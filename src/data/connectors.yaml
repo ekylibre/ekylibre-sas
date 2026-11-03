@@ -1,0 +1,196 @@
+# Curation éditoriale des connecteurs (plugins Ekylibre) — docs/design/02-architecture.md §4.2.
+#
+# Un connecteur n'est AFFICHÉ que si son plugin est « stable » dans src/data/generated/plugins.json
+# (dépôt ekylibre-<slug>, au moins un tag publié — décision D9). Les entrées préparées pour des
+# plugins sans version publiée apparaîtront automatiquement dès qu'un tag sera publié.
+#
+# zone     : ancre dans la scène 3D (clé de public/3d/scene.json → zones)
+# category : machines | meteo | elevage | vigne | finance | gestion | durabilite | terrain
+# dataFlow : in (vers Ekylibre) | out (depuis Ekylibre) | both
+
+# ── Plugins stables au 2026-11-03 ────────────────────────────────────────────
+- slug: samsys
+  category: machines
+  zone: hangars
+  dataFlow: in
+  partner: { name: Samsys, url: 'https://www.samsys.io/' }
+  title: { fr: Machines connectées, en: Connected machinery }
+  summary:
+    fr: Les boîtiers Samsys enregistrent l’activité des tracteurs et des outils ; Ekylibre en déduit les interventions, les temps et les surfaces travaillées.
+    en: Samsys boxes record tractor and implement activity; Ekylibre turns it into interventions, working times and worked areas.
+
+- slug: weenat
+  category: meteo
+  zone: meteo
+  dataFlow: in
+  partner: { name: Weenat, url: 'https://weenat.com/' }
+  title: { fr: Stations météo et capteurs, en: Weather stations and sensors }
+  summary:
+    fr: Pluie, température, humidité et sondes de sol des stations Weenat alimentent les analyses de chaque parcelle.
+    en: Rainfall, temperature, humidity and soil probes from Weenat stations feed the analysis of each plot.
+
+- slug: previmeteo
+  category: meteo
+  zone: meteo
+  dataFlow: in
+  partner: { name: Previmeteo }
+  title: { fr: Objets connectés météo, en: Connected weather devices }
+  summary:
+    fr: Les relevés des objets connectés météo sont rattachés aux zones cultivées de l’exploitation.
+    en: Readings from connected weather devices are linked to the farm’s cultivated zones.
+
+- slug: cap2020
+  category: terrain
+  zone: maraichage
+  dataFlow: in
+  partner: { name: CapTrap }
+  title: { fr: Pièges connectés, en: Connected traps }
+  summary:
+    fr: Les captures des pièges connectés CapTrap remontent dans Ekylibre pour suivre la pression des ravageurs.
+    en: Catches from CapTrap connected traps flow into Ekylibre to monitor pest pressure.
+
+- slug: ednotif
+  category: elevage
+  zone: elevage
+  dataFlow: both
+  partner: { name: EDE }
+  title: { fr: Identification animale, en: Livestock identification }
+  summary:
+    fr: Les données animales des Établissements départementaux de l’élevage (EDE) sont échangées automatiquement avec Ekylibre.
+    en: Livestock data from the French departmental livestock registries (EDE) is exchanged automatically with Ekylibre.
+
+- slug: viti
+  category: vigne
+  zone: vigne-chai
+  dataFlow: both
+  title: { fr: Ekyviti, la vigne et le chai, en: Ekyviti, vineyard and cellar }
+  summary:
+    fr: L’extension viticole d’Ekylibre suit la vigne, la vendange, le chai et la traçabilité jusqu’à la bouteille.
+    en: Ekylibre’s wine extension tracks the vineyard, harvest, cellar and traceability down to the bottle.
+
+- slug: baqio
+  category: vigne
+  zone: vigne-chai
+  dataFlow: in
+  partner: { name: Baqio, url: 'https://baqio.com/' }
+  title: { fr: Ventes et logistique du vin, en: Wine sales and logistics }
+  summary:
+    fr: Les commandes, ventes et expéditions gérées dans Baqio sont reprises dans la gestion commerciale et la comptabilité d’Ekylibre.
+    en: Orders, sales and shipments managed in Baqio are brought into Ekylibre’s sales management and accounting.
+
+- slug: banking
+  category: finance
+  zone: bureau
+  dataFlow: in
+  partner: { name: 'Nordigen (GoCardless)', url: 'https://gocardless.com/bank-account-data/' }
+  title: { fr: Relevés bancaires, en: Bank statements }
+  summary:
+    fr: Les relevés et paiements bancaires sont récupérés automatiquement pour le rapprochement comptable.
+    en: Bank statements and payments are retrieved automatically for accounting reconciliation.
+
+- slug: planning
+  category: gestion
+  zone: bureau
+  dataFlow: both
+  title: { fr: Planification, en: Planning }
+  summary:
+    fr: Planifier les interventions, les équipes et le matériel, puis comparer le prévu et le réalisé.
+    en: Plan interventions, teams and equipment, then compare what was planned with what was done.
+
+- slug: hajimari
+  category: gestion
+  zone: hub
+  dataFlow: in
+  title: { fr: Assistant de démarrage, en: Onboarding assistant }
+  summary:
+    fr: Un assistant guide la configuration initiale de l’exploitation et la reprise des données existantes.
+    en: An assistant guides the farm’s initial setup and the import of existing data.
+
+# ── Prêts à apparaître dès qu’une version sera publiée ───────────────────────
+- slug: agro-monitoring
+  category: terrain
+  zone: parcelles
+  dataFlow: in
+  partner: { name: Agromonitoring, url: 'https://agromonitoring.com/' }
+  title: { fr: Images satellites, en: Satellite imagery }
+  summary:
+    fr: Indices de végétation (NDVI) et données de sol par satellite, pour chaque zone cultivable.
+    en: Satellite vegetation indices (NDVI) and soil data for each cultivable zone.
+
+- slug: traccar
+  category: machines
+  zone: parcelles
+  dataFlow: in
+  partner: { name: Traccar, url: 'https://www.traccar.org/' }
+  title: { fr: Positions GPS, en: GPS tracking }
+  summary:
+    fr: Les positions des tracteurs (AgOpenGPS édition OSFarm, boîtiers, téléphones) sont rattachées aux interventions.
+    en: Tractor positions (AgOpenGPS OSFarm edition, trackers, phones) are linked to interventions.
+
+- slug: sencrop
+  category: meteo
+  zone: meteo
+  dataFlow: in
+  partner: { name: Sencrop, url: 'https://sencrop.com/' }
+  title: { fr: Stations météo Sencrop, en: Sencrop weather stations }
+  summary:
+    fr: Les stations connectées Sencrop enrichissent les analyses météo de l’exploitation.
+    en: Sencrop connected stations enrich the farm’s weather analysis.
+
+- slug: natuition
+  category: machines
+  zone: maraichage
+  dataFlow: in
+  partner: { name: Natuition, url: 'https://natuition.com/' }
+  title: { fr: Robot de désherbage, en: Weeding robot }
+  summary:
+    fr: Le travail du robot de désherbage Natuition est enregistré comme intervention dans Ekylibre.
+    en: Work done by the Natuition weeding robot is recorded as an intervention in Ekylibre.
+
+- slug: qonto
+  category: finance
+  zone: bureau
+  dataFlow: both
+  partner: { name: Qonto, url: 'https://qonto.com/' }
+  title: { fr: Banque et facture électronique, en: Banking and e-invoicing }
+  summary:
+    fr: Transactions Qonto et, progressivement, facturation électronique, directement dans la comptabilité.
+    en: Qonto transactions and, progressively, e-invoicing, straight into the accounts.
+
+- slug: pasteque
+  category: gestion
+  zone: bureau
+  dataFlow: both
+  partner: { name: Pastèque, url: 'https://www.pasteque.coop/' }
+  title: { fr: Caisse de vente directe, en: Farm shop till }
+  summary:
+    fr: Ekylibre sert de serveur au logiciel de caisse libre Pastèque pour la vente directe.
+    en: Ekylibre acts as the server for the Pastèque open-source point-of-sale software for direct sales.
+
+- slug: hve
+  category: durabilite
+  zone: hub
+  dataFlow: out
+  title: { fr: Audit HVE, en: HVE certification audit }
+  summary:
+    fr: Calcul de l’audit Haute Valeur Environnementale (niveau 3, référentiel V4.4) à partir des données de l’exploitation.
+    en: Computes the French High Environmental Value audit (level 3, V4.4 standard) from farm data.
+
+- slug: idea
+  category: durabilite
+  zone: hub
+  dataFlow: out
+  partner: { name: Méthode IDEA, url: 'https://methode-idea.org/' }
+  title: { fr: Diagnostic de durabilité IDEA4, en: IDEA4 sustainability assessment }
+  summary:
+    fr: Les 53 indicateurs de durabilité de la méthode IDEA4, calculés depuis Ekylibre.
+    en: The 53 sustainability indicators of the IDEA4 method, computed from Ekylibre.
+
+- slug: economic
+  category: gestion
+  zone: bureau
+  dataFlow: out
+  title: { fr: Analyse économique, en: Economic analysis }
+  summary:
+    fr: Marges et coûts de production par atelier et par culture.
+    en: Margins and production costs per enterprise and per crop.

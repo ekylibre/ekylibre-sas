@@ -1,0 +1,305 @@
+[
+  {
+    "slug": "challenge-photo-ekylibre",
+    "legacyUrl": "/challenge-photo-ekylibre/",
+    "status": "ok",
+    "reason": "",
+    "images": {
+      "ok": 0,
+      "failed": 0
+    },
+    "date": "2019-12-13",
+    "words": 159,
+    "snapshot": "20251111165351"
+  },
+  {
+    "slug": "clic-and-farm-sia-2018",
+    "legacyUrl": "/clic-and-farm-sia-2018/",
+    "status": "ok",
+    "reason": "corps court (35 mots) | fichiers liés non archivés : https://ekylibre.com/wp-content/uploads/2020/01/Ekylibre1718_CP_ClinFarm_DEF_20fev18.pdf",
+    "images": {
+      "ok": 0,
+      "failed": 0
+    },
+    "date": "2018-02-22",
+    "words": 35,
+    "snapshot": "20251111164627"
+  },
+  {
+    "slug": "communique-lancement-de-la-version-appli-mobile-de-clic-farm",
+    "legacyUrl": "/communique-lancement-de-la-version-appli-mobile-de-clic-farm/",
+    "status": "ok",
+    "reason": "images en échec : https://ekylibre.com/wp-content/uploads/2020/01/20180830-UNE_Actu-AppMobileC_F-1024x288.png (non archivée) ; https://ekylibre.com/wp-content/uploads/2020/01/20180830-UNE_Actu-AppMobileC_F-1024x288.png (non archivée)",
+    "images": {
+      "ok": 0,
+      "failed": 2
+    },
+    "date": "2018-08-30",
+    "words": 467,
+    "snapshot": "20260613091955"
+  },
+  {
+    "slug": "communique-le-reseau-des-villages-by-ca-s-installe-au-sommet-de-l-elevage",
+    "legacyUrl": "/communique-le-reseau-des-villages-by-ca-s-installe-au-sommet-de-l-elevage/",
+    "status": "ok",
+    "reason": "images en échec : https://ekylibre.com/wp-content/uploads/2020/01/UneActu-WebEKY-1024x288.png (non archivée) ; https://ekylibre.com/wp-content/uploads/2020/01/UneActu-WebEKY-1024x288.png (non archivée)",
+    "images": {
+      "ok": 0,
+      "failed": 2
+    },
+    "date": "2018-09-28",
+    "words": 138,
+    "snapshot": "20260714162126"
+  },
+  {
+    "slug": "de-la-vigne-a-la-bouteille-un-evenement-signe-microsoft",
+    "legacyUrl": "/de-la-vigne-a-la-bouteille-un-evenement-signe-microsoft/",
+    "status": "ok",
+    "reason": "images en échec : https://ekylibre.com/wp-content/uploads/2021/01/20210204_WebinarMicrosoft-Ekylibre-1024x362.jpg (non archivée) ; https://ekylibre.com/wp-content/uploads/2021/01/3logos-webinaireMicrosoft-1-1024x119.png (non archivée) ; https://ekylibre.com/wp-content/uploads/2021/01/3Tools-webinaireMicrosoft-1024x227.png (non archivée)",
+    "images": {
+      "ok": 1,
+      "failed": 3
+    },
+    "date": "2021-01-26",
+    "words": 281,
+    "snapshot": "20260317034433"
+  },
+  {
+    "slug": "des-solutions-connectees-pour-l-agriculture-quand-3-entreprises-innovantes-s-engagent",
+    "legacyUrl": "/des-solutions-connectees-pour-l-agriculture-quand-3-entreprises-innovantes-s-engagent/",
+    "status": "ok",
+    "reason": "corps court (19 mots) | fichiers liés non archivés : https://ekylibre.com/wp-content/uploads/2020/01/170131_CP_solutions_connectées_3_entreprises_innovantes.pdf",
+    "images": {
+      "ok": 0,
+      "failed": 0
+    },
+    "date": "2017-02-02",
+    "words": 19,
+    "snapshot": "20260210024459"
+  },
+  {
+    "slug": "ekylibre-1ere-entreprise-labellisee-data-agri-par-la-fnsea-jeunes-agriculteurs",
+    "legacyUrl": "/ekylibre-1ere-entreprise-labellisee-data-agri-par-la-fnsea-jeunes-agriculteurs/",
+    "status": "ok",
+    "reason": "images en échec : https://ekylibre.com/wp-content/uploads/2020/01/david-1024x499.png (non archivée)",
+    "images": {
+      "ok": 2,
+      "failed": 1
+    },
+    "date": "2020-09-30",
+    "words": 175,
+    "snapshot": "20251111160850"
+  },
+  {
+    "slug": "ekylibre-present-au-sia-2023",
+    "legacyUrl": "/ekylibre-present-au-sia-2023/",
+    "status": "ok",
+    "reason": "",
+    "images": {
+      "ok": 2,
+      "failed": 0
+    },
+    "date": "2023-01-31",
+    "words": 81,
+    "snapshot": "20251111173624"
+  },
+  {
+    "slug": "ekyviti-projet-vin-mais-pas-vain",
+    "legacyUrl": "/ekyviti-projet-vin-mais-pas-vain/",
+    "status": "ok",
+    "reason": "",
+    "images": {
+      "ok": 0,
+      "failed": 0
+    },
+    "date": "2019-10-17",
+    "words": 123,
+    "snapshot": "20251111161046"
+  },
+  {
+    "slug": "ekyviti-samsys-une-offre-tout-en-un-pour-une-gestion-a-portee-de-mains",
+    "legacyUrl": "/ekyviti-samsys-une-offre-tout-en-un-pour-une-gestion-a-portee-de-mains/",
+    "status": "ok",
+    "reason": "",
+    "images": {
+      "ok": 4,
+      "failed": 0
+    },
+    "date": "2020-11-24",
+    "words": 583,
+    "snapshot": "20251111175842"
+  },
+  {
+    "slug": "formation-la-comptabilite-accessible-a-tous-7-11-19",
+    "legacyUrl": "/formation-la-comptabilite-accessible-a-tous-7-11-19/",
+    "status": "ok",
+    "reason": "corps court (22 mots) | fichiers liés non archivés : https://ekylibre.com/wp-content/uploads/2020/01/20191002_Flyer_RV.pdf",
+    "images": {
+      "ok": 0,
+      "failed": 0
+    },
+    "date": "2019-10-01",
+    "words": 22,
+    "snapshot": "20260613082939"
+  },
+  {
+    "slug": "la-solution-tout-en-un-ekyviti-et-baqio",
+    "legacyUrl": "/la-solution-tout-en-un-ekyviti-et-baqio/",
+    "status": "ok",
+    "reason": "images en échec : https://ekylibre.com/wp-content/uploads/elementor/thumbs/Ekyviti-et-Baqio-prix-paob66vn5877ik1la744jujxzd3jbxvnribezbgb6o.png (non archivée)",
+    "images": {
+      "ok": 2,
+      "failed": 1
+    },
+    "date": "2021-06-14",
+    "words": 286,
+    "snapshot": "20251209235434"
+  },
+  {
+    "slug": "le-module-comptabilite-evolue",
+    "legacyUrl": "/le-module-comptabilite-evolue/",
+    "status": "ok",
+    "reason": "",
+    "images": {
+      "ok": 0,
+      "failed": 0
+    },
+    "date": "2019-10-29",
+    "words": 455,
+    "snapshot": "20260118065819"
+  },
+  {
+    "slug": "les-chiffres-en-ekylibre",
+    "legacyUrl": "/les-chiffres-en-ekylibre/",
+    "status": "ok",
+    "reason": "",
+    "images": {
+      "ok": 2,
+      "failed": 0
+    },
+    "date": "2020-11-03",
+    "words": 425,
+    "snapshot": "20251209222519"
+  },
+  {
+    "slug": "lfday-2022",
+    "legacyUrl": "/lfday-2022/",
+    "status": "ok",
+    "reason": "",
+    "images": {
+      "ok": 2,
+      "failed": 0
+    },
+    "date": "2022-05-17",
+    "words": 207,
+    "snapshot": "20260714153253"
+  },
+  {
+    "slug": "lfday-by-la-ferme-digitale-le-1-juin-a-paris",
+    "legacyUrl": "/lfday-by-la-ferme-digitale-le-1-juin-a-paris/",
+    "status": "ok",
+    "reason": "images en échec : https://ekylibre.com/wp-content/uploads/2020/01/UNEActuLFD2-1024x360.png (non archivée) ; https://ekylibre.com/wp-content/uploads/2020/01/UNEActuLFD2-1024x360.png (non archivée)",
+    "images": {
+      "ok": 0,
+      "failed": 2
+    },
+    "date": "2017-04-07",
+    "words": 276,
+    "snapshot": "20251111172153"
+  },
+  {
+    "slug": "osfarm-ekylibre-salon-agriculture-2024",
+    "legacyUrl": "/osfarm-ekylibre-salon-agriculture-2024/",
+    "status": "ok",
+    "reason": "images en échec : https://ekylibre.com/wp-content/uploads/elementor/thumbs/osfarm-osfarm_eky-hdpi-qk70raokymabvvvr5fiihx8e6jqr5tosxyt9gvyz0g.png (non archivée) ; https://ekylibre.com/wp-content/uploads/2024/02/osfarm-osfarm_eky-hdpi.png (non archivée)",
+    "images": {
+      "ok": 1,
+      "failed": 2
+    },
+    "date": "2024-02-22",
+    "words": 103,
+    "snapshot": "20251111172604"
+  },
+  {
+    "slug": "osfarm-presente-a-lopen-source-experience-paris-2023",
+    "legacyUrl": "/osfarm-presente-a-lopen-source-experience-paris-2023/",
+    "status": "ok",
+    "reason": "corps court (54 mots)",
+    "images": {
+      "ok": 2,
+      "failed": 0
+    },
+    "date": "2023-10-02",
+    "words": 54,
+    "snapshot": "20260613093726"
+  },
+  {
+    "slug": "sia2022",
+    "legacyUrl": "/sia2022/",
+    "status": "skipped",
+    "reason": "page d'atterrissage (pas de date ni de corps d'article)",
+    "images": {
+      "ok": 0,
+      "failed": 0
+    }
+  },
+  {
+    "slug": "sia2023",
+    "legacyUrl": "/sia2023/",
+    "status": "skipped",
+    "reason": "page d'atterrissage (pas de date ni de corps d'article)",
+    "images": {
+      "ok": 0,
+      "failed": 0
+    }
+  },
+  {
+    "slug": "stand-lfd-sia2023",
+    "legacyUrl": "/stand-lfd-sia2023/",
+    "status": "skipped",
+    "reason": "page d'atterrissage (pas de date ni de corps d'article)",
+    "images": {
+      "ok": 0,
+      "failed": 0
+    }
+  },
+  {
+    "slug": "un-vent-nouveau-souffle-sur-ekylibre",
+    "legacyUrl": "/un-vent-nouveau-souffle-sur-ekylibre/",
+    "status": "ok",
+    "reason": "images en échec : https://ekylibre.com/wp-content/uploads/2020/11/Capture-d%E2%80%99e%CC%81cran-2020-11-03-a%CC%80-17.29.52.png (non archivée) ; https://ekylibre.com/wp-content/uploads/2020/11/logo_ekyagri.png (non archivée) ; https://ekylibre.com/wp-content/uploads/2020/11/logo_ekyviti.png (non archivée)",
+    "images": {
+      "ok": 1,
+      "failed": 3
+    },
+    "date": "2020-11-03",
+    "words": 412,
+    "snapshot": "20260714154434"
+  },
+  {
+    "slug": "video-ekyviti-face-camera",
+    "legacyUrl": "/video-ekyviti-face-camera/",
+    "status": "ok",
+    "reason": "",
+    "images": {
+      "ok": 1,
+      "failed": 0
+    },
+    "date": "2021-03-22",
+    "words": 385,
+    "snapshot": "20251111172431"
+  },
+  {
+    "slug": "vinitech-sifel-2022",
+    "legacyUrl": "/vinitech-sifel-2022/",
+    "status": "ok",
+    "reason": "images en échec : https://ekylibre.com/wp-content/uploads/2022/11/baqio.png (non archivée) ; https://ekylibre.com/wp-content/uploads/2022/11/invitation-aperitif.png (non archivée)",
+    "images": {
+      "ok": 2,
+      "failed": 2
+    },
+    "date": "2022-11-28",
+    "words": 188,
+    "snapshot": "20251209234200"
+  }
+]

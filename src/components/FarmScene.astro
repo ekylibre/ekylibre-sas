@@ -1,0 +1,107 @@
+---
+// Îlot 3D « La ferme connectée ». Le HTML ne contient qu'un conteneur vide : l'image d'attente
+// (photo ou rendu) est fournie par la page, en dessous. three.js n'est chargé que lorsque la
+// scène devient visible et que le navigateur est disponible, puis la scène apparaît en fondu.
+import { withBase } from '~/i18n/routes';
+import type { FarmSceneProps } from '~/islands/farm-scene/types';
+
+interface Props {
+  mode?: FarmSceneProps['mode'];
+  lang: FarmSceneProps['lang'];
+  view?: string;
+  focusX?: number;
+  class?: string;
+}
+const { mode = 'hero', lang, view = 'site', focusX, class: className } = Astro.props;
+const props: FarmSceneProps = {
+  mode,
+  lang,
+  view,
+  manifestUrl: withBase('/3d/scene.json'),
+  modelUrl: withBase(mode === 'hero' ? '/3d/hero.glb' : '/3d/farm-full.glb'),
+  ...(focusX === undefined ? {} : { focusX }),
+};
+---
+
+<farm-scene
+  class:list={['farm-scene block', className]}
+  data-props={JSON.stringify(props)}
+  data-state="idle"
+></farm-scene>
+
+<style>
+  .farm-scene {
+    opacity: 0;
+    transition: opacity 1.2s var(--ease-out-soft);
+  }
+  .farm-scene[data-state='ready'] {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .farm-scene {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { detectTier } from '~/islands/farm-scene/quality';
+  import type { FarmSceneProps } from '~/islands/farm-scene/types';
+
+  const FIRST_FRAME_TIMEOUT = 8000;
+
+  class FarmSceneElement extends HTMLElement {
+    private started = false;
+
+    connectedCallback() {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((e) => e.isIntersecting) || this.started) return;
+          this.started = true;
+          io.disconnect();
+          const idle = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 200));
+          idle(() => void this.start(), { timeout: 1500 });
+        },
+        { rootMargin: '200px' },
+      );
+      io.observe(this);
+    }
+
+    private fallback(reason: string) {
+      this.dataset.state = 'fallback';
+      document.dispatchEvent(new CustomEvent('eky:fallback', { detail: { reason } }));
+    }
+
+    private async start() {
+      const props = JSON.parse(this.dataset.props ?? '{}') as FarmSceneProps;
+      // En développement : ?view=<nom> force une vue fixe (cadrage des vues et des zones).
+      if (import.meta.env.DEV) {
+        const forced = new URLSearchParams(location.search).get('view');
+        if (forced) Object.assign(props, { view: forced, still: true, focusX: 0.5 });
+      }
+      const report = detectTier();
+      this.dataset.tier = report.tier;
+      if (report.tier === 'none') return this.fallback(report.reason);
+      this.dataset.state = 'loading';
+      let timedOut = false;
+      const timer = setTimeout(() => {
+        timedOut = true;
+        this.fallback('timeout');
+      }, FIRST_FRAME_TIMEOUT);
+      try {
+        const { mountFarmScene } = await import('~/islands/farm-scene/main');
+        const handle = await mountFarmScene(this, props, report);
+        clearTimeout(timer);
+        if (timedOut) return handle.dispose();
+        this.dataset.state = 'ready';
+        document.dispatchEvent(new CustomEvent('eky:ready', { detail: { tier: report.tier } }));
+      } catch (error) {
+        clearTimeout(timer);
+        console.warn('[farm-scene]', error);
+        if (!timedOut) this.fallback(error instanceof Error ? error.message : 'error');
+      }
+    }
+  }
+
+  if (!customElements.get('farm-scene')) customElements.define('farm-scene', FarmSceneElement);
+</script>

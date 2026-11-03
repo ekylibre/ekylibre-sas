@@ -5,6 +5,7 @@ import { Picture } from 'astro:assets';
 import drone from '~/assets/images/la-vauzelle-drone.jpg';
 import Icon from '~/components/Icon.astro';
 import StatBand from '~/components/StatBand.astro';
+import FarmScene from '~/components/FarmScene.astro';
 import { routePath, type Locale } from '~/i18n/routes';
 import { useTranslations } from '~/i18n/ui';
 import type { IconName } from '~/lib/icon-names';
@@ -75,6 +76,7 @@ const products: Array<{ key: 'ekylibre' | 'aiffel' | 'lexicon'; icon: IconName; 
     fetchpriority="high"
     class="absolute inset-0 -z-10 h-full w-full object-cover object-[50%_40%]"
   />
+  <FarmScene lang={lang} view="hero" focusX={0.68} class="absolute inset-0 -z-10" />
   <div
     class="absolute inset-0 -z-10 bg-[linear-gradient(100deg,rgb(7_20_14/0.94)_0%,rgb(7_20_14/0.78)_42%,rgb(7_20_14/0.15)_100%)]"
     aria-hidden="true"

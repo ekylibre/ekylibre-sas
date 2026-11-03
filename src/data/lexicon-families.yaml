@@ -1,0 +1,93 @@
+# Regroupement des jeux de données du Lexicon en 7 familles (constellation de la scène 3D,
+# tableau de la page Interopérabilité) — docs/design/02-architecture.md §4.2.
+# Chaque jeu de src/data/generated/datasets.json doit figurer dans exactement une famille
+# (vérifié par scripts/check-content.mjs). Libellés FR/EN rédigés pour le site.
+
+- id: territoire
+  icon: map
+  title: { fr: Territoire et foncier, en: Land and territory }
+  datasets:
+    cadastre: { fr: Parcelles cadastrales, en: Cadastral parcels }
+    cadastral_prices: { fr: Prix du foncier, en: Land prices }
+    cadastre_owners: { fr: Propriétaires cadastraux, en: Cadastral owners }
+    graphic_parcels: { fr: Parcelles déclarées à la PAC (RPG), en: CAP declared plots (LPIS) }
+    administrative_areas: { fr: Découpages administratifs, en: Administrative areas }
+    postal_codes: { fr: Codes postaux, en: Postcodes }
+    commune_links: { fr: Liens entre communes et données, en: Municipality links }
+    hydrography: { fr: Hydrographie, en: Hydrography }
+    soil: { fr: Sols, en: Soils }
+    protected_natural_zones: { fr: Espaces naturels protégés, en: Protected natural areas }
+    protected_water_zones: { fr: Zones de protection de l’eau, en: Water protection zones }
+
+- id: climat
+  icon: cloudy
+  title: { fr: Climat, en: Climate }
+  datasets:
+    weather: { fr: Observations météorologiques, en: Weather observations }
+
+- id: intrants
+  icon: flask
+  title: { fr: Intrants et réglementation, en: Inputs and regulation }
+  datasets:
+    phytosanitary: { fr: Produits phytosanitaires autorisés, en: Authorised plant protection products }
+    phytosanitary_substances: { fr: Substances actives, en: Active substances }
+    phytosanitary_purchases: { fr: Achats de produits phytosanitaires, en: Plant protection product purchases }
+    phytosanitary_prices: { fr: Prix des produits phytosanitaires, en: Plant protection product prices }
+    fertilizers: { fr: Engrais, en: Fertilisers }
+    seeds: { fr: Semences, en: Seeds }
+    seed_varieties: { fr: Variétés végétales, en: Plant varieties }
+    vine_varieties: { fr: Cépages, en: Grape varieties }
+
+- id: entreprises
+  icon: building
+  title: { fr: Entreprises et aides, en: Businesses and subsidies }
+  datasets:
+    enterprises: { fr: Entreprises (SIREN), en: Businesses (SIREN) }
+    enterprise_classifications: { fr: Classifications d’entreprises, en: Business classifications }
+    enterprise_links: { fr: Liens entre entreprises, en: Business links }
+    industry_sector: { fr: Secteurs d’activité, en: Industry sectors }
+    legal_positions: { fr: Statuts juridiques, en: Legal forms }
+    cap_beneficiaries: { fr: Bénéficiaires des aides PAC, en: CAP beneficiaries }
+    msa_populations: { fr: Population agricole (MSA), en: Farming population (MSA) }
+    rica: { fr: Résultats comptables agricoles (RICA), en: Farm accountancy data (FADN) }
+    hve_farms: { fr: Exploitations certifiées HVE, en: HVE-certified farms }
+    organic_farming: { fr: Agriculture biologique, en: Organic farming }
+    quality_and_origin_signs: { fr: Signes de qualité et d’origine, en: Quality and origin labels }
+
+- id: marches
+  icon: line-chart
+  title: { fr: Marchés et économie, en: Markets and economics }
+  datasets:
+    eu_market_prices: { fr: Prix des marchés européens, en: EU market prices }
+    fuel_prices: { fr: Prix des carburants, en: Fuel prices }
+    prices: { fr: Prix de référence, en: Reference prices }
+    budgets: { fr: Budgets types, en: Budget templates }
+    chart_of_accounts: { fr: Plan comptable agricole, en: Agricultural chart of accounts }
+
+- id: savoirs
+  icon: seedling-solid
+  title: { fr: Savoirs agronomiques, en: Agronomic knowledge }
+  datasets:
+    productions: { fr: Productions agricoles, en: Agricultural productions }
+    technical_workflows: { fr: Itinéraires techniques, en: Crop management plans }
+    technical_workflow_sequences: { fr: Séquences d’itinéraires techniques, en: Crop management sequences }
+    intervention_models: { fr: Modèles d’interventions, en: Intervention templates }
+    phenological_stages: { fr: Stades phénologiques, en: Growth stages }
+    taxonomy: { fr: Taxonomie, en: Taxonomy }
+    variants: { fr: Variantes de produits, en: Product variants }
+    units: { fr: Unités, en: Units }
+    open_nomenclature: { fr: Nomenclature ouverte, en: Open nomenclature }
+    user_roles: { fr: Rôles d’utilisateurs, en: User roles }
+    production_documentations: { fr: Fiches de production, en: Production guides }
+    rd_agri: { fr: Recherche et développement agricoles, en: Agricultural R&D }
+    agricultural_pictures: { fr: Photothèque agricole, en: Agricultural picture library }
+
+- id: filiere
+  icon: shopping-basket
+  title: { fr: Filières et alimentation, en: Food systems }
+  datasets:
+    pat: { fr: Projets alimentaires territoriaux, en: Territorial food projects }
+    canteens: { fr: Restauration collective, en: School and public canteens }
+    alim_confiance: { fr: Contrôles sanitaires alimentaires, en: Food safety inspections }
+    agricultural_schools: { fr: Enseignement agricole, en: Agricultural education }
+    agroedi: { fr: Référentiel d’échanges AgroEDI, en: AgroEDI exchange standard }

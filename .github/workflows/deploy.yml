@@ -42,7 +42,7 @@ jobs:
       - name: Contrastes du design system
         run: node scripts/check-contrast.mjs
 
-      - name: Build
+      - name: Build (contrôles de contenu, types, build, liens internes)
         run: npm run build
         env:
           # Avant la bascule DNS : https://ekylibre.github.io + /ekylibre-sas/

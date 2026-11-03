@@ -1,0 +1,137 @@
+#!/usr/bin/env node
+// B4 — Contrôles de cohérence des contenus, exécutés avant le build (et après, avec --links).
+//
+//   node scripts/check-content.mjs           contenus et données (avant build)
+//   node scripts/check-content.mjs --links   liens internes de dist/ (après build)
+//
+// Erreur  → code de sortie 1 (le build échoue).
+// Avertissement → signalé, n'échoue pas (annotation ::warning:: en CI).
+import { readFile, readdir, stat } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { join, relative } from 'node:path';
+import { parse } from 'yaml';
+import { warn } from './lib/snapshot.mjs';
+
+const errors = [];
+const warnings = [];
+const error = (m) => errors.push(m);
+const warning = (m) => warnings.push(m);
+
+const json = async (p) => JSON.parse(await readFile(p, 'utf8'));
+const yaml = async (p) => parse(await readFile(p, 'utf8'));
+
+async function walk(dir, filter) {
+  if (!existsSync(dir)) return [];
+  const out = [];
+  for (const entry of await readdir(dir, { withFileTypes: true })) {
+    const p = join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...(await walk(p, filter)));
+    else if (filter(entry.name)) out.push(p);
+  }
+  return out;
+}
+
+async function checkContent() {
+  const { plugins } = await json('src/data/generated/plugins.json');
+  const { datasets } = await json('src/data/generated/datasets.json');
+  const scene = await json('public/3d/scene.json');
+  const connectors = await yaml('src/data/connectors.yaml');
+  const families = await yaml('src/data/lexicon-families.yaml');
+
+  // Connecteurs ↔ plugins stables ↔ zones de la scène
+  const zones = new Set(Object.keys(scene.zones ?? {}));
+  const curated = new Map();
+  for (const c of connectors) {
+    if (curated.has(c.slug)) error(`connectors.yaml : slug en double « ${c.slug} »`);
+    curated.set(c.slug, c);
+    if (!zones.has(c.zone)) error(`connectors.yaml : « ${c.slug} » vise la zone inconnue « ${c.zone} »`);
+  }
+  for (const p of plugins) {
+    if (!curated.has(p.slug))
+      warning(`plugin stable « ${p.slug} » sans curation dans connectors.yaml (affiché au bureau avec son README)`);
+  }
+
+  // Jeux Lexicon ↔ familles
+  const seen = new Map();
+  for (const f of families) {
+    for (const name of Object.keys(f.datasets ?? {})) {
+      if (seen.has(name)) error(`lexicon-families.yaml : « ${name} » est dans « ${seen.get(name)} » et « ${f.id} »`);
+      seen.set(name, f.id);
+    }
+  }
+  for (const d of datasets) {
+    if (!seen.has(d.name))
+      error(`jeu Lexicon « ${d.name} » absent de lexicon-families.yaml (libellés FR/EN à ajouter)`);
+  }
+  const names = new Set(datasets.map((d) => d.name));
+  for (const name of seen.keys()) {
+    if (!names.has(name)) warning(`lexicon-families.yaml : « ${name} » n'existe plus dans le catalogue Lexicon`);
+  }
+
+  // Actualités : appariement FR/EN par translationKey
+  const news = await walk('src/content/news', (n) => n.endsWith('.md') && !n.startsWith('_'));
+  const byKey = new Map();
+  for (const file of news) {
+    const head = (await readFile(file, 'utf8')).match(/^---\n([\s\S]*?)\n---/)?.[1];
+    if (!head) {
+      error(`${file} : frontmatter absent`);
+      continue;
+    }
+    const fm = parse(head);
+    const langs = byKey.get(fm.translationKey) ?? new Set();
+    langs.add(fm.lang);
+    byKey.set(fm.translationKey, langs);
+  }
+  const untranslated = [...byKey].filter(([, l]) => !l.has('en')).length;
+  if (untranslated) {
+    // Les anciennes actualités peuvent rester en français seul (périmètre coupable B7).
+    const msg = `${untranslated} actualité(s) sans version anglaise`;
+    if (process.env.STRICT_NEWS) error(msg);
+    else warning(msg);
+  }
+
+  // Redirections : chaque ancienne URL recensée a une cible (B6)
+  const legacyList = 'docs/brainstorm/anciennes-urls-ekylibre-com.txt';
+  if (existsSync('src/data/redirects.yaml')) {
+    const redirects = await yaml('src/data/redirects.yaml');
+    const covered = new Set(Object.keys(redirects ?? {}));
+    for (const f of news) {
+      const legacy = (await readFile(f, 'utf8')).match(/^legacyUrl:\s*(\S+)/m)?.[1];
+      if (legacy) covered.add(legacy);
+    }
+    const legacy = (await readFile(legacyList, 'utf8')).split('\n').filter(Boolean);
+    const missing = legacy.filter((u) => !covered.has(u));
+    if (missing.length)
+      error(`${missing.length} ancienne(s) URL sans redirection : ${missing.slice(0, 5).join(', ')}…`);
+  }
+}
+
+async function checkLinks() {
+  const base = (process.env.BASE_PATH || '/').replace(/\/?$/, '/');
+  const dist = 'dist';
+  const pages = await walk(dist, (n) => n.endsWith('.html'));
+  let checked = 0;
+  for (const page of pages) {
+    const html = await readFile(page, 'utf8');
+    for (const [, url] of html.matchAll(/\s(?:href|src)="([^"#?]+)[^"]*"/g)) {
+      if (!url.startsWith(base) || url.startsWith('//')) continue;
+      const path = decodeURI(url.slice(base.length));
+      const target = join(dist, path);
+      checked++;
+      const ok = existsSync(target) && ((await stat(target)).isFile() || existsSync(join(target, 'index.html')));
+      if (!ok) error(`${relative(dist, page)} → lien interne cassé : ${url}`);
+    }
+  }
+  console.log(`  ${checked} liens internes vérifiés sur ${pages.length} pages`);
+}
+
+const mode = process.argv.includes('--links') ? 'links' : 'content';
+await (mode === 'links' ? checkLinks() : checkContent());
+
+for (const w of warnings) warn(w);
+for (const e of errors) console.error(`✗ ${e}`);
+if (errors.length) {
+  console.error(`check-content (${mode}) : ${errors.length} erreur(s)`);
+  process.exit(1);
+}
+console.log(`✓ check-content (${mode}) : aucune erreur, ${warnings.length} avertissement(s)`);

@@ -349,6 +349,8 @@ Source : `github.com/ekylibre/ekylibre.github.io` (illustrations de l'accueil de
 | Réseaux, mobilier, EDL | — | ✗ | ✗ | **exclus** (§1.3 des exigences) |
 | Marqueurs, flux, constellation | procéduraux (code) | ✓ | ✓ | — |
 
+> **Mise en œuvre (J2)** : sans `toktx` disponible, les textures sont en **WebP** (`EXT_texture_webp`) et la géométrie en **Meshopt** (`EXT_meshopt_compression`, décodeur embarqué dans three.js, aucun fichier WASM à héberger) plutôt que KTX2/Draco. Résultat : `hero.glb` 2,0 Mo, `farm-full.glb` 2,8 Mo.
+
 **Budget** : `hero.glb` ≤ **2,5 Mo**, `farm-full.glb` ≤ **5 Mo**. `prepare-3d` fait échouer l'étape si le budget est dépassé, et écrit le poids réel dans `scene.json`.
 **Repère** : celui de la maquette, conservé tel quel (local Lambert 93 − (406300, 6532400), Y vers le haut), ce qui permet de reprendre les vues et les ancres existantes.
 

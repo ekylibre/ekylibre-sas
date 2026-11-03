@@ -1,0 +1,273 @@
+{
+  "title": "FarmLab La Vauzelle — la ferme connectée",
+  "frame": "local : Lambert 93 - (406300, 6532400), altitude NGF - 20 m ; glTF Y en haut (x, z, -y)",
+  "unit": "m",
+  "provenance": {
+    "source": "Maquette SCI Les Chênes Verts / FarmLab La Vauzelle (FreeCAD → Blender → glTF)",
+    "layers": [
+      "terrain",
+      "contexte",
+      "paysage",
+      "rebus_ESQ",
+      "arbres"
+    ],
+    "excluded": [
+      "reseaux",
+      "mobilier",
+      "rebus_EDL",
+      "REBUS : cloisons et sols intérieurs"
+    ],
+    "preparedAt": "2026-11-03T11:25:28.389Z",
+    "script": "scripts/prepare-3d.mjs"
+  },
+  "assets": {
+    "hero": {
+      "file": "hero.glb",
+      "bytes": 2111792,
+      "trees": 1200,
+      "sha256": "3bf2a90fd3f2"
+    },
+    "full": {
+      "file": "farm-full.glb",
+      "bytes": 2922472,
+      "trees": 2622,
+      "sha256": "e9d8ff29b0ea"
+    }
+  },
+  "views": {
+    "site": {
+      "position": [
+        -66.04,
+        95,
+        117.87
+      ],
+      "cible": [
+        22,
+        -2,
+        -8
+      ]
+    },
+    "rebus": {
+      "position": [
+        15.84,
+        11.87,
+        26.66
+      ],
+      "cible": [
+        35.54,
+        1.87,
+        1.45
+      ]
+    },
+    "facade_sud": {
+      "position": [
+        22.62,
+        2.07,
+        25.88
+      ],
+      "cible": [
+        30.22,
+        2.27,
+        9.56
+      ]
+    },
+    "reseaux": {
+      "position": [
+        32.18,
+        75,
+        86.42
+      ],
+      "cible": [
+        5,
+        -3,
+        -18
+      ]
+    },
+    "terrasse_est": {
+      "position": [
+        50.45,
+        3.87,
+        26.78
+      ],
+      "cible": [
+        41.72,
+        1.97,
+        10.93
+      ]
+    },
+    "top": {
+      "position": [
+        22,
+        900,
+        -7.9
+      ],
+      "cible": [
+        22,
+        0,
+        -8
+      ],
+      "fov": 26
+    },
+    "hero": {
+      "position": [
+        -330,
+        290,
+        330
+      ],
+      "cible": [
+        10,
+        -6,
+        -14
+      ],
+      "fov": 26
+    },
+    "parcelles": {
+      "position": [
+        -40,
+        150,
+        170
+      ],
+      "cible": [
+        -110,
+        -6,
+        -90
+      ],
+      "fov": 26
+    },
+    "elevage-vigne": {
+      "position": [
+        -170,
+        110,
+        250
+      ],
+      "cible": [
+        -30,
+        -6,
+        30
+      ],
+      "fov": 26
+    },
+    "hub": {
+      "position": [
+        200,
+        95,
+        170
+      ],
+      "cible": [
+        50,
+        -2,
+        -5
+      ],
+      "fov": 26
+    },
+    "ciel": {
+      "position": [
+        -260,
+        10,
+        300
+      ],
+      "cible": [
+        22,
+        150,
+        -8
+      ],
+      "fov": 26
+    },
+    "cour": {
+      "position": [
+        -60,
+        45,
+        90
+      ],
+      "cible": [
+        15,
+        -2,
+        -25
+      ],
+      "fov": 26
+    },
+    "synthese": {
+      "position": [
+        -480,
+        420,
+        480
+      ],
+      "cible": [
+        10,
+        20,
+        -14
+      ],
+      "fov": 26
+    }
+  },
+  "zones": {
+    "hub": {
+      "node": "SITE_batiment_bat5_0_toit",
+      "lift": 7,
+      "label": "Maison — siège Ekylibre"
+    },
+    "bureau": {
+      "node": "SITE_batiment_bat3_0_toit",
+      "lift": 6,
+      "label": "Annexe — bureau"
+    },
+    "hangars": {
+      "node": "SITE_batiment_bat4_hangar_0_toit",
+      "lift": 6,
+      "label": "Hangar à matériel"
+    },
+    "elevage": {
+      "node": "SITE_batiment_poulailler_1_0_toit",
+      "lift": 6,
+      "label": "Bâtiments d'élevage"
+    },
+    "parcelles": {
+      "xz": [
+        -134,
+        -127
+      ],
+      "lift": 10,
+      "label": "Grandes cultures"
+    },
+    "meteo": {
+      "xz": [
+        -31,
+        -82
+      ],
+      "lift": 8,
+      "label": "Station météo"
+    },
+    "maraichage": {
+      "xz": [
+        -54,
+        33
+      ],
+      "lift": 8,
+      "label": "Parcelles maraîchères"
+    },
+    "vigne-chai": {
+      "xz": [
+        -85,
+        60
+      ],
+      "lift": 8,
+      "label": "Vigne"
+    },
+    "cour": {
+      "xz": [
+        13,
+        -29
+      ],
+      "lift": 4,
+      "label": "Cour — l'agriculteur"
+    },
+    "ciel": {
+      "xz": [
+        22,
+        -8
+      ],
+      "lift": 140,
+      "label": "Ciel de données (Lexicon)"
+    }
+  }
+}
