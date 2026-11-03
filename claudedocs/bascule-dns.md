@@ -26,6 +26,23 @@ Supprimer tout autre A/AAAA/ALIAS de l'apex. Ne pas toucher aux enregistrements 
 
 Contrôle : `dig +short ekylibre.com A`, `dig +short ekylibre.com AAAA`, `dig +short www.ekylibre.com CNAME`.
 
+### Application à la zone Gandi actuelle (relevé du 2026-11-03)
+
+| Action | Enregistrement actuel | Nouvel enregistrement |
+|---|---|---|
+| Supprimer | `@ 300 IN A 185.236.56.101` | — |
+| Supprimer | `@ 300 IN A 185.236.56.104` | — |
+| Ajouter | — | `@ 300 IN A 185.199.108.153` (et `.109`, `.110`, `.111`) |
+| Ajouter | — | `@ 300 IN AAAA 2606:50c0:8000::153` (et `8001`, `8002`, `8003`) |
+| Modifier | `www 300 IN CNAME ekylibre.org.` | `www 300 IN CNAME ekylibre.github.io.` |
+| Ajouter (avant la bascule) | — | `_github-pages-challenge-ekylibre 300 IN TXT "<valeur fournie par GitHub>"` |
+| Corriger | `@ 1800 IN CAA 127 issue "letsencrypt.org"` | `@ 1800 IN CAA 0 issue "letsencrypt.org"` (GitHub Pages utilise Let's Encrypt ; l'indicateur 127 n'est pas standard) |
+| Recommandé | `@ 300 IN TXT "v=spf1 a mx a:ekylibre.com …"` | retirer `a` et `a:ekylibre.com` (sinon les serveurs de GitHub deviendraient émetteurs autorisés) ; ajouter `include:spf.brevo.com` si la lettre d'information part au nom de ekylibre.com |
+
+À conserver tels quels : SOA, MX Google, DKIM, DMARC, `brevo-code`, `google-site-verification`,
+`_github-challenge-ekylibre-org`, tous les sous-domaines (`doc`, `forum`, `documentation`, `chat`, `traccar`…).
+Les anciens `_acme-challenge` (certificats de l'ancien serveur) et les CNAME `comodoca.com` peuvent être supprimés après la bascule.
+
 ## 2. Domaine personnalisé du dépôt
 
 Une fois le DNS propagé :
