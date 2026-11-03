@@ -8,7 +8,7 @@ updatedAt: 2026-11-08
 
 ## Data controller
 
-Ekylibre SAS — [À COMPLÉTER : registered office address]. Contact for any question about your data: [À COMPLÉTER : data protection email].
+Ekylibre SAS — 8 rue du Bouil Bleu, 17250 Saint-Porchaire, France. Contact for any question about your data: [À COMPLÉTER : data protection email].
 
 ## Data collected and purposes
 

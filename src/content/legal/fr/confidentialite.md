@@ -8,7 +8,7 @@ updatedAt: 2026-11-08
 
 ## Responsable du traitement
 
-Ekylibre SAS — [À COMPLÉTER : adresse du siège]. Contact pour toute question relative à vos données : [À COMPLÉTER : adresse e-mail dédiée aux données personnelles].
+Ekylibre SAS — 8 rue du Bouil Bleu, 17250 Saint-Porchaire, France. Contact pour toute question relative à vos données : [À COMPLÉTER : adresse e-mail dédiée aux données personnelles].
 
 ## Données collectées et finalités
 

@@ -21,6 +21,7 @@ const pages = [
 
 for (const p of pages) {
   test(`axe ${p.name} ${p.path}`, async ({ page }, testInfo) => {
+    test.skip('scene' in p && !!process.env.CI, 'Scène 3D réelle : testée en local uniquement (pas de GPU en CI)');
     await page.goto(url(p.path));
     if ('scene' in p) {
       const scene = page.locator('farm-scene');

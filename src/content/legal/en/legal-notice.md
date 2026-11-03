@@ -8,17 +8,17 @@ updatedAt: 2026-11-08
 
 ## Publisher
 
-The ekylibre.com website is published by **Ekylibre SAS**, a French simplified joint-stock company (société par actions simplifiée).
+The ekylibre.com website is published by **EKYLIBRE**, a French simplified joint-stock company (société par actions simplifiée, SAS) founded on 20 November 2014.
 
-- Registered office: [À COMPLÉTER : registered office address]
-- Registration: [À COMPLÉTER : RCS — SIREN]
+- Registered office: 8 rue du Bouil Bleu, 17250 Saint-Porchaire, France
+- Registration: RCS Saintes 808 534 283 — head office SIRET: 808 534 283 00045 — APE code 62.01Z
 - Share capital: [À COMPLÉTER : amount]
-- VAT number: [À COMPLÉTER]
+- VAT number: FR06 808 534 283
 - Contact: [À COMPLÉTER : contact email]
 
 ## Publication director
 
-[À COMPLÉTER : name and position]
+David Joulin, President.
 
 ## Hosting
 

@@ -8,6 +8,7 @@ for (const [lang, path] of [
   ['en', '/en/?force3d'],
 ] as const) {
   test(`chapitres de l'accueil ${lang}`, async ({ page }) => {
+    test.skip(!!process.env.CI, 'Scène 3D réelle : testée en local uniquement (pas de GPU en CI)');
     await page.addInitScript(() => {
       const w = window as unknown as { __chapters: string[] };
       w.__chapters = [];

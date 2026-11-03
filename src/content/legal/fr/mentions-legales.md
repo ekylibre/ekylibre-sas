@@ -8,17 +8,17 @@ updatedAt: 2026-11-08
 
 ## Éditeur du site
 
-Le site ekylibre.com est édité par **Ekylibre SAS**, société par actions simplifiée.
+Le site ekylibre.com est édité par **EKYLIBRE**, société par actions simplifiée (SAS) créée le 20 novembre 2014.
 
-- Siège social : [À COMPLÉTER : adresse du siège]
-- Immatriculation : [À COMPLÉTER : RCS de … — SIREN]
+- Siège social : 8 rue du Bouil Bleu, 17250 Saint-Porchaire, France
+- Immatriculation : RCS Saintes 808 534 283 — SIRET du siège : 808 534 283 00045 — code APE 62.01Z
 - Capital social : [À COMPLÉTER : montant]
-- Numéro de TVA intracommunautaire : [À COMPLÉTER]
+- Numéro de TVA intracommunautaire : FR06 808 534 283
 - Contact : [À COMPLÉTER : adresse e-mail de contact]
 
 ## Directeur de la publication
 
-[À COMPLÉTER : nom et qualité du directeur de la publication]
+David Joulin, président.
 
 ## Hébergement
 
