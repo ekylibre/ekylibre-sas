@@ -1,0 +1,33 @@
+---
+// Page 404 bilingue (GitHub Pages sert 404.html pour toutes les URL inconnues).
+// Duke y fera son apparition en C12.
+import Base from '~/layouts/Base.astro';
+import { routePath } from '~/i18n/routes';
+---
+
+<Base lang="fr" routeKey="home" title="Page introuvable · Page not found" noindex>
+  <section class="section-dark">
+    <div class="container-site grid gap-16 py-28 md:grid-cols-2">
+      <div>
+        <p class="eyebrow text-eky-green-light">Erreur 404</p>
+        <h1 class="mt-4 text-h1">Cette page n’existe pas (ou plus).</h1>
+        <p class="mt-6 text-lead text-straw-50/80">
+          Le site d’Ekylibre a fait peau neuve : certaines adresses ont changé.
+        </p>
+        <a href={routePath('home', 'fr')} class="btn btn-primary mt-10">
+          Retour à l’accueil
+        </a>
+      </div>
+      <div lang="en">
+        <p class="eyebrow text-eky-green-light">Error 404</p>
+        <p class="mt-4 font-display text-h2 font-bold">This page does not exist (anymore).</p>
+        <p class="mt-6 text-lead text-straw-50/80">
+          The Ekylibre website has been redesigned: some addresses have changed.
+        </p>
+        <a href={routePath('home', 'en')} class="btn btn-secondary mt-10">
+          Back to home
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>

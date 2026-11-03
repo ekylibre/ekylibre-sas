@@ -1,0 +1,73 @@
+---
+import Logo from '~/assets/brand/ekylibre-logo.svg';
+import { routePath, type Locale, type RouteKey } from '~/i18n/routes';
+import { useTranslations, ROUTE_TITLES } from '~/i18n/ui';
+import { LINKS } from '~/lib/links';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const year = new Date().getFullYear();
+
+const internal = (keys: RouteKey[]) =>
+  keys.map((key) => ({ href: routePath(key, lang), label: ROUTE_TITLES[key][lang] }));
+const columns = [
+  { title: t('footer.products'), links: internal(['ekylibre', 'aiffel', 'lexicon', 'interop']) },
+  { title: t('footer.company'), links: internal(['services', 'company', 'news', 'contact']) },
+  {
+    title: t('footer.resources'),
+    links: [
+      ...internal(['developers']),
+      { href: LINKS.github, label: 'GitHub' },
+      { href: LINKS.discord, label: 'Discord' },
+      { href: LINKS.docs, label: lang === 'fr' ? 'Documentation' : 'Documentation' },
+    ],
+  },
+];
+const legal = internal(['legal', 'terms', 'privacy', 'cookies']);
+---
+
+<footer class="section-dark border-t border-white/8">
+  <div class="container-site grid gap-12 py-16 lg:grid-cols-[1.3fr_2fr]">
+    <div class="max-w-sm">
+      <Logo class="h-12 w-auto text-straw-50" aria-hidden="true" />
+      <p class="mt-5 text-muted">{t('site.description')}</p>
+      <p class="eyebrow mt-6 text-eky-green-light">{t('footer.opensource')}</p>
+    </div>
+    <nav aria-label={t('a11y.footerNav')} class="grid gap-10 sm:grid-cols-3">
+      {columns.map((col) => (
+        <div>
+          <h2 class="eyebrow mb-4 font-mono text-straw-50/60">{col.title}</h2>
+          <ul class="space-y-2.5">
+            {col.links.map((l) => (
+              <li>
+                <a href={l.href} class="text-straw-50/85 no-underline hover:text-eky-green-light hover:underline">
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </nav>
+  </div>
+  <div class="border-t border-white/8">
+    <div class="container-site flex flex-col gap-3 py-6 text-sm text-straw-50/60 sm:flex-row sm:items-center sm:justify-between">
+      <p>
+        © {year} {t('footer.copyright')}
+      </p>
+      <ul class="flex flex-wrap gap-x-5 gap-y-2" aria-label={t('footer.legal')}>
+        {legal.map((l) => (
+          <li>
+            <a href={l.href} class="text-straw-50/60 no-underline hover:text-straw-50 hover:underline">
+              {l.label}
+            </a>
+          </li>
+        ))}
+        <slot name="consent" />
+      </ul>
+    </div>
+  </div>
+</footer>

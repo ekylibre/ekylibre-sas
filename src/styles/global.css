@@ -1,0 +1,197 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   Design system Ekylibre — « l'heure dorée numérique »
+   Voir docs/design/02-architecture.md §7. Contrastes : scripts/check-contrast.mjs
+   ========================================================================== */
+
+@theme {
+  /* Marque et flux de données */
+  --color-eky-green: #00c15d;
+  --color-eky-green-light: #4ed164;
+  --color-eky-green-deep: #008f46;
+  --color-eky-green-text: #00703a;
+
+  /* Registre technologique (sections sombres) */
+  --color-night-900: #07140e;
+  --color-night-800: #0b1e15;
+  --color-night-700: #0f2a1e;
+  --color-night-600: #17382a;
+  --color-night-500: #24493a;
+
+  /* Registre agricole (sections claires, palette des illustrations isométriques) */
+  --color-straw-50: #faf6ec;
+  --color-straw-100: #f3ebd8;
+  --color-cream-200: #ebe4b8;
+  --color-wheat-400: #e2b76c;
+  --color-ochre-400: #ce9558;
+  --color-clay-500: #c46a3c;
+  --color-grass-500: #8db44f;
+  --color-sky-300: #8ec5e8;
+  --color-soil-800: #3a2c20;
+  --color-ink-500: #5b6b63;
+  --color-mint-100: #c3e0c6;
+  --color-apricot-100: #fcd79e;
+
+  /* Familles Lexicon (constellation, tableaux) */
+  --color-family-territoire: var(--color-clay-500);
+  --color-family-climat: var(--color-sky-300);
+  --color-family-intrants: var(--color-eky-green-light);
+  --color-family-entreprises: var(--color-straw-100);
+  --color-family-marches: var(--color-wheat-400);
+  --color-family-savoirs: var(--color-grass-500);
+  --color-family-filiere: #e8a39b;
+
+  /* Typographie */
+  --font-display: var(--font-montserrat);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
+
+  /* Échelle fluide (360 px → 1440 px) */
+  --text-display: clamp(2.5rem, 1.6rem + 4vw, 4.5rem);
+  --text-display--line-height: 1.05;
+  --text-h1: clamp(2rem, 1.5rem + 2.2vw, 3.25rem);
+  --text-h1--line-height: 1.1;
+  --text-h2: clamp(1.625rem, 1.3rem + 1.4vw, 2.5rem);
+  --text-h2--line-height: 1.15;
+  --text-h3: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
+  --text-h3--line-height: 1.25;
+  --text-lead: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
+  --text-lead--line-height: 1.55;
+
+  --radius-card: 1rem;
+  --shadow-card: 0 1px 2px rgb(7 20 14 / 0.06), 0 8px 24px -8px rgb(7 20 14 / 0.12);
+  --shadow-glow: 0 0 0 1px rgb(0 193 93 / 0.35), 0 0 24px -4px rgb(0 193 93 / 0.45);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    @apply bg-straw-50 font-sans text-base leading-relaxed text-soil-800 antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-bold tracking-tight text-balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  a {
+    @apply text-eky-green-text underline decoration-1 underline-offset-3 transition-colors;
+  }
+  a:hover {
+    @apply decoration-2;
+  }
+  :focus-visible {
+    @apply rounded-sm outline-3 outline-offset-3 outline-eky-green;
+  }
+  ::selection {
+    @apply bg-eky-green text-night-900;
+  }
+  code,
+  kbd,
+  samp,
+  pre {
+    @apply font-mono;
+  }
+}
+
+/* Sur-titre en police mono (utilitaire, donc utilisable avec @apply) */
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   Registres de section
+   -------------------------------------------------------------------------- */
+@layer components {
+  .section-light {
+    @apply bg-straw-50 text-soil-800;
+  }
+  .section-cream {
+    @apply bg-straw-100 text-soil-800;
+  }
+  .section-dark {
+    @apply bg-night-900 text-straw-50;
+    color-scheme: dark;
+  }
+  .section-dark a:not(.btn) {
+    @apply text-eky-green-light;
+  }
+  .section-dark .text-muted {
+    @apply text-straw-100/75;
+  }
+  .text-muted {
+    @apply text-ink-500;
+  }
+
+  .container-site {
+    @apply mx-auto w-full max-w-[78rem] px-5 sm:px-8;
+  }
+
+  /* Boutons — le texte sur le vert est toujours vert-nuit (7,8:1), jamais blanc (2,4:1) */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-display text-[0.95rem] font-semibold no-underline transition duration-200;
+    transition-timing-function: var(--ease-out-soft);
+  }
+  .btn-primary {
+    @apply bg-eky-green text-night-900 hover:bg-eky-green-light hover:shadow-[var(--shadow-glow)];
+  }
+  .btn-secondary {
+    @apply border border-current bg-transparent text-soil-800 hover:bg-soil-800 hover:text-straw-50;
+  }
+  .section-dark .btn-secondary {
+    @apply text-straw-50 hover:bg-straw-50 hover:text-night-900;
+  }
+  .btn:hover {
+    @apply no-underline;
+  }
+
+  .card {
+    @apply rounded-[var(--radius-card)] bg-white/70 p-6 shadow-[var(--shadow-card)] ring-1 ring-soil-800/5;
+  }
+  .section-dark .card {
+    @apply bg-night-700 ring-white/8;
+    box-shadow: none;
+  }
+
+  /* Médaillon : langage graphique du « schéma de flux » de la documentation Ekylibre */
+  .medallion {
+    @apply inline-grid aspect-square place-items-center rounded-full border-[3px] border-eky-green-deep bg-white text-night-700;
+  }
+  .section-dark .medallion {
+    @apply border-eky-green bg-night-700 text-eky-green-light shadow-[var(--shadow-glow)];
+  }
+
+  .icon {
+    @apply inline-block size-[1em] shrink-0 fill-current align-[-0.125em];
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

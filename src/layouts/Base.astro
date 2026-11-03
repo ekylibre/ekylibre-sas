@@ -1,0 +1,71 @@
+---
+import '~/styles/global.css';
+import { Font } from 'astro:assets';
+import Header from '~/components/Header.astro';
+import Footer from '~/components/Footer.astro';
+import { alternates, routePath, withBase, type Locale, type RouteKey } from '~/i18n/routes';
+import { useTranslations } from '~/i18n/ui';
+
+interface Props {
+  lang: Locale;
+  routeKey: RouteKey;
+  /** Titre de la page ; le nom du site est ajouté automatiquement (sauf accueil). */
+  title?: string;
+  description?: string;
+  /** Image OpenGraph (URL absolue ou chemin du site). */
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const { lang, routeKey, title, description, ogImage, noindex = false } = Astro.props;
+const t = useTranslations(lang);
+const site = Astro.site ?? new URL('https://ekylibre.com');
+const fullTitle = title ? `${title} · Ekylibre` : `Ekylibre · ${t('site.tagline')}`;
+const metaDescription = description ?? t('site.description');
+const canonical = new URL(routePath(routeKey, lang), site).href;
+const alts = alternates(routeKey, site);
+const og = ogImage ? new URL(withBase(ogImage), site).href : undefined;
+// Hors du domaine de production (recette sur ekylibre.github.io), aucune page n'est indexée.
+const indexable = !noindex && site.hostname === 'ekylibre.com';
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={metaDescription} />
+    <link rel="canonical" href={canonical} />
+    {alts.map((a) => (
+      <link rel="alternate" hreflang={a.lang} href={a.href} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={alts.find((a) => a.lang === 'fr')?.href} />
+    {!indexable && <meta name="robots" content="noindex" />}
+
+    <link rel="icon" type="image/png" href={withBase('/favicon.png')} />
+    <link rel="apple-touch-icon" href={withBase('/favicon.png')} />
+    <meta name="theme-color" content="#07140e" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Ekylibre" />
+    <meta property="og:locale" content={lang === 'fr' ? 'fr_FR' : 'en_GB'} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:url" content={canonical} />
+    {og && <meta property="og:image" content={og} />}
+    <meta name="twitter:card" content={og ? 'summary_large_image' : 'summary'} />
+
+    <Font cssVariable="--font-montserrat" preload={[{ weight: 700 }]} />
+    <Font cssVariable="--font-inter" preload={[{ style: 'normal' }]} />
+    <Font cssVariable="--font-jetbrains" />
+    <slot name="head" />
+  </head>
+  <body class="min-h-dvh">
+    <Header lang={lang} routeKey={routeKey} />
+    <main id="contenu" tabindex="-1" class="outline-none">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>

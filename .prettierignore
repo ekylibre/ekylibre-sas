@@ -1,0 +1,8 @@
+dist
+node_modules
+vendor
+public/icons
+src/data/generated
+docs
+claudedocs
+package-lock.json

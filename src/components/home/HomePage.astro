@@ -1,0 +1,122 @@
+---
+// Accueil — version squelette (J1). La scène 3D (C2) remplacera la photo du hero,
+// qui restera l'image d'attente (poster) et le repli 2D.
+import { Picture } from 'astro:assets';
+import drone from '~/assets/images/la-vauzelle-drone.jpg';
+import Icon from '~/components/Icon.astro';
+import StatBand from '~/components/StatBand.astro';
+import { routePath, type Locale } from '~/i18n/routes';
+import { useTranslations } from '~/i18n/ui';
+import type { IconName } from '~/lib/icon-names';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const copy = {
+  fr: {
+    eyebrow: 'Ekylibre SAS · éditeur et opérateur de communs numériques agricoles',
+    title: 'Le système d’information agricole interopérable',
+    lead: 'Machines, capteurs, comptabilité, banques, filières et données publiques : Ekylibre relie tous les outils de la ferme, pour que chaque donnée ne soit saisie qu’une fois.',
+    alt: 'Vue aérienne du FarmLab La Vauzelle au coucher du soleil : corps de ferme, hangars, parcelles maraîchères et grandes cultures.',
+    productsTitle: 'Trois communs, une même donnée',
+    productsLead:
+      'Ekylibre SAS édite, opère et contribue en premier lieu à trois logiciels libres, portés avec l’association OSFarm.',
+  },
+  en: {
+    eyebrow: 'Ekylibre SAS · publisher and operator of agricultural digital commons',
+    title: 'The interoperable farm information system',
+    lead: 'Machinery, sensors, accounting, banks, supply chains and public data: Ekylibre connects every tool on the farm, so that each piece of data is entered only once.',
+    alt: 'Aerial view of the FarmLab La Vauzelle at sunset: farmhouse, sheds, market-garden plots and arable fields.',
+    productsTitle: 'Three commons, one source of truth',
+    productsLead:
+      'Ekylibre SAS publishes, operates and is the main contributor to three free software projects, developed with the OSFarm association.',
+  },
+}[lang];
+
+const products: Array<{ key: 'ekylibre' | 'aiffel' | 'lexicon'; icon: IconName; text: Record<Locale, string> }> = [
+  {
+    key: 'ekylibre',
+    icon: 'tractor',
+    text: {
+      fr: 'Le logiciel de gestion de l’exploitation : cultures, élevage, stocks, ventes, comptabilité. Open source depuis 2008.',
+      en: 'The farm management system: crops, livestock, stock, sales, accounting. Open source since 2008.',
+    },
+  },
+  {
+    key: 'lexicon',
+    icon: 'database',
+    text: {
+      fr: 'Le référentiel ouvert des données agricoles françaises, reliées entre elles et accessibles par API et MCP.',
+      en: 'The open reference of French agricultural data, linked together and available through API and MCP.',
+    },
+  },
+  {
+    key: 'aiffel',
+    icon: 'microphone',
+    text: {
+      fr: 'L’assistant qui écoute l’agriculteur et range chaque information dans le bon logiciel, après validation.',
+      en: 'The assistant that listens to farmers and files each piece of information in the right software, once approved.',
+    },
+  },
+];
+---
+
+<section class="section-dark relative isolate overflow-hidden">
+  <Picture
+    src={drone}
+    alt={copy.alt}
+    formats={['avif', 'webp']}
+    widths={[640, 960, 1280, 1920, 2560]}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+    class="absolute inset-0 -z-10 h-full w-full object-cover object-[50%_40%]"
+  />
+  <div
+    class="absolute inset-0 -z-10 bg-[linear-gradient(100deg,rgb(7_20_14/0.94)_0%,rgb(7_20_14/0.78)_42%,rgb(7_20_14/0.15)_100%)]"
+    aria-hidden="true"
+  ></div>
+  <div
+    class="absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-linear-to-t from-night-900/90 to-transparent"
+    aria-hidden="true"
+  ></div>
+  <div class="container-site flex min-h-[calc(100svh-4.5rem)] flex-col justify-center py-20">
+    <p class="eyebrow max-w-xl text-eky-green-light">{copy.eyebrow}</p>
+    <h1 class="mt-5 max-w-3xl text-display">{copy.title}</h1>
+    <p class="mt-6 max-w-2xl text-lead text-straw-50/85">{copy.lead}</p>
+    <div class="mt-10 flex flex-wrap gap-4">
+      <a href={routePath('contact', lang)} class="btn btn-primary">
+        {t('cta.demo')}
+      </a>
+      <a href={routePath('interop', lang)} class="btn btn-secondary">
+        {lang === 'fr' ? 'Voir la ferme connectée' : 'Explore the connected farm'}
+        <Icon name="arrow-right" />
+      </a>
+    </div>
+    <StatBand lang={lang} class="mt-16" />
+  </div>
+</section>
+
+<section class="section-light py-24">
+  <div class="container-site">
+    <h2 class="max-w-2xl text-h2">{copy.productsTitle}</h2>
+    <p class="mt-4 max-w-2xl text-lead text-muted">{copy.productsLead}</p>
+    <ul class="mt-12 grid gap-6 md:grid-cols-3">
+      {products.map((p) => (
+        <li class="card flex flex-col">
+          <span class="medallion size-16 text-3xl">
+            <Icon name={p.icon} />
+          </span>
+          <h3 class="mt-6 text-h3">{p.key === 'ekylibre' ? 'Ekylibre' : p.key === 'aiffel' ? 'Aiffel' : 'Lexicon'}</h3>
+          <p class="mt-3 grow text-muted">{p.text[lang]}</p>
+          <a href={routePath(p.key, lang)} class="mt-6 inline-flex items-center gap-2 font-semibold">
+            {t('cta.discover')} <Icon name="arrow-right" />
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

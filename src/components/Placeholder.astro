@@ -1,0 +1,27 @@
+---
+// Page d'attente des routes pas encore construites (squelette J1) ; retirée route par route.
+import Base from '~/layouts/Base.astro';
+import Icon from '~/components/Icon.astro';
+import { routePath, type Locale, type RouteKey } from '~/i18n/routes';
+import { useTranslations, ROUTE_TITLES } from '~/i18n/ui';
+
+interface Props {
+  lang: Locale;
+  routeKey: RouteKey;
+}
+const { lang, routeKey } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<Base lang={lang} routeKey={routeKey} title={ROUTE_TITLES[routeKey][lang]} noindex>
+  <section class="section-dark">
+    <div class="container-site py-28">
+      <p class="eyebrow text-eky-green-light">{t('placeholder.title')}</p>
+      <h1 class="mt-4 text-h1">{ROUTE_TITLES[routeKey][lang]}</h1>
+      <p class="mt-6 max-w-xl text-lead text-straw-50/80">{t('placeholder.text')}</p>
+      <a href={routePath('home', lang)} class="btn btn-secondary mt-10">
+        {t('placeholder.back')} <Icon name="arrow-right" />
+      </a>
+    </div>
+  </section>
+</Base>

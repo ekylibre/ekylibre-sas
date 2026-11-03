@@ -1,0 +1,49 @@
+---
+// Bandeau de chiffres : tous calculés au build depuis GitHub et le Lexicon (EF9).
+// Les chiffres fournis par Ekylibre SAS (exploitations, hectares) s'ajouteront via figures.yaml (B9).
+import { stats, formatCompact, formatInt } from '~/lib/data';
+import type { Locale } from '~/i18n/routes';
+
+interface Props {
+  lang: Locale;
+  class?: string;
+}
+const { lang, class: className } = Astro.props;
+const since = new Date(stats.core.firstCommit).getFullYear();
+
+const items = [
+  {
+    value: formatCompact(stats.lexicon.totalRows, lang),
+    label: { fr: 'données agricoles reliées dans le Lexicon', en: 'linked agricultural records in Lexicon' }[lang],
+  },
+  {
+    value: formatInt(stats.lexicon.datasets, lang),
+    label: {
+      fr: `jeux de données publics, de ${stats.lexicon.providers} producteurs`,
+      en: `public datasets from ${stats.lexicon.providers} providers`,
+    }[lang],
+  },
+  {
+    value: formatInt(stats.stablePlugins, lang),
+    label: { fr: 'connecteurs stables vers les outils de la ferme', en: 'stable connectors to farm tools' }[lang],
+  },
+  {
+    value: String(since),
+    label: {
+      fr: `open source depuis, ${formatInt(stats.core.commits, lang)} contributions`,
+      en: `open source since, ${formatInt(stats.core.commits, lang)} commits`,
+    }[lang],
+  },
+];
+---
+
+<dl class:list={['grid grid-cols-2 gap-x-8 gap-y-8 border-t border-white/12 pt-8 lg:grid-cols-4', className]}>
+  {items.map((item) => (
+    <div class="flex flex-col-reverse gap-1.5">
+      <dt class="max-w-[16rem] text-sm text-straw-50/70">{item.label}</dt>
+      <dd class="font-mono text-3xl font-semibold tracking-tight text-eky-green-light tabular-nums sm:text-4xl">
+        {item.value}
+      </dd>
+    </div>
+  ))}
+</dl>

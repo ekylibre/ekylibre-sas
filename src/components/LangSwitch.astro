@@ -1,0 +1,25 @@
+---
+import { routePath, type Locale, type RouteKey } from '~/i18n/routes';
+import { useTranslations } from '~/i18n/ui';
+
+interface Props {
+  lang: Locale;
+  routeKey: RouteKey;
+  /** URL explicite de la version traduite (articles), sinon déduite de la table des routes. */
+  href?: string;
+}
+const { lang, routeKey, href } = Astro.props;
+const other: Locale = lang === 'fr' ? 'en' : 'fr';
+const t = useTranslations(lang);
+---
+
+<a
+  href={href ?? routePath(routeKey, other)}
+  hreflang={other}
+  lang={other}
+  class="inline-flex items-center rounded-full px-3 py-2 font-mono text-xs font-semibold tracking-widest text-straw-50/80 no-underline ring-1 ring-white/15 hover:text-straw-50 hover:ring-white/40"
+  title={t('lang.switch')}
+>
+  <span aria-hidden="true">{t('lang.short')}</span>
+  <span class="sr-only">{t('lang.label')}</span>
+</a>

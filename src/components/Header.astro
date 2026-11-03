@@ -1,0 +1,127 @@
+---
+import Logo from '~/assets/brand/ekylibre-logo.svg';
+import Icon from './Icon.astro';
+import LangSwitch from './LangSwitch.astro';
+import { routePath, type Locale, type RouteKey } from '~/i18n/routes';
+import { useTranslations, ROUTE_TITLES } from '~/i18n/ui';
+
+interface Props {
+  lang: Locale;
+  routeKey: RouteKey;
+}
+const { lang, routeKey } = Astro.props;
+const t = useTranslations(lang);
+
+const PRODUCTS: RouteKey[] = ['ekylibre', 'aiffel', 'lexicon'];
+const MAIN: RouteKey[] = ['interop', 'services', 'developers', 'company', 'news'];
+const isCurrent = (key: RouteKey) => (key === routeKey ? 'page' : undefined);
+---
+
+<header class="section-dark sticky top-0 z-50 border-b border-white/8 bg-night-900/92 backdrop-blur-md">
+  <a
+    href="#contenu"
+    class="sr-only z-[60] rounded-full bg-eky-green px-4 py-2 font-semibold text-night-900 focus:not-sr-only focus:absolute focus:top-3 focus:left-3"
+  >
+    {t('a11y.skip')}
+  </a>
+  <div class="container-site flex h-16 items-center gap-6 xl:h-[4.5rem]">
+    <a href={routePath('home', lang)} class="shrink-0 text-straw-50" aria-label={t('a11y.home')}>
+      <Logo class="h-9 w-auto xl:h-10" aria-hidden="true" />
+    </a>
+
+    <nav id="nav-principale" aria-label={t('a11y.mainNav')} class="nav-panel ml-auto" data-open="false">
+      <ul class="flex flex-col gap-1 xl:flex-row xl:items-center xl:gap-0.5">
+        <li>
+          <a href={routePath('interop', lang)} aria-current={isCurrent('interop')} class="nav-link">
+            {ROUTE_TITLES.interop[lang]}
+          </a>
+        </li>
+        <li class="nav-group">
+          <span class="nav-label">{t('nav.products')}</span>
+          <ul class="nav-sub">
+            {PRODUCTS.map((key) => (
+              <li>
+                <a href={routePath(key, lang)} aria-current={isCurrent(key)} class="nav-link">
+                  {ROUTE_TITLES[key][lang]}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </li>
+        {MAIN.filter((k) => k !== 'interop').map((key) => (
+          <li>
+            <a href={routePath(key, lang)} aria-current={isCurrent(key)} class="nav-link">
+              {ROUTE_TITLES[key][lang]}
+            </a>
+          </li>
+        ))}
+        <li class="mt-4 flex items-center gap-3 xl:mt-0 xl:ml-3">
+          <LangSwitch lang={lang} routeKey={routeKey} />
+          <a href={routePath('contact', lang)} class="btn btn-primary px-5 py-2.5 text-sm whitespace-nowrap">
+            {t('cta.demo')}
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <button
+      type="button"
+      class="nav-toggle ml-auto grid size-11 place-items-center rounded-full text-straw-50 xl:hidden"
+      aria-controls="nav-principale"
+      aria-expanded="false"
+      data-label-open={t('a11y.menu.open')}
+      data-label-close={t('a11y.menu.close')}
+    >
+      <span class="sr-only">{t('a11y.menu.open')}</span>
+      <Icon name="bars" class="text-2xl" />
+    </button>
+  </div>
+</header>
+
+<style>
+  @reference "../styles/global.css";
+
+  .nav-link {
+    @apply block rounded-full px-3 py-2 font-display whitespace-nowrap text-[0.92rem] font-semibold text-straw-50/85 no-underline transition-colors hover:bg-white/6 hover:text-straw-50;
+  }
+  .nav-link[aria-current='page'] {
+    @apply text-eky-green-light;
+  }
+  .nav-label {
+    @apply eyebrow block px-3 pt-3 pb-1 text-straw-50/55 xl:hidden;
+  }
+  .nav-sub {
+    @apply flex flex-col xl:flex-row;
+  }
+
+  /* Mobile : panneau déroulant sous l'en-tête */
+  @media (width < 80rem) {
+    .nav-panel {
+      @apply absolute inset-x-0 top-16 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-white/8 bg-night-900 px-5 pt-2 pb-6;
+    }
+    .nav-panel[data-open='false'] {
+      @apply hidden;
+    }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+  const panel = document.getElementById('nav-principale');
+  if (toggle && panel) {
+    const label = toggle.querySelector('.sr-only');
+    const set = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      panel.dataset.open = String(open);
+      if (label) label.textContent = (open ? toggle.dataset.labelClose : toggle.dataset.labelOpen) ?? '';
+    };
+    toggle.addEventListener('click', () => set(toggle.getAttribute('aria-expanded') !== 'true'));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        set(false);
+        toggle.focus();
+      }
+    });
+    matchMedia('(width >= 80rem)').addEventListener('change', () => set(false));
+  }
+</script>

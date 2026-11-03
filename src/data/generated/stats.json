@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-11-03T11:01:46.183Z",
+  "core": {
+    "repo": "ekylibre/ekylibre",
+    "firstCommit": "2008-09-08T07:45:50Z",
+    "commits": 23192,
+    "contributors": 39,
+    "stars": 493,
+    "forks": 174
+  },
+  "stablePlugins": 10
+}

@@ -1,0 +1,65 @@
+name: Déploiement GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Chaque lundi à 6 h UTC : met à jour les chiffres GitHub et Lexicon sans commit.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Configuration Pages (URL et base de déploiement)
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - run: npm ci
+
+      - name: Données GitHub et Lexicon (repli sur l'instantané en cas d'échec)
+        run: npm run fetch:data
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Contrastes du design system
+        run: node scripts/check-contrast.mjs
+
+      - name: Build
+        run: npm run build
+        env:
+          # Avant la bascule DNS : https://ekylibre.github.io + /ekylibre-sas/
+          # Après : https://ekylibre.com + / (fournis automatiquement par configure-pages)
+          SITE_URL: ${{ steps.pages.outputs.origin }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

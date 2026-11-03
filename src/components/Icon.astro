@@ -1,0 +1,24 @@
+---
+// Pictogramme issu du sprite agric (public/icons/agric.svg, généré par `npm run icons`).
+import type { IconName } from '~/lib/icon-names';
+import { withBase } from '~/i18n/routes';
+
+interface Props {
+  name: IconName;
+  /** Texte alternatif ; sans lui, l'icône est décorative (aria-hidden). */
+  label?: string;
+  class?: string;
+}
+const { name, label, class: className } = Astro.props;
+const href = `${withBase('/icons/agric.svg')}#i-${name}`;
+---
+
+<svg
+  class:list={['icon', className]}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+>
+  <use href={href}></use>
+</svg>
