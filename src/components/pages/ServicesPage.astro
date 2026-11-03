@@ -1,0 +1,279 @@
+---
+// Page Services (D4) — page de conversion principale (D10).
+// Textes : docs/contenus/fr/services.md (B10), points [À CONFIRMER] écartés.
+import { Image } from 'astro:assets';
+import Base from '~/layouts/Base.astro';
+import Icon from '~/components/Icon.astro';
+import BrevoForm from '~/components/forms/BrevoForm.astro';
+import illusIntegration from '~/assets/illustrations/plan-exploitation.webp';
+import illusFormation from '~/assets/illustrations/metiers-agricoles.webp';
+import illusTransformation from '~/assets/illustrations/pilotage-performance.webp';
+import illusConnecteurs from '~/assets/illustrations/poste-developpeur.webp';
+import illusSupport from '~/assets/illustrations/bureau-comptable.webp';
+import stepDiagnostic from '~/assets/illustrations/support-probleme.webp';
+import stepAccompagnement from '~/assets/illustrations/support-accompagnement.webp';
+import stepAutonomie from '~/assets/illustrations/support-reussite.webp';
+import { stats } from '~/lib/data';
+import type { Locale } from '~/i18n/routes';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+
+const services = [
+  {
+    id: 'integration',
+    img: illusIntegration,
+    title: fr ? 'Intégration' : 'Integration',
+    text: fr
+      ? 'Nous mettons en place Ekylibre dans votre organisation : paramétrage, reprise de vos données existantes, branchement des connecteurs dont vous avez besoin. Vous démarrez avec un outil prêt à l’emploi, pas avec une base vide.'
+      : 'We set up Ekylibre in your organisation: configuration, migration of your existing data, and the connectors you need. You start with a ready-to-use tool, not an empty database.',
+    deliverables: fr
+      ? [
+          'Une instance Ekylibre paramétrée pour votre exploitation ou votre réseau',
+          'Vos données historiques reprises (parcellaire, stocks, comptabilité, tiers)',
+          'Les connecteurs activés et testés avec vos outils',
+        ]
+      : [
+          'An Ekylibre instance configured for your farm or network',
+          'Your historical data migrated (fields, stock, accounts, contacts)',
+          'Connectors enabled and tested with your tools',
+        ],
+  },
+  {
+    id: 'formation',
+    img: illusFormation,
+    title: fr ? 'Formation' : 'Training',
+    text: fr
+      ? 'Nous formons les agriculteurs, les salariés et les conseillers à Ekylibre, à leur rythme et sur leurs propres données. Les formations se font sur site ou à distance, en groupe ou en individuel.'
+      : 'We train farmers, staff and advisers on Ekylibre, at their own pace and on their own data. Sessions take place on site or remotely, in groups or one-to-one.',
+    deliverables: fr
+      ? [
+          'Un programme adapté au profil de chaque participant',
+          'Des supports de formation réutilisables',
+          'Une session de suivi après la prise en main',
+        ]
+      : [
+          'A programme tailored to each participant',
+          'Reusable training materials',
+          'A follow-up session after onboarding',
+        ],
+  },
+  {
+    id: 'transformation',
+    img: illusTransformation,
+    title: fr ? 'Transformation du système d’information' : 'Information system transformation',
+    text: fr
+      ? 'Pour une coopérative, un organisme agricole ou un groupe d’exploitations, nous faisons l’état des lieux de vos logiciels et de vos flux de données, puis nous construisons avec vous un système d’information plus simple, ouvert et sans ressaisie. Nous privilégions les logiciels libres et les formats ouverts, pour que vous restiez maîtres de vos choix.'
+      : 'For a co-op, a farm organisation or a group of farms, we map your software and data flows, then build with you a simpler, open information system with no double entry. We favour free software and open formats, so you stay in control of your choices.',
+    deliverables: fr
+      ? [
+          'Une cartographie de vos outils, de vos données et de leurs échanges',
+          'Une feuille de route priorisée, chiffrée et réaliste',
+          'L’accompagnement de la mise en œuvre, étape par étape',
+        ]
+      : [
+          'A map of your tools, your data and how they exchange',
+          'A prioritised, costed and realistic roadmap',
+          'Step-by-step support for implementation',
+        ],
+  },
+  {
+    id: 'connecteurs',
+    img: illusConnecteurs,
+    title: fr ? 'Développement de connecteurs' : 'Connector development',
+    text: fr
+      ? `Votre matériel, votre capteur ou votre logiciel n’est pas encore relié à Ekylibre ? Nous développons le connecteur, en logiciel libre, comme les ${stats.stablePlugins} déjà publiés. Éditeurs et constructeurs : c’est aussi le moyen de rendre votre outil accessible à Aiffel et aux utilisateurs d’Ekylibre.`
+      : `Your equipment, sensor or software isn’t connected to Ekylibre yet? We build the connector as free software, like the ${stats.stablePlugins} already released. For vendors and manufacturers, it is also how your tool becomes available to Aiffel and to Ekylibre users.`,
+    deliverables: fr
+      ? [
+          'Un connecteur (extension Ekylibre) publié et versionné sur GitHub',
+          'Sa documentation et ses tests',
+          'Son suivi lors des évolutions d’Ekylibre ou de l’outil connecté',
+        ]
+      : [
+          'A connector (Ekylibre extension) published and versioned on GitHub',
+          'Its documentation and tests',
+          'Follow-up as Ekylibre or the connected tool evolves',
+        ],
+  },
+  {
+    id: 'support',
+    img: illusSupport,
+    title: 'Support',
+    text: fr
+      ? 'Une question, un blocage, une évolution réglementaire : notre équipe répond, corrige et vous tient informés, sur le logiciel comme sur les connecteurs.'
+      : 'A question, a problem, a regulatory change: our team answers, fixes and keeps you informed, for the software and the connectors alike.',
+    deliverables: fr
+      ? [
+          'Une équipe joignable qui connaît votre configuration',
+          'Les mises à jour d’Ekylibre et des connecteurs',
+          'Un suivi de vos demandes jusqu’à leur résolution',
+        ]
+      : [
+          'A reachable team that knows your set-up',
+          'Ekylibre and connector updates',
+          'Your requests followed through to resolution',
+        ],
+  },
+];
+
+const steps = [
+  {
+    img: stepDiagnostic,
+    title: fr ? 'Diagnostic' : 'Diagnosis',
+    text: fr
+      ? 'Nous écoutons votre besoin, regardons vos outils et vos données, et proposons un plan d’action chiffré.'
+      : 'We listen to your needs, look at your tools and data, and propose a costed action plan.',
+  },
+  {
+    img: stepAccompagnement,
+    title: fr ? 'Accompagnement' : 'Support',
+    text: fr
+      ? 'Nous mettons en œuvre avec vous : paramétrage, connecteurs, reprise de données, formation.'
+      : 'We implement it with you: configuration, connectors, data migration, training.',
+  },
+  {
+    img: stepAutonomie,
+    title: fr ? 'Autonomie' : 'Autonomy',
+    text: fr
+      ? 'Vos équipes maîtrisent l’outil. Le code et les données restent les vôtres ; le support prend le relais quand vous en avez besoin.'
+      : 'Your teams master the tool. The code and the data remain yours; support takes over whenever you need it.',
+  },
+];
+
+const audiences = fr
+  ? [
+      ['Exploitations et domaines', 'qui veulent passer à Ekylibre sans perdre leur historique.'],
+      ['Coopératives, chambres, centres de gestion', 'qui équipent ou accompagnent un réseau d’adhérents.'],
+      ['Éditeurs et constructeurs', 'qui veulent connecter leur produit à Ekylibre, au Lexicon ou à Aiffel.'],
+    ]
+  : [
+      ['Farms and estates', 'that want to move to Ekylibre without losing their history.'],
+      ['Co-ops, chambers of agriculture, accounting centres', 'that equip or support a network of members.'],
+      ['Software vendors and manufacturers', 'that want to connect their product to Ekylibre, Lexicon or Aiffel.'],
+    ];
+---
+
+<Base
+  lang={lang}
+  routeKey="services"
+  title="Services"
+  description={
+    fr
+      ? 'Intégration, formation, transformation du système d’information, connecteurs et support : Ekylibre SAS vous accompagne avec des logiciels libres.'
+      : 'Integration, training, information system transformation, connectors and support: Ekylibre SAS supports you with free software.'
+  }
+>
+  <section class="section-dark">
+    <div class="container-site grid gap-10 py-20 lg:grid-cols-[1.4fr_1fr] lg:items-end">
+      <div>
+        <p class="eyebrow text-eky-green-light">Services</p>
+        <h1 class="mt-4 text-h1">
+          {fr
+            ? 'Le logiciel est libre. Nous vous aidons à en tirer parti.'
+            : 'The software is free. We help you make the most of it.'}
+        </h1>
+        <p class="mt-5 max-w-2xl text-lead text-straw-50/85">
+          {fr
+            ? 'Ekylibre ne se vend pas par abonnement en ligne. Ekylibre SAS vend des services : nous installons, connectons, formons et assurons le support, pour une exploitation comme pour un réseau d’adhérents.'
+            : 'Ekylibre is not sold as an online subscription. Ekylibre SAS sells services: we install, connect, train and support, for a single farm as well as for a network of members.'}
+        </p>
+      </div>
+      <div class="lg:justify-self-end">
+        <a href="#projet" class="btn btn-primary">
+          {fr ? 'Parler de votre projet' : 'Discuss your project'} <Icon name="arrow-right" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-light py-24">
+    <div class="container-site space-y-8">
+      {services.map((s, i) => (
+        <article
+          id={s.id}
+          class:list={[
+            'card grid scroll-mt-24 items-center gap-8 lg:gap-12',
+            i % 2 === 1 ? 'md:grid-cols-[1fr_13rem]' : 'md:grid-cols-[13rem_1fr]',
+          ]}
+        >
+          <Image
+            src={s.img}
+            alt=""
+            widths={[208, 330]}
+            sizes="13rem"
+            class:list={['mx-auto w-52 rounded-2xl', i % 2 === 1 && 'md:order-last']}
+          />
+          <div>
+            <p class="eyebrow text-eky-green-text">0{i + 1}</p>
+            <h2 class="mt-1 text-h3">{s.title}</h2>
+            <p class="mt-3 max-w-3xl text-muted">{s.text}</p>
+            <ul class="mt-5 grid gap-2 sm:grid-cols-3 sm:gap-4">
+              {s.deliverables.map((d) => (
+                <li class="flex gap-2 text-sm">
+                  <Icon name="check" class="mt-0.5 text-eky-green-deep" /> {d}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section-cream py-24">
+    <div class="container-site">
+      <h2 class="text-h2">{fr ? 'Diagnostic, accompagnement, autonomie' : 'Diagnosis, support, autonomy'}</h2>
+      <p class="mt-4 max-w-2xl text-lead text-muted">
+        {fr
+          ? 'Notre objectif n’est pas de vous rendre dépendants, mais de vous rendre autonomes.'
+          : 'Our goal is not to make you dependent, but to make you autonomous.'}
+      </p>
+      <ol class="mt-12 grid gap-6 md:grid-cols-3">
+        {steps.map((s, i) => (
+          <li class="card overflow-hidden p-0">
+            <Image
+              src={s.img}
+              alt=""
+              widths={[330]}
+              sizes="(min-width: 768px) 30vw, 100vw"
+              class="aspect-[2/1] w-full object-cover"
+            />
+            <div class="p-6">
+              <p class="eyebrow text-eky-green-text">{i + 1}</p>
+              <h3 class="mt-1 text-h3">{s.title}</h3>
+              <p class="mt-2 text-muted">{s.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <h2 class="mt-20 text-h3">{fr ? 'Pour qui' : 'Who for'}</h2>
+      <ul class="mt-6 grid gap-6 md:grid-cols-3">
+        {audiences.map(([who, what]) => (
+          <li class="border-t border-soil-800/12 pt-4">
+            <strong class="font-display">{who}</strong> <span class="text-muted">{what}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section id="projet" class="section-dark scroll-mt-20 py-24">
+    <div class="container-site grid gap-12 lg:grid-cols-[1fr_1.3fr]">
+      <div>
+        <h2 class="text-h2">{fr ? 'Parlez-nous de votre projet' : 'Tell us about your project'}</h2>
+        <p class="mt-4 text-lead text-straw-50/80">
+          {fr
+            ? 'Quelques lignes suffisent. Dites-nous qui vous êtes, quels outils vous utilisez et ce que vous voulez relier : nous revenons vers vous pour un premier échange, sans engagement.'
+            : 'A few lines are enough. Tell us who you are, which tools you use and what you want to connect: we will get back to you for a first, no-obligation conversation.'}
+        </p>
+      </div>
+      <div class="card">
+        <BrevoForm kind="projet" lang={lang} tone="dark" />
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,560 @@
+---
+// Page Développeurs (D5). Textes : docs/contenus/fr/developpeurs.md, vérifiés le 2026-11-03 :
+// spec OpenAPI d'Ekylibre (docs/api/openapi-v2.yaml), réponse réelle du Lexicon, documentation
+// lexicon.osfarm.org/documentation, plugin ekylibre-samsys (engine.rb), Gemfile d'Ekylibre.
+// Écartés : URL de production de l'API (non confirmée), licences du code du Lexicon et de la documentation.
+import { Image } from 'astro:assets';
+import Base from '~/layouts/Base.astro';
+import Icon from '~/components/Icon.astro';
+import CodeSample from './CodeSample.astro';
+import illusPoste from '~/assets/illustrations/poste-developpeur.webp';
+import illusServeurs from '~/assets/illustrations/salle-serveurs.webp';
+import { routePath, type Locale } from '~/i18n/routes';
+import { stats, formatCompact, formatInt } from '~/lib/data';
+import { stableConnectors } from '~/lib/interop';
+import { LINKS } from '~/lib/links';
+import type { IconName } from '~/lib/icon-names';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const rows = formatCompact(stats.lexicon.totalRows, lang);
+const firstMonth = new Date(stats.core.firstCommit).toLocaleDateString(fr ? 'fr-FR' : 'en-GB', {
+  month: 'long',
+  year: 'numeric',
+});
+const connectors = await stableConnectors(lang);
+const samsys = connectors.find((c) => c.slug === 'samsys');
+
+const title = fr ? 'Développeurs : API, MCP, plugins et licences' : 'Developers: API, MCP, plugins and licences';
+const description = fr
+  ? 'API REST v2 d’Ekylibre, API JSON/CSV et serveur MCP du Lexicon, plugins Rails, licences : tout pour connecter votre outil à Ekylibre.'
+  : 'Ekylibre’s REST API v2, Lexicon’s JSON/CSV API and MCP server, Rails plugins, licences: everything you need to connect your tool to Ekylibre.';
+
+const nav: Array<{ id: string; icon: IconName; label: string }> = [
+  { id: 'api-ekylibre', icon: 'code', label: fr ? 'API d’Ekylibre' : 'Ekylibre API' },
+  { id: 'lexicon-api', icon: 'database', label: fr ? 'API du Lexicon' : 'Lexicon API' },
+  { id: 'mcp', icon: 'comment-dots', label: fr ? 'Serveur MCP' : 'MCP server' },
+  { id: 'plugins', icon: 'plug', label: fr ? 'Plugins' : 'Plugins' },
+  { id: 'licences', icon: 'scale-balanced', label: fr ? 'Licences' : 'Licences' },
+  { id: 'contribuer', icon: 'code-fork', label: fr ? 'Contribuer' : 'Contribute' },
+];
+
+const ekyCurl = fr
+  ? `# 1. Obtenir un jeton
+curl -X POST https://VOTRE_INSTANCE/api/v2/tokens \\
+  -H "Content-Type: application/json" \\
+  -d '{"email": "vous@exemple.fr", "password": "…"}'
+
+# 2. Lister les parcelles de l'exploitation
+curl https://VOTRE_INSTANCE/api/v2/cultivable_zones \\
+  -H "Authorization: simple-token vous@exemple.fr VOTRE_JETON"`
+  : `# 1. Get a token
+curl -X POST https://YOUR_INSTANCE/api/v2/tokens \\
+  -H "Content-Type: application/json" \\
+  -d '{"email": "you@example.com", "password": "…"}'
+
+# 2. List the farm's fields
+curl https://YOUR_INSTANCE/api/v2/cultivable_zones \\
+  -H "Authorization: simple-token you@example.com YOUR_TOKEN"`;
+
+const resources = fr
+  ? [
+      ['cultivable_zones', 'parcelles'],
+      ['products', 'animaux, matériel, végétaux…'],
+      ['variants', 'variantes du catalogue'],
+      ['interventions', 'interventions et leurs enregistrements'],
+      ['activity_productions', 'productions'],
+      ['input_totals', 'totaux d’intrants'],
+      ['farm_profiles · farm_accountancy', 'profil et comptabilité par campagne'],
+      ['lexicon/registered_phytosanitary_*', 'produits phytosanitaires homologués'],
+    ]
+  : [
+      ['cultivable_zones', 'fields'],
+      ['products', 'animals, equipment, plants…'],
+      ['variants', 'catalogue variants'],
+      ['interventions', 'interventions and their records'],
+      ['activity_productions', 'productions'],
+      ['input_totals', 'input totals'],
+      ['farm_profiles · farm_accountancy', 'farm profile and accounts per season'],
+      ['lexicon/registered_phytosanitary_*', 'registered plant protection products'],
+    ];
+
+const lexCurl = `curl https://lexicon.osfarm.org/phytosanitary/products.json
+
+# Jeux réservés aux adhérents OSFarm : ajouter la clé
+curl https://lexicon.osfarm.org/… \\
+  -H "Authorization: Bearer VOTRE_CLE"`;
+const lexCurlEn = `curl https://lexicon.osfarm.org/phytosanitary/products.json
+
+# Datasets reserved for OSFarm members: add your key
+curl https://lexicon.osfarm.org/… \\
+  -H "Authorization: Bearer YOUR_KEY"`;
+// Forme réelle de la réponse (relevée le 2026-11-03), tronquée.
+const lexResponse = `{
+  "title": "Produits",
+  "table": {
+    "columns": { "name": "Nom", "firm": "Firme", "type": "Type", … },
+    "rows": [ { "name": { "@type": "Text", "value": "…" }, … }, … ]
+  },
+  "credit": { "provider": { "value": "ANSES" }, "license": { … }, "date": { … } },
+  "page": 1, "items-per-page": 150, "total-pages": …,
+  "formats": { … }
+}`;
+
+const mcpConfig = `{
+  "mcpServers": {
+    "lexicon": {
+      "type": "http",
+      "url": "https://lexicon.osfarm.org/mcp"
+    }
+  }
+}`;
+
+const gemfile = `# Gemfile.plugins (chargé par le Gemfile d'Ekylibre)
+gem 'ekylibre-samsys',
+    git: 'https://github.com/ekylibre/ekylibre-samsys.git'${samsys ? `,\n    tag: '${samsys.version}'` : ''}`;
+const gemfileEn = gemfile.replace("(chargé par le Gemfile d'Ekylibre)", '(loaded by Ekylibre’s Gemfile)');
+
+// Extrait réel de lib/ekylibre-samsys/engine.rb, abrégé.
+const engine = `module EkylibreSamsys
+  class Engine < ::Rails::Engine
+    initializer :ekylibre_samsys_i18n do |app|
+      app.config.i18n.load_path += Dir[root.join('config', 'locales', '**', '*.yml')]
+    end
+
+    initializer :ekylibre_samsys_integration do
+      Samsys::SamsysIntegration.run every: :day do
+        SamsysFetchUpdateCreateJob.perform_now(…)
+      end
+    end
+
+    initializer :add_samsys_partials do
+      Ekylibre::View::Addon.add(:extensions_content_top,
+        'backend/ride_sets/sync_samsys_toolbar', to: 'backend/ride_sets#index')
+    end
+  end
+end`;
+
+const pluginPoints = fr
+  ? [
+      ['Un dépôt, une gem', 'Le plugin déclare un Rails::Engine et s’ajoute au Gemfile d’Ekylibre.'],
+      [
+        'Une intégration',
+        'Il décrit la connexion au service tiers (identifiants, vérification) et les synchronisations à lancer, par exemple chaque jour.',
+      ],
+      [
+        'Des tâches de fond',
+        'Les données sont récupérées par des jobs, puis transformées en objets Ekylibre : interventions, relevés, écritures.',
+      ],
+      ['Des points d’extension', 'Le plugin ajoute ses vues, ses traductions et ses boutons aux écrans existants.'],
+      ['Une version publiée', 'Dès qu’un tag est publié sur GitHub, le connecteur apparaît sur ce site.'],
+    ]
+  : [
+      ['One repository, one gem', 'The plugin declares a Rails::Engine and is added to Ekylibre’s Gemfile.'],
+      [
+        'An integration',
+        'It describes the connection to the third-party service (credentials, check) and the syncs to run, for example daily.',
+      ],
+      [
+        'Background jobs',
+        'Data is fetched by jobs, then turned into Ekylibre objects: interventions, readings, accounting entries.',
+      ],
+      ['Extension points', 'The plugin adds its views, translations and buttons to existing screens.'],
+      ['A published release', 'As soon as a tag is published on GitHub, the connector appears on this site.'],
+    ];
+
+const steps = fr
+  ? [
+      'Partez d’un plugin existant proche de votre cas : Samsys pour des machines, Weenat pour des capteurs, Baqio pour un logiciel de vente.',
+      'Décrivez l’intégration : authentification auprès de votre service et test de connexion.',
+      'Écrivez la récupération des données dans un job, et leur correspondance avec les modèles d’Ekylibre, en vous appuyant sur les nomenclatures Onoma et Lexicon.',
+      'Ajoutez des tests, la documentation et les traductions (au moins français et anglais).',
+      'Publiez une première version (tag), puis annoncez-la sur le Discord.',
+    ]
+  : [
+      'Start from an existing plugin close to your case: Samsys for machinery, Weenat for sensors, Baqio for sales software.',
+      'Describe the integration: authentication with your service and a connection test.',
+      'Write the data fetch in a job, and map it to Ekylibre’s models using the Onoma and Lexicon nomenclatures.',
+      'Add tests, documentation and translations (at least French and English).',
+      'Publish a first release (tag), then announce it on Discord.',
+    ];
+
+const licences = fr
+  ? [
+      ['Ekylibre (cœur)', 'GNU AGPL v3', 'https://github.com/ekylibre/ekylibre'],
+      ['Plugins et connecteurs', 'Indiquée dans chaque dépôt (voir le tableau ci-dessus)', null],
+      ['Lexicon (code)', 'Code source ouvert sur GitHub', 'https://github.com/osfarm/lexicon'],
+      [
+        'Données du Lexicon',
+        'Chaque jeu garde la licence de sa source, précisée dans le catalogue (par exemple Licence Ouverte 2.0)',
+        LINKS.lexiconCatalog,
+      ],
+    ]
+  : [
+      ['Ekylibre (core)', 'GNU AGPL v3', 'https://github.com/ekylibre/ekylibre'],
+      ['Plugins and connectors', 'Stated in each repository (see the table above)', null],
+      ['Lexicon (code)', 'Source code open on GitHub', 'https://github.com/osfarm/lexicon'],
+      [
+        'Lexicon data',
+        'Each dataset keeps its source licence, stated in the catalogue (for example Licence Ouverte 2.0)',
+        LINKS.lexiconCatalog,
+      ],
+    ];
+
+const contribLinks = [
+  { href: LINKS.github, label: fr ? 'Ekylibre et ses plugins' : 'Ekylibre and its plugins', icon: 'code-fork' },
+  { href: 'https://github.com/osfarm/lexicon', label: 'Lexicon', icon: 'database' },
+  {
+    href: 'https://lexicon.osfarm.org/contribute',
+    label: fr ? 'Proposer un jeu de données au Lexicon' : 'Propose a dataset to Lexicon',
+    icon: 'lightbulb-o',
+  },
+  { href: LINKS.discord, label: fr ? 'Discuter sur le Discord' : 'Chat on Discord', icon: 'comment-dots' },
+  { href: LINKS.demo, label: fr ? 'Démo en ligne' : 'Online demo', icon: 'globe' },
+] satisfies Array<{ href: string; label: string; icon: IconName }>;
+---
+
+<Base lang={lang} routeKey="developers" title={title} description={description}>
+  <section class="section-dark">
+    <div class="container-site grid gap-12 pt-16 pb-16 lg:grid-cols-[1.4fr_1fr] lg:items-center">
+      <div>
+        <p class="eyebrow text-eky-green-light">{fr ? 'Développeurs' : 'Developers'}</p>
+        <h1 class="mt-4 max-w-3xl text-h1">{fr ? 'Ouvert par conception' : 'Open by design'}</h1>
+        <p class="mt-5 max-w-2xl text-lead text-straw-50/85">
+          {fr
+            ? 'Code public, API documentées, référentiels ouverts et serveur MCP : tout ce qu’il faut pour connecter votre outil à Ekylibre, au Lexicon et à Aiffel.'
+            : 'Public code, documented APIs, open reference data and an MCP server: everything you need to connect your tool to Ekylibre, Lexicon and Aiffel.'}
+        </p>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a href={LINKS.github} rel="noopener" target="_blank" class="btn btn-primary">
+            <Icon name="code-fork" />
+            {fr ? 'Voir les dépôts GitHub' : 'Browse GitHub repositories'}
+          </a>
+          <a href={LINKS.discord} rel="noopener" target="_blank" class="btn btn-secondary">
+            {fr ? 'Rejoindre le Discord' : 'Join the Discord'}
+          </a>
+        </div>
+      </div>
+      <Image
+        src={illusPoste}
+        alt=""
+        widths={[320, 500]}
+        sizes="(min-width: 1024px) 22rem, 70vw"
+        class="mx-auto w-full max-w-[22rem] rounded-2xl lg:mr-0"
+        loading="eager"
+      />
+    </div>
+    <nav class="border-t border-white/8" aria-label={fr ? 'Sur cette page' : 'On this page'}>
+      <ul class="container-site flex flex-wrap gap-x-6 gap-y-2 py-5 text-sm">
+        {nav.map((n) => (
+          <li>
+            <a href={`#${n.id}`} class="inline-flex items-center gap-2 font-semibold no-underline hover:underline">
+              <Icon name={n.icon} /> {n.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </section>
+
+  <section id="api-ekylibre" class="section-light scroll-mt-20 py-24">
+    <div class="container-site grid gap-12 lg:grid-cols-[1fr_1.2fr]">
+      <div>
+        <p class="eyebrow text-eky-green-text">REST · OpenAPI 3</p>
+        <h2 class="mt-3 text-h2">{fr ? 'L’API d’Ekylibre' : 'The Ekylibre API'}</h2>
+        <p class="mt-5 text-lead text-muted">
+          {fr
+            ? 'Ekylibre expose une API REST en JSON (version 2), décrite au format OpenAPI. Chaque exploitation est un espace de données séparé (un tenant), désigné par le sous-domaine ou par l’en-tête X-Tenant. On s’authentifie avec un jeton lié à l’utilisateur, obtenu par POST /tokens.'
+            : 'Ekylibre exposes a JSON REST API (version 2), described in OpenAPI. Each farm is a separate data space (a tenant), selected by the subdomain or the X-Tenant header. You authenticate with a user-bound token obtained from POST /tokens.'}
+        </p>
+        <h3 class="mt-8 font-display text-lg font-semibold">{fr ? 'Ressources (extrait)' : 'Resources (excerpt)'}</h3>
+        <dl class="mt-4 grid grid-cols-1 gap-x-6 gap-y-2 text-sm sm:grid-cols-[auto_1fr]">
+          {resources.map(([path, label]) => (
+            <>
+              <dt class="font-mono text-eky-green-text">{path}</dt>
+              <dd class="mb-2 text-muted sm:mb-0">{label}</dd>
+            </>
+          ))}
+        </dl>
+        <p class="mt-8">
+          <a href={LINKS.api} rel="noopener" target="_blank" class="inline-flex items-center gap-2 font-semibold">
+            {fr ? 'Documentation de l’API' : 'API documentation'} <Icon name="arrow-right" />
+          </a>
+        </p>
+      </div>
+      <div class="min-w-0 lg:pt-10">
+        <CodeSample lang={lang} label="bash" code={ekyCurl} />
+        <p class="mt-3 text-sm text-muted">
+          {fr
+            ? 'Remplacez VOTRE_INSTANCE par l’adresse de votre Ekylibre. Le jeton peut aussi passer en paramètres (access_email et access_token).'
+            : 'Replace YOUR_INSTANCE with the address of your Ekylibre. The token can also be sent as query parameters (access_email and access_token).'}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="lexicon-api" class="section-cream scroll-mt-20 py-24">
+    <div class="container-site grid gap-12 lg:grid-cols-[1fr_1.2fr]">
+      <div>
+        <p class="eyebrow text-eky-green-text">JSON · CSV · PostgreSQL</p>
+        <h2 class="mt-3 text-h2">{fr ? 'Le Lexicon en JSON, en CSV ou en SQL' : 'Lexicon in JSON, CSV or SQL'}</h2>
+        <p class="mt-5 text-lead text-muted">
+          {fr
+            ? 'Chaque page du Lexicon existe aussi en JSON et en CSV : ajoutez .json ou .csv à son adresse. L’essentiel des données est ouvert, sans clé. Les jeux réservés aux adhérents d’OSFarm demandent une clé d’API, transmise dans l’en-tête Authorization: Bearer ou X-API-Key. Les données sont lisibles depuis d’autres sites (CORS ouvert).'
+            : 'Every Lexicon page also exists in JSON and CSV: add .json or .csv to its address. Most of the data is open, with no key. Datasets reserved for OSFarm members need an API key, sent in the Authorization: Bearer or X-API-Key header. The data can be read from other sites (CORS enabled).'}
+        </p>
+        <p class="mt-5 text-muted">
+          {fr
+            ? 'Paquets PostgreSQL : chaque jeu de données est un paquet versionné, à charger dans votre propre base. Versions, licences et dates de source sont listées dans le catalogue.'
+            : 'PostgreSQL packages: each dataset is a versioned package you can load into your own database. Versions, licences and source dates are listed in the catalogue.'}
+        </p>
+        <ul class="mt-8 space-y-3">
+          <li>
+            <a href="https://lexicon.osfarm.org/documentation" rel="noopener" target="_blank" class="font-semibold">
+              {fr ? 'Documentation de l’API du Lexicon' : 'Lexicon API documentation'}
+            </a>
+          </li>
+          <li>
+            <a href="https://lexicon.osfarm.org/catalog.json" rel="noopener" target="_blank" class="font-semibold">
+              {fr ? 'Catalogue (catalog.json)' : 'Catalogue (catalog.json)'}
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="flex min-w-0 flex-col gap-4 lg:pt-10">
+        <CodeSample lang={lang} label="bash" code={fr ? lexCurl : lexCurlEn} />
+        <CodeSample
+          lang={lang}
+          label={fr ? 'Réponse (extrait)' : 'Response (excerpt)'}
+          code={lexResponse}
+          copy={false}
+        />
+      </div>
+    </div>
+  </section>
+
+  <section id="mcp" class="section-dark scroll-mt-20 py-24">
+    <div class="container-site grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+      <div>
+        <p class="eyebrow text-eky-green-light">Model Context Protocol</p>
+        <h2 class="mt-3 text-h2">
+          {fr ? `Branchez un assistant d’IA sur ${rows} de données` : `Plug an AI assistant into ${rows} records`}
+        </h2>
+        <p class="mt-5 text-lead text-straw-50/80">
+          {fr
+            ? 'Le Lexicon expose un serveur MCP (JSON-RPC sur HTTP). Un assistant d’IA compatible peut y chercher et croiser les jeux de données, avec leurs sources : identifier une parcelle, chercher un produit phytosanitaire, retrouver une commune ou une entreprise.'
+            : 'Lexicon exposes an MCP server (JSON-RPC over HTTP). A compatible AI assistant can search and cross-reference the datasets, with their sources: identify a plot, look up a plant protection product, find a municipality or a business.'}
+        </p>
+        <p class="mt-5 text-straw-50/70">
+          {fr
+            ? 'Ajoutez cette configuration à votre client MCP. Le nom du serveur (ici lexicon) est libre ; l’emplacement du fichier dépend du client.'
+            : 'Add this configuration to your MCP client. The server name (lexicon here) is up to you; where the file lives depends on the client.'}
+        </p>
+      </div>
+      <CodeSample lang={lang} label="JSON" code={mcpConfig} />
+    </div>
+  </section>
+
+  <section id="plugins" class="section-light scroll-mt-20 py-24">
+    <div class="container-site">
+      <p class="eyebrow text-eky-green-text">Ruby on Rails</p>
+      <h2 class="mt-3 max-w-3xl text-h2">{fr ? 'Un connecteur, c’est un plugin' : 'A connector is a plugin'}</h2>
+      <p class="mt-5 max-w-3xl text-lead text-muted">
+        {fr
+          ? 'Les connecteurs d’Ekylibre sont des extensions indépendantes : des moteurs Rails (Rails engines) packagés en gem Ruby, chacun dans son dépôt ekylibre-<nom>.'
+          : 'Ekylibre’s connectors are standalone extensions: Rails engines packaged as Ruby gems, each in its own ekylibre-<name> repository.'}
+      </p>
+
+      <div class="mt-12 grid gap-12 lg:grid-cols-[1fr_1.2fr]">
+        <ul class="space-y-6">
+          {pluginPoints.map(([t, d]) => (
+            <li class="border-t border-soil-800/10 pt-4">
+              <h3 class="font-display text-lg font-semibold">{t}</h3>
+              <p class="mt-1 text-muted">{d}</p>
+            </li>
+          ))}
+        </ul>
+        <div class="flex min-w-0 flex-col gap-4">
+          <CodeSample lang={lang} label="Gemfile.plugins" code={fr ? gemfile : gemfileEn} />
+          <CodeSample lang={lang} label="lib/ekylibre-samsys/engine.rb" code={engine} copy={false} />
+          <p class="text-sm text-muted">
+            {fr ? 'Extrait abrégé du plugin ' : 'Abridged excerpt from the '}
+            <a href="https://github.com/ekylibre/ekylibre-samsys" rel="noopener" target="_blank">
+              ekylibre-samsys
+            </a>
+            {fr ? '.' : ' plugin.'}
+          </p>
+        </div>
+      </div>
+
+      <h3 class="mt-20 text-h3">
+        {fr ? `Les ${stats.stablePlugins} plugins stables` : `The ${stats.stablePlugins} stable plugins`}
+      </h3>
+      <p class="mt-2 max-w-3xl text-muted">
+        {fr
+          ? 'Dépôts actifs ayant au moins une version publiée. Version et licence relevées sur GitHub à la construction du site.'
+          : 'Active repositories with at least one published release. Version and licence read from GitHub when the site is built.'}
+      </p>
+      <div class="mt-6 overflow-x-auto rounded-[var(--radius-card)] ring-1 ring-soil-800/10">
+        <table class="w-full min-w-[36rem] text-left text-sm">
+          <thead class="bg-straw-100 font-display text-xs tracking-wide text-soil-800 uppercase">
+            <tr>
+              <th scope="col" class="px-4 py-3">
+                {fr ? 'Dépôt' : 'Repository'}
+              </th>
+              <th scope="col" class="px-4 py-3">
+                {fr ? 'Rôle' : 'Purpose'}
+              </th>
+              <th scope="col" class="px-4 py-3">
+                Version
+              </th>
+              <th scope="col" class="px-4 py-3">
+                {fr ? 'Licence' : 'Licence'}
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-soil-800/8 bg-white/60">
+            {connectors.map((c) => (
+              <tr>
+                <td class="px-4 py-3 font-mono whitespace-nowrap">
+                  <a href={c.repoUrl} rel="noopener" target="_blank">
+                    {c.repoUrl.split('/').pop()}
+                  </a>
+                </td>
+                <td class="px-4 py-3">{c.title}</td>
+                <td class="px-4 py-3 font-mono whitespace-nowrap">{c.version}</td>
+                <td class="px-4 py-3 whitespace-nowrap text-muted">
+                  {c.license ?? (fr ? 'non déclarée' : 'not stated')}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-cream py-24">
+    <div class="container-site grid gap-12 lg:grid-cols-[1.4fr_1fr] lg:items-start">
+      <div>
+        <h2 class="text-h2">{fr ? 'Construire votre connecteur' : 'Build your connector'}</h2>
+        <ol class="mt-10 space-y-6">
+          {steps.map((s, i) => (
+            <li class="flex gap-5">
+              <span class="medallion size-10 shrink-0 font-mono text-sm font-semibold">{i + 1}</span>
+              <p class="pt-2">{s}</p>
+            </li>
+          ))}
+        </ol>
+        <p class="mt-10">
+          <a href={LINKS.techdoc} rel="noopener" target="_blank" class="inline-flex items-center gap-2 font-semibold">
+            {fr ? 'Documentation technique' : 'Technical documentation'} <Icon name="arrow-right" />
+          </a>
+        </p>
+      </div>
+      <aside class="card">
+        <Image
+          src={illusServeurs}
+          alt=""
+          widths={[332]}
+          sizes="20rem"
+          class="mx-auto w-full max-w-[16rem] rounded-xl"
+        />
+        <h3 class="mt-6 font-display text-lg font-semibold">
+          {fr ? 'Vous préférez qu’on le fasse pour vous ?' : 'Would you rather we built it?'}
+        </h3>
+        <p class="mt-2 text-sm text-muted">
+          {fr
+            ? 'Nous développons et publions des connecteurs pour les éditeurs, les constructeurs et les organisations agricoles.'
+            : 'We build and publish connectors for software vendors, manufacturers and farm organisations.'}
+        </p>
+        <a href={routePath('services', lang)} class="btn btn-primary mt-5">
+          {fr ? 'Développement de connecteurs' : 'Connector development'}
+        </a>
+      </aside>
+    </div>
+  </section>
+
+  <section id="licences" class="section-light scroll-mt-20 py-24">
+    <div class="container-site">
+      <h2 class="text-h2">{fr ? 'Les licences' : 'Licences'}</h2>
+      <div class="mt-10 overflow-x-auto rounded-[var(--radius-card)] ring-1 ring-soil-800/10">
+        <table class="w-full min-w-[32rem] text-left">
+          <thead class="bg-straw-100 font-display text-xs tracking-wide uppercase">
+            <tr>
+              <th scope="col" class="px-4 py-3">
+                {fr ? 'Élément' : 'Component'}
+              </th>
+              <th scope="col" class="px-4 py-3">
+                {fr ? 'Licence' : 'Licence'}
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-soil-800/8 bg-white/60">
+            {licences.map(([what, licence, href]) => (
+              <tr>
+                <th scope="row" class="px-4 py-3 font-display font-semibold whitespace-nowrap">
+                  {what}
+                </th>
+                <td class="px-4 py-3">
+                  {href ? (
+                    <a href={href} rel="noopener" target="_blank">
+                      {licence}
+                    </a>
+                  ) : (
+                    licence
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-6 max-w-3xl text-muted">
+        {fr
+          ? 'L’AGPL garantit que le code d’Ekylibre reste libre, y compris quand il est proposé en service en ligne : toute version modifiée mise à disposition des utilisateurs doit publier son code.'
+          : 'The AGPL keeps Ekylibre’s code free, including when it is offered as an online service: any modified version made available to users must publish its code.'}
+      </p>
+    </div>
+  </section>
+
+  <section id="contribuer" class="section-dark scroll-mt-20 py-24">
+    <div class="container-site grid gap-12 lg:grid-cols-[1.2fr_1fr]">
+      <div>
+        <h2 class="text-h2">{fr ? 'Contribuer' : 'Contribute'}</h2>
+        <p class="mt-5 text-lead text-straw-50/80">
+          {fr
+            ? `Premier commit d’Ekylibre en ${firstMonth} : ${formatInt(stats.core.commits, lang)} commits et ${formatInt(stats.core.contributors, lang)} contributeurs à ce jour. Signalez un bogue, proposez une amélioration ou une nouvelle donnée : toutes les contributions sont bienvenues.`
+            : `Ekylibre’s first commit dates from ${firstMonth}: ${formatInt(stats.core.commits, lang)} commits and ${formatInt(stats.core.contributors, lang)} contributors to date. Report a bug, suggest an improvement or new data: all contributions are welcome.`}
+        </p>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a href={routePath('services', lang)} class="btn btn-primary">
+            {fr ? 'Parler de votre projet' : 'Discuss your project'}
+          </a>
+          <a href={routePath('interop', lang)} class="btn btn-secondary">
+            {fr ? 'L’interopérabilité' : 'Interoperability'}
+          </a>
+        </div>
+      </div>
+      <ul class="space-y-1">
+        {contribLinks.map((l) => (
+          <li>
+            <a
+              href={l.href}
+              rel="noopener"
+              target="_blank"
+              class="flex items-center gap-3 rounded-xl px-4 py-3 font-semibold no-underline ring-1 ring-white/8 transition hover:bg-night-700"
+            >
+              <Icon name={l.icon} />
+              <span class="flex-1">{l.label}</span>
+              <Icon name="arrow-right" class="text-straw-50/50" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>

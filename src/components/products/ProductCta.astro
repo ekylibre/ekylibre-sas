@@ -1,0 +1,41 @@
+---
+// Appel final des pages produit : démo (contact), projet (services) et lien vers le site du produit.
+import Icon from '~/components/Icon.astro';
+import { routePath, type Locale } from '~/i18n/routes';
+import { useTranslations } from '~/i18n/ui';
+
+interface Props {
+  lang: Locale;
+  title: string;
+  text: string;
+  /** Bouton mis en avant : la démo (Ekylibre) ou le projet (Lexicon, Aiffel). */
+  lead?: 'demo' | 'project';
+  site: { href: string; label: string };
+}
+const { lang, title, text, lead = 'demo', site } = Astro.props;
+const t = useTranslations(lang);
+const demo = { href: routePath('contact', lang), label: t('cta.demo') };
+const project = { href: routePath('services', lang), label: t('cta.project') };
+const buttons = lead === 'demo' ? [demo, project] : [project, demo];
+---
+
+<section class="section-dark py-24">
+  <div class="container-site grid gap-10 lg:grid-cols-[1.3fr_1fr] lg:items-center">
+    <div>
+      <h2 class="text-h2">{title}</h2>
+      <p class="mt-4 max-w-2xl text-lead text-straw-50/80">{text}</p>
+    </div>
+    <div class="flex flex-col gap-5 lg:items-end">
+      <div class="flex flex-wrap gap-4 lg:justify-end">
+        {buttons.map((b, i) => (
+          <a href={b.href} class:list={['btn', i === 0 ? 'btn-primary' : 'btn-secondary']}>
+            {b.label}
+          </a>
+        ))}
+      </div>
+      <a href={site.href} rel="noopener" target="_blank" class="inline-flex items-center gap-2 font-semibold">
+        {site.label} <Icon name="arrow-right" />
+      </a>
+    </div>
+  </div>
+</section>

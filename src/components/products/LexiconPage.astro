@@ -1,0 +1,325 @@
+---
+// Page produit Lexicon (D3). Textes : docs/contenus/fr/lexicon.md. Rôle d'Ekylibre SAS formulé
+// prudemment (lexicon.osfarm.org : « construit et maintenu par l'association OSFarm ») ;
+// licence du code non citée (MIT sur le site, Apache-2.0 dans la spec OpenAPI : à harmoniser).
+import { Image } from 'astro:assets';
+import Base from '~/layouts/Base.astro';
+import Icon from '~/components/Icon.astro';
+import CodeSample from './CodeSample.astro';
+import ProductCta from './ProductCta.astro';
+import { softwareJsonLd, OSFARM, EKYLIBRE_SAS } from './jsonld';
+import medRegistre from '~/assets/illustrations/medaillon-registre.webp';
+import { routePath, type Locale } from '~/i18n/routes';
+import { stats, datasets, formatCompact, formatInt } from '~/lib/data';
+import { lexiconFamilies } from '~/lib/interop';
+import { LINKS } from '~/lib/links';
+import type { IconName } from '~/lib/icon-names';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const rows = formatCompact(stats.lexicon.totalRows, lang);
+const open = datasets.filter((d) => d.scope === 'open').length;
+const members = datasets.length - open;
+const families = await lexiconFamilies(lang);
+
+const title = fr ? 'Lexicon, les données agricoles françaises reliées' : 'Lexicon, French farm data, linked';
+const description = fr
+  ? `Lexicon, le référentiel ouvert des données agricoles françaises : ${formatInt(stats.lexicon.datasets, lang)} jeux, ${rows} de données reliées, API JSON/CSV, paquets PostgreSQL et serveur MCP.`
+  : `Lexicon, the open reference of French agricultural data: ${formatInt(stats.lexicon.datasets, lang)} datasets, ${rows} linked records, JSON/CSV API, PostgreSQL packages and an MCP server.`;
+
+const figures = [
+  { value: rows, label: fr ? 'données reliées' : 'linked records' },
+  { value: formatInt(stats.lexicon.datasets, lang), label: fr ? 'jeux de données' : 'datasets' },
+  { value: formatInt(stats.lexicon.providers, lang), label: fr ? 'producteurs de données' : 'data providers' },
+  { value: formatInt(open, lang), label: fr ? 'jeux ouverts à tous' : 'datasets open to all' },
+];
+
+const access: Array<{ icon: IconName; title: string; text: string }> = fr
+  ? [
+      {
+        icon: 'globe',
+        title: 'Dans le navigateur',
+        text: 'Chaque jeu se consulte et se filtre sur lexicon.osfarm.org. L’outil « Identifier une parcelle » donne tout ce que le Lexicon sait d’un point de la carte.',
+      },
+      {
+        icon: 'code',
+        title: 'Par API',
+        text: 'Chaque page existe aussi en JSON et en CSV : il suffit d’ajouter .json ou .csv à son adresse.',
+      },
+      {
+        icon: 'database',
+        title: 'En base de données',
+        text: 'Chaque jeu est un paquet versionné, à charger dans votre propre base PostgreSQL.',
+      },
+      {
+        icon: 'comment-dots',
+        title: 'Par un assistant d’IA',
+        text: 'Le serveur MCP du Lexicon permet à un assistant de chercher et de croiser les jeux de données, avec leurs sources.',
+      },
+    ]
+  : [
+      {
+        icon: 'globe',
+        title: 'In the browser',
+        text: 'Every dataset can be browsed and filtered on lexicon.osfarm.org. The “Identify a plot” tool shows everything Lexicon knows about a point on the map.',
+      },
+      {
+        icon: 'code',
+        title: 'Through the API',
+        text: 'Every page also exists in JSON and CSV: just add .json or .csv to its address.',
+      },
+      {
+        icon: 'database',
+        title: 'In your database',
+        text: 'Each dataset is a versioned package you can load into your own PostgreSQL database.',
+      },
+      {
+        icon: 'comment-dots',
+        title: 'Through an AI assistant',
+        text: 'Lexicon’s MCP server lets an assistant search and cross-reference the datasets, with their sources.',
+      },
+    ];
+
+const audiences = fr
+  ? [
+      ['Éditeurs de logiciels et startups agricoles', 'des référentiels à jour, sans avoir à les collecter vous-même.'],
+      [
+        'Coopératives et organisations agricoles',
+        'des données publiques prêtes à croiser avec celles de vos adhérents.',
+      ],
+      ['Chercheurs, enseignants, collectivités', 'une base unique pour étudier un territoire ou une filière.'],
+      [
+        'Agriculteurs',
+        'indirectement, à travers Ekylibre et Aiffel, qui s’y réfèrent pour vérifier une dose ou identifier une parcelle.',
+      ],
+    ]
+  : [
+      ['Software vendors and agtech start-ups', 'up-to-date reference data without having to collect it yourself.'],
+      ['Co-ops and farm organisations', 'public data ready to cross-reference with your members’ data.'],
+      ['Researchers, teachers, local authorities', 'a single base for studying an area or a supply chain.'],
+      ['Farmers', 'indirectly, through Ekylibre and Aiffel, which use it to check a rate or identify a plot.'],
+    ];
+
+const curl = 'curl https://lexicon.osfarm.org/phytosanitary/products.json';
+// Forme réelle de la réponse (relevée le 2026-11-03), tronquée ; valeurs remplacées par « … ».
+const response = `{
+  "title": "Produits",
+  "table": {
+    "columns": { "name": "Nom", "firm": "Firme", "type": "Type",
+                 "active-compounds": "Principes actifs", "state": "État d'usage" },
+    "rows": [
+      { "name": { "@type": "Text", "value": "…" },
+        "type": { "@type": "Text", "value": "PPP" },
+        "active-compounds": { "@type": "List", "values": ["…"] },
+        "state": { "@type": "Text", "value": "Autorisé" } },
+      …
+    ]
+  },
+  "credit": { "provider": { "value": "ANSES" }, "license": { "value": "Open Licence" }, … },
+  "page": 1, "items-per-page": 150, "items-total": …, "total-pages": …,
+  "formats": { … }
+}`;
+
+const jsonLd = softwareJsonLd({
+  name: 'Lexicon',
+  description,
+  url: LINKS.lexicon,
+  publisher: OSFARM,
+  contributor: EKYLIBRE_SAS,
+});
+---
+
+<Base lang={lang} routeKey="lexicon" title={title} description={description}>
+  <script type="application/ld+json" slot="head" set:html={jsonLd} />
+  <section class="section-dark">
+    <div class="container-site grid gap-12 pt-16 pb-20 lg:grid-cols-[1.5fr_1fr] lg:items-end">
+      <div>
+        <p class="eyebrow text-eky-green-light">
+          {fr ? 'Lexicon · les données de référence' : 'Lexicon · reference data'}
+        </p>
+        <h1 class="mt-4 max-w-3xl text-h1">
+          {fr ? 'Les données agricoles françaises, reliées entre elles' : 'French agricultural data, linked together'}
+        </h1>
+        <p class="mt-5 max-w-2xl text-lead text-straw-50/85">
+          {fr
+            ? `Cadastre, parcelles PAC, produits phytosanitaires, météo, entreprises, savoirs agronomiques : le Lexicon rassemble ${rows} de données publiques et les relie par des clés communes. Un commun de l’association OSFarm, ouvert à tous.`
+            : `Land registry, CAP plots, plant protection products, weather, businesses, agronomic knowledge: Lexicon brings together ${rows} public records and links them with shared keys. A commons of the OSFarm association, open to all.`}
+        </p>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a href={LINKS.lexicon} rel="noopener" target="_blank" class="btn btn-primary">
+            {fr ? 'Explorer le Lexicon' : 'Explore Lexicon'}
+          </a>
+          <a href={`${routePath('developers', lang)}#lexicon-api`} class="btn btn-secondary">
+            {fr ? 'Accéder à l’API' : 'Use the API'}
+          </a>
+        </div>
+      </div>
+      <dl class="grid grid-cols-2 gap-x-6 gap-y-8 border-t border-white/12 pt-8 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-10">
+        {figures.map((f) => (
+          <div class="flex flex-col-reverse gap-1">
+            <dt class="text-sm text-straw-50/70">{f.label}</dt>
+            <dd class="font-mono text-3xl font-semibold tracking-tight text-eky-green-light tabular-nums">{f.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section class="section-light py-20">
+    <div class="container-site grid gap-8 lg:grid-cols-[auto_1fr_2fr] lg:items-center">
+      <Image src={medRegistre} alt="" width={104} height={104} class="size-20" />
+      <h2 class="text-h2">{fr ? 'Qui fait quoi' : 'Who does what'}</h2>
+      <p class="text-lead text-muted">
+        {fr
+          ? `Le Lexicon est un commun de l’association OSFarm, dont Ekylibre SAS est le contributeur principal. Nous produisons ${stats.lexicon.byEkylibre} de ses jeux de données, comme les itinéraires techniques, les modèles d’interventions ou le plan comptable agricole.`
+          : `Lexicon is a commons of the OSFarm association, and Ekylibre SAS is its main contributor. We produce ${stats.lexicon.byEkylibre} of its datasets, such as crop management plans, intervention templates and the agricultural chart of accounts.`}
+      </p>
+    </div>
+  </section>
+
+  <section class="section-cream py-24">
+    <div class="container-site">
+      <h2 class="max-w-2xl text-h2">
+        {fr ? `${families.length} familles de données` : `${families.length} families of data`}
+      </h2>
+      <p class="mt-4 max-w-3xl text-lead text-muted">
+        {fr
+          ? 'L’INSEE, l’IGN, l’ANSES, Météo-France, l’Agence Bio, l’ASP et bien d’autres : chaque jeu est repris de sa source, mis à jour et relié aux autres.'
+          : 'INSEE, IGN, ANSES, Météo-France, Agence Bio, ASP and many more: each dataset is taken from its source, kept up to date and linked to the others.'}
+      </p>
+      <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {families.map((f) => (
+          <li class="card flex flex-col">
+            <div class="flex items-center gap-4">
+              <span class="medallion size-12 shrink-0 text-xl">
+                <Icon name={f.icon} />
+              </span>
+              <div>
+                <h3 class="font-display text-lg leading-snug font-semibold">{f.title}</h3>
+                <p class="font-mono text-xs text-muted">
+                  {fr
+                    ? `${f.datasets.length} ${f.datasets.length > 1 ? 'jeux' : 'jeu'} · ${formatCompact(f.rows, lang)} lignes`
+                    : `${f.datasets.length} ${f.datasets.length > 1 ? 'datasets' : 'dataset'} · ${formatCompact(f.rows, lang)} rows`}
+                </p>
+              </div>
+            </div>
+            <p class="mt-4 text-sm text-muted">
+              {f.datasets
+                .slice(0, 5)
+                .map((d) => d.label)
+                .join(' · ')}
+              {f.datasets.length > 5 && ' …'}
+            </p>
+          </li>
+        ))}
+      </ul>
+      <p class="mt-8">
+        <a href={`${routePath('interop', lang)}#tableaux`} class="font-semibold">
+          {fr ? 'Tous les jeux, avec leur source et leur licence' : 'All datasets, with their source and licence'}
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section-light py-24">
+    <div class="container-site">
+      <h2 class="max-w-2xl text-h2">{fr ? 'Quatre façons de s’en servir' : 'Four ways to use it'}</h2>
+      <div class="mt-12 grid gap-12 lg:grid-cols-[1fr_1.15fr]">
+        <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-1">
+          {access.map((a) => (
+            <li class="flex gap-4">
+              <span class="medallion size-11 shrink-0 text-lg">
+                <Icon name={a.icon} />
+              </span>
+              <div>
+                <h3 class="font-display text-lg font-semibold">{a.title}</h3>
+                <p class="mt-1 text-muted">{a.text}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <div class="flex min-w-0 flex-col gap-4">
+          <CodeSample lang={lang} label="bash" code={curl} />
+          <CodeSample
+            lang={lang}
+            label={fr ? 'Réponse (extrait)' : 'Response (excerpt)'}
+            code={response}
+            copy={false}
+          />
+          <p class="text-sm text-muted">
+            {fr
+              ? 'Réponse paginée, avec la source, la date et la licence du jeu. Sans clé, sans inscription.'
+              : 'A paginated response, with the dataset’s source, date and licence. No key, no sign-up.'}
+            <a href={`${routePath('developers', lang)}#lexicon-api`} class="ml-1 font-semibold">
+              {fr ? 'Détails de l’API et du MCP' : 'API and MCP details'}
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-dark py-24">
+    <div class="container-site grid gap-10 lg:grid-cols-[1fr_1.5fr]">
+      <h2 class="text-h2">{fr ? 'Libre, sourcé, traçable' : 'Open, sourced, traceable'}</h2>
+      <div class="space-y-5 text-lead text-straw-50/80">
+        <p>
+          {fr
+            ? 'Le code source du Lexicon est ouvert sur GitHub. Chaque jeu de données garde la licence de sa source, indiquée dans le catalogue avec sa date et sa version.'
+            : 'Lexicon’s source code is open on GitHub. Each dataset keeps the licence of its source, shown in the catalogue with its date and version.'}
+        </p>
+        <p>
+          {fr
+            ? `${open} jeux sont ouverts à tous. ${members} sont réservés aux adhérents de l’association OSFarm, qui y accèdent avec une clé d’API.`
+            : `${open} datasets are open to all. ${members} are reserved for members of the OSFarm association, who access them with an API key.`}
+        </p>
+        <ul class="flex flex-wrap gap-x-8 gap-y-3 pt-2 text-base">
+          <li>
+            <a href="https://github.com/osfarm/lexicon" rel="noopener" target="_blank">
+              github.com/osfarm/lexicon
+            </a>
+          </li>
+          <li>
+            <a href={LINKS.lexiconCatalog} rel="noopener" target="_blank">
+              {fr ? 'Le catalogue des jeux' : 'The dataset catalogue'}
+            </a>
+          </li>
+          <li>
+            <a href={LINKS.osfarm} rel="noopener" target="_blank">
+              {fr ? 'Adhérer à OSFarm' : 'Join OSFarm'}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-cream py-24">
+    <div class="container-site">
+      <h2 class="text-h2">{fr ? 'Pour qui' : 'Who it is for'}</h2>
+      <ul class="mt-10 grid gap-x-10 gap-y-6 md:grid-cols-2">
+        {audiences.map(([who, why]) => (
+          <li class="border-t border-soil-800/10 pt-5">
+            <h3 class="font-display text-lg font-semibold">{who}</h3>
+            <p class="mt-1 text-muted">{why}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <ProductCta
+    lang={lang}
+    lead="project"
+    title={fr ? 'Besoin d’intégrer le Lexicon dans vos outils ?' : 'Need Lexicon inside your tools?'}
+    text={
+      fr
+        ? 'Nous vous aidons à brancher l’API, à charger les paquets PostgreSQL ou à proposer un nouveau jeu de données.'
+        : 'We help you connect the API, load the PostgreSQL packages or propose a new dataset.'
+    }
+    site={{ href: LINKS.lexicon, label: fr ? 'Explorer lexicon.osfarm.org' : 'Explore lexicon.osfarm.org' }}
+  />
+</Base>

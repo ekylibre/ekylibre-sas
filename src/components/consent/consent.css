@@ -1,0 +1,36 @@
+/* Bandeau de consentement aux couleurs du design system (vanilla-cookieconsent 3). */
+#cc-main {
+  --cc-font-family: var(--font-inter), system-ui, sans-serif;
+  --cc-bg: #0f2a1e;
+  --cc-primary-color: #faf6ec;
+  --cc-secondary-color: rgb(250 246 236 / 0.78);
+  --cc-btn-primary-bg: #00c15d;
+  --cc-btn-primary-color: #07140e;
+  --cc-btn-primary-border-color: #00c15d;
+  --cc-btn-primary-hover-bg: #4ed164;
+  --cc-btn-primary-hover-color: #07140e;
+  --cc-btn-primary-hover-border-color: #4ed164;
+  /* Refuser a le même poids visuel qu'accepter (exigence CNIL). */
+  --cc-btn-secondary-bg: #00c15d;
+  --cc-btn-secondary-color: #07140e;
+  --cc-btn-secondary-border-color: #00c15d;
+  --cc-btn-secondary-hover-bg: #4ed164;
+  --cc-btn-secondary-hover-color: #07140e;
+  --cc-btn-secondary-hover-border-color: #4ed164;
+  --cc-separator-border-color: rgb(250 246 236 / 0.12);
+  --cc-toggle-on-bg: #00c15d;
+  --cc-toggle-off-bg: #5b6b63;
+  --cc-toggle-readonly-bg: #24493a;
+  --cc-cookie-category-block-bg: #0b1e15;
+  --cc-cookie-category-block-border: rgb(250 246 236 / 0.08);
+  --cc-cookie-category-block-hover-bg: #17382a;
+  --cc-cookie-category-block-hover-border: rgb(250 246 236 / 0.12);
+  --cc-overlay-bg: rgb(7 20 14 / 0.7);
+  --cc-link-color: #4ed164;
+  --cc-btn-border-radius: 999px;
+  --cc-modal-border-radius: 1rem;
+}
+#cc-main .cm__title,
+#cc-main .pm__title {
+  font-family: var(--font-montserrat), sans-serif;
+}

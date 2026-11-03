@@ -122,6 +122,25 @@ async function checkContent() {
   }
 }
 
+// Prêt pour la mise en ligne ? Intégrations configurées et aucun texte « à compléter ».
+// Avertissements en temps normal, erreurs avec LAUNCH=1 (recette finale, CK-5).
+async function checkLaunchReadiness() {
+  const report = process.env.LAUNCH ? error : warning;
+  const integrations = await yaml('src/data/integrations.yaml');
+  if (!/^G-[A-Z0-9]{4,}$/.test(integrations?.ga4 ?? '')) report('integrations.yaml : identifiant GA4 manquant (mesure d’audience désactivée)');
+  for (const [kind, langs] of Object.entries(integrations?.brevo ?? {})) {
+    for (const [lang, url] of Object.entries(langs ?? {})) {
+      if (!/^https:\/\/[a-z0-9-]+\.sibforms\.com\//.test(url ?? '')) report(`integrations.yaml : formulaire Brevo « ${kind} » (${lang}) non configuré`);
+    }
+  }
+  const files = await walk('src', (n) => /\.(astro|md|ts|yaml)$/.test(n));
+  for (const file of files) {
+    const text = await readFile(file, 'utf8');
+    const count = (text.match(/\[À COMPLÉTER/g) ?? []).length;
+    if (count) report(`${file} : ${count} mention(s) « [À COMPLÉTER] » à renseigner`);
+  }
+}
+
 async function checkLinks() {
   const base = (process.env.BASE_PATH || '/').replace(/\/?$/, '/');
   const dist = 'dist';
@@ -142,7 +161,7 @@ async function checkLinks() {
 }
 
 const mode = process.argv.includes('--links') ? 'links' : 'content';
-await (mode === 'links' ? checkLinks() : checkContent());
+await (mode === 'links' ? checkLinks() : Promise.all([checkContent(), checkLaunchReadiness()]));
 
 for (const w of warnings) warn(w);
 for (const e of errors) console.error(`✗ ${e}`);

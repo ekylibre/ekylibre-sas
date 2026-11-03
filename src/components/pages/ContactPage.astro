@@ -1,0 +1,99 @@
+---
+// Page Contact / demande de démo (D8).
+import Base from '~/layouts/Base.astro';
+import Icon from '~/components/Icon.astro';
+import BrevoForm from '~/components/forms/BrevoForm.astro';
+import { routePath, type Locale } from '~/i18n/routes';
+import { LINKS } from '~/lib/links';
+import type { IconName } from '~/lib/icon-names';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+
+const other: Array<{ icon: IconName; title: string; text: string; href: string; label: string; external?: boolean }> = [
+  {
+    icon: 'rocket',
+    title: fr ? 'Essayer tout de suite' : 'Try it right now',
+    text: fr
+      ? 'Une instance de démonstration d’Ekylibre est ouverte à tous.'
+      : 'An Ekylibre demo instance is open to everyone.',
+    href: LINKS.demo,
+    label: fr ? 'Ouvrir la démo' : 'Open the demo',
+    external: true,
+  },
+  {
+    icon: 'cogs',
+    title: fr ? 'Un projet d’intégration ?' : 'An integration project?',
+    text: fr
+      ? 'Coopérative, éditeur, réseau d’exploitations : décrivez votre projet.'
+      : 'Co-op, software vendor, network of farms: describe your project.',
+    href: `${routePath('services', lang)}#projet`,
+    label: fr ? 'Formulaire projet' : 'Project form',
+  },
+  {
+    icon: 'comment-dots',
+    title: fr ? 'La communauté' : 'The community',
+    text: fr
+      ? 'Questions techniques, entraide, contributions : rejoignez-nous sur Discord.'
+      : 'Technical questions, mutual help, contributions: join us on Discord.',
+    href: LINKS.discord,
+    label: 'Discord',
+    external: true,
+  },
+];
+---
+
+<Base
+  lang={lang}
+  routeKey="contact"
+  title={fr ? 'Contact et démonstration' : 'Contact and demo'}
+  description={
+    fr
+      ? 'Demandez une démonstration d’Ekylibre ou contactez Ekylibre SAS pour votre projet d’intégration, de formation ou de connecteur.'
+      : 'Request an Ekylibre demo or contact Ekylibre SAS about your integration, training or connector project.'
+  }
+>
+  <section class="section-dark">
+    <div class="container-site grid gap-12 py-20 lg:grid-cols-[1fr_1.25fr]">
+      <div>
+        <p class="eyebrow text-eky-green-light">Contact</p>
+        <h1 class="mt-4 text-h1">{fr ? 'Voyons Ekylibre sur vos données' : 'Let’s see Ekylibre on your data'}</h1>
+        <p class="mt-5 text-lead text-straw-50/85">
+          {fr
+            ? 'Une démonstration, c’est un échange avec notre équipe : vous nous parlez de votre exploitation ou de votre réseau, nous vous montrons comment Ekylibre, ses connecteurs et le Lexicon s’y appliquent.'
+            : 'A demo is a conversation with our team: you tell us about your farm or network, and we show you how Ekylibre, its connectors and Lexicon apply to it.'}
+        </p>
+      </div>
+      <div class="card">
+        <BrevoForm kind="demo" lang={lang} tone="dark" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section-light py-20">
+    <div class="container-site">
+      <h2 class="text-h3">{fr ? 'Autres façons de nous rejoindre' : 'Other ways to reach us'}</h2>
+      <ul class="mt-8 grid gap-6 md:grid-cols-3">
+        {other.map((o) => (
+          <li class="card flex flex-col">
+            <span class="medallion size-12 text-xl">
+              <Icon name={o.icon} />
+            </span>
+            <h3 class="mt-5 font-display text-lg font-semibold">{o.title}</h3>
+            <p class="mt-2 grow text-muted">{o.text}</p>
+            <a
+              href={o.href}
+              class="mt-5 inline-flex items-center gap-2 font-semibold"
+              {...(o.external ? { rel: 'noopener', target: '_blank' } : {})}
+            >
+              {o.label} <Icon name="arrow-right" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>

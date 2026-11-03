@@ -49,7 +49,7 @@ const families = ['territoire', 'climat', 'intrants', 'entreprises', 'marches', 
         <ul class="mt-6 flex flex-wrap gap-3">
           {families.map((f) => (
             <li class="flex items-center gap-2 font-mono text-xs">
-              <span class="size-4 rounded-full" style={`background: var(--color-family-${f})`} />
+              <span class={`fam-bg fam-${f} size-4 rounded-full`} />
               {f}
             </li>
           ))}

@@ -1,0 +1,80 @@
+---
+// Bloc de code (pages produit et Développeurs) : carte sombre, police mono, bouton « Copier ».
+// Aucun surlignage syntaxique ni bibliothèque externe : le code reste lisible et léger.
+import type { Locale } from '~/i18n/routes';
+
+interface Props {
+  code: string;
+  lang: Locale;
+  /** Langage ou nom de fichier affiché dans l'en-tête (ex. « bash », « Gemfile.plugins »). */
+  label?: string;
+  /** Extrait non exécutable tel quel (réponse tronquée) : pas de bouton « Copier ». */
+  copy?: boolean;
+  class?: string;
+}
+const { code, lang, label, copy = true, class: className } = Astro.props;
+const fr = lang === 'fr';
+---
+
+<figure class:list={['code-sample', className]}>
+  <figcaption class="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-2">
+    <span class="font-mono text-xs tracking-wide text-straw-50/60">{label}</span>
+    {copy && (
+      <button
+        type="button"
+        class="copy-btn"
+        data-copy
+        data-done={fr ? 'Copié' : 'Copied'}
+        aria-label={fr ? `Copier le code${label ? ` (${label})` : ''}` : `Copy code${label ? ` (${label})` : ''}`}
+      >
+        <span data-copy-text>{fr ? 'Copier' : 'Copy'}</span>
+      </button>
+    )}
+  </figcaption>
+  <pre tabindex="0"><code>{code}</code></pre>
+  {copy && <span class="sr-only" role="status" data-copy-status />}
+</figure>
+
+<style>
+  @reference "../../styles/global.css";
+
+  .code-sample {
+    @apply min-w-0 overflow-hidden rounded-[var(--radius-card)] bg-night-800 text-straw-50 ring-1 ring-white/10;
+  }
+  pre {
+    @apply overflow-x-auto px-4 py-4 font-mono text-[0.8125rem] leading-relaxed;
+    tab-size: 2;
+  }
+  .copy-btn {
+    @apply rounded-full px-3 py-1 font-display text-xs font-semibold text-straw-50/80 ring-1 ring-white/20 transition hover:text-straw-50 hover:ring-white/45;
+  }
+  .copy-btn[data-state='done'] {
+    @apply bg-eky-green text-night-900 ring-eky-green;
+  }
+</style>
+
+<script>
+  document.addEventListener('click', async (event) => {
+    const button = (event.target as Element | null)?.closest<HTMLButtonElement>('[data-copy]');
+    if (!button) return;
+    const figure = button.closest('figure');
+    const code = figure?.querySelector('code')?.textContent ?? '';
+    const text = button.querySelector('[data-copy-text]');
+    const status = figure?.querySelector('[data-copy-status]');
+    try {
+      await navigator.clipboard.writeText(code);
+    } catch {
+      return;
+    }
+    const initial = text?.textContent ?? '';
+    const done = button.dataset.done ?? '';
+    if (text) text.textContent = done;
+    if (status) status.textContent = done;
+    button.dataset.state = 'done';
+    window.setTimeout(() => {
+      if (text) text.textContent = initial;
+      if (status) status.textContent = '';
+      delete button.dataset.state;
+    }, 1800);
+  });
+</script>

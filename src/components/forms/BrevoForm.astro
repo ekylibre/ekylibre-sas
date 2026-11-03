@@ -1,0 +1,240 @@
+---
+// E1 — Formulaire Brevo (démo, projet, lettre d'information).
+// HTML pur qui poste directement vers Brevo (aucune clé exposée, fonctionne sans JavaScript) ;
+// avec JavaScript : envoi en arrière-plan, message localisé, événement GA4 `generate_lead`
+// (seulement si l'utilisateur a accepté les cookies de mesure).
+import { brevoAction, type FormKind } from '~/lib/integrations';
+import { routePath, type Locale } from '~/i18n/routes';
+
+interface Props {
+  kind: FormKind;
+  lang: Locale;
+  /** Fond sombre (pied de page, sections tech) ou clair. */
+  tone?: 'light' | 'dark';
+  class?: string;
+}
+const { kind, lang, tone = 'light', class: className } = Astro.props;
+const fr = lang === 'fr';
+const action = brevoAction(kind, lang);
+const page = Astro.url.pathname;
+const uid = `f-${kind}`;
+
+const t = {
+  firstName: fr ? 'Prénom' : 'First name',
+  lastName: fr ? 'Nom' : 'Last name',
+  email: fr ? 'Adresse e-mail' : 'Email address',
+  company: fr ? 'Exploitation ou entreprise' : 'Farm or company',
+  profile: fr ? 'Vous êtes' : 'You are',
+  profiles: fr
+    ? [
+        'Agriculteur ou viticulteur',
+        'Coopérative, négoce ou OPA',
+        'Éditeur de logiciel ou de matériel',
+        'Conseil, enseignement, recherche',
+        'Autre',
+      ]
+    : [
+        'Farmer or winegrower',
+        'Co-op or farm organisation',
+        'Software or equipment vendor',
+        'Advisory, education, research',
+        'Other',
+      ],
+  service: fr ? 'Votre besoin' : 'What you need',
+  services: fr
+    ? [
+        'Intégration',
+        'Formation',
+        'Transformation du système d’information',
+        'Développement de connecteurs',
+        'Support',
+        'Je ne sais pas encore',
+      ]
+    : [
+        'Integration',
+        'Training',
+        'Information system transformation',
+        'Connector development',
+        'Support',
+        'Not sure yet',
+      ],
+  message: fr ? 'Votre projet en quelques lignes' : 'Your project in a few lines',
+  consent: fr
+    ? 'J’accepte qu’Ekylibre SAS utilise ces informations pour me recontacter. Je peux retirer mon consentement à tout moment.'
+    : 'I agree that Ekylibre SAS may use this information to contact me. I can withdraw my consent at any time.',
+  consentNews: fr
+    ? 'J’accepte de recevoir la lettre d’information d’Ekylibre (au plus une fois par mois, désinscription en un clic).'
+    : 'I agree to receive the Ekylibre newsletter (at most once a month, one-click unsubscribe).',
+  privacy: fr ? 'Politique de confidentialité' : 'Privacy policy',
+  submit: {
+    demo: fr ? 'Demander une démo' : 'Request a demo',
+    projet: fr ? 'Envoyer ma demande' : 'Send my request',
+    newsletter: fr ? 'S’inscrire' : 'Subscribe',
+  }[kind],
+  sending: fr ? 'Envoi en cours…' : 'Sending…',
+  success: {
+    demo: fr
+      ? 'Merci ! Votre demande est bien envoyée : nous revenons vers vous pour convenir d’un créneau.'
+      : 'Thank you! Your request has been sent: we will get back to you to schedule a slot.',
+    projet: fr
+      ? 'Merci ! Votre demande est bien envoyée : nous revenons vers vous rapidement.'
+      : 'Thank you! Your request has been sent: we will get back to you shortly.',
+    newsletter: fr
+      ? 'Merci ! Confirmez votre inscription grâce au lien envoyé par e-mail.'
+      : 'Thank you! Please confirm your subscription using the link we just emailed you.',
+  }[kind],
+  error: fr ? 'L’envoi n’a pas abouti. Réessayez dans un instant.' : 'Sending failed. Please try again in a moment.',
+  unavailable: fr ? 'Le formulaire sera disponible très prochainement.' : 'This form will be available very soon.',
+  required: fr ? '(obligatoire)' : '(required)',
+};
+const field =
+  tone === 'dark'
+    ? 'w-full rounded-xl border-0 bg-white/8 px-4 py-3 text-straw-50 ring-1 ring-white/15 placeholder:text-straw-50/40 focus:ring-2 focus:ring-eky-green focus:outline-none'
+    : 'w-full rounded-xl border-0 bg-white px-4 py-3 text-soil-800 ring-1 ring-soil-800/15 focus:ring-2 focus:ring-eky-green-deep focus:outline-none';
+const labelCls = 'mb-1.5 block text-sm font-semibold';
+---
+
+<form
+  class:list={['brevo-form', className]}
+  method="post"
+  action={action ?? undefined}
+  data-kind={kind}
+  data-ready={action ? 'true' : 'false'}
+  data-msg-sending={t.sending}
+  data-msg-success={t.success}
+  data-msg-error={t.error}
+>
+  {kind === 'newsletter' ? (
+    <div class="flex flex-col gap-3 sm:flex-row">
+      <label for={`${uid}-email`} class="sr-only">
+        {t.email}
+      </label>
+      <input
+        id={`${uid}-email`}
+        name="EMAIL"
+        type="email"
+        required
+        autocomplete="email"
+        placeholder={t.email}
+        class={field}
+      />
+      <button type="submit" class="btn btn-primary shrink-0" disabled={!action}>
+        {t.submit}
+      </button>
+    </div>
+  ) : (
+    <div class="grid gap-5 sm:grid-cols-2">
+      <div>
+        <label for={`${uid}-prenom`} class={labelCls}>
+          {t.firstName}
+        </label>
+        <input id={`${uid}-prenom`} name="PRENOM" type="text" autocomplete="given-name" class={field} />
+      </div>
+      <div>
+        <label for={`${uid}-nom`} class={labelCls}>
+          {t.lastName}
+        </label>
+        <input id={`${uid}-nom`} name="NOM" type="text" autocomplete="family-name" class={field} />
+      </div>
+      <div class="sm:col-span-2">
+        <label for={`${uid}-email`} class={labelCls}>
+          {t.email} <span class="font-normal opacity-70">{t.required}</span>
+        </label>
+        <input id={`${uid}-email`} name="EMAIL" type="email" required autocomplete="email" class={field} />
+      </div>
+      <div>
+        <label for={`${uid}-entreprise`} class={labelCls}>
+          {t.company}
+        </label>
+        <input id={`${uid}-entreprise`} name="ENTREPRISE" type="text" autocomplete="organization" class={field} />
+      </div>
+      <div>
+        <label for={`${uid}-profil`} class={labelCls}>
+          {t.profile}
+        </label>
+        <select id={`${uid}-profil`} name="PROFIL" class={field}>
+          {t.profiles.map((p) => (
+            <option value={p}>{p}</option>
+          ))}
+        </select>
+      </div>
+      {kind === 'projet' && (
+        <>
+          <div class="sm:col-span-2">
+            <label for={`${uid}-service`} class={labelCls}>
+              {t.service}
+            </label>
+            <select id={`${uid}-service`} name="SERVICE" class={field}>
+              {t.services.map((s) => (
+                <option value={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+          <div class="sm:col-span-2">
+            <label for={`${uid}-message`} class={labelCls}>
+              {t.message}
+            </label>
+            <textarea id={`${uid}-message`} name="MESSAGE" rows="4" class={field} />
+          </div>
+        </>
+      )}
+    </div>
+  )}
+
+  <label class="mt-5 flex items-start gap-3 text-sm">
+    <input type="checkbox" name="OPT_IN" value="1" required class="mt-0.5 size-4 shrink-0 accent-eky-green" />
+    <span>
+      {kind === 'newsletter' ? t.consentNews : t.consent} <a href={routePath('privacy', lang)}>{t.privacy}</a>
+    </span>
+  </label>
+
+  {/* Champs techniques Brevo : piège à robots (doit rester vide) et contexte de la demande. */}
+  <input
+    type="text"
+    name="email_address_check"
+    value=""
+    tabindex="-1"
+    autocomplete="off"
+    class="absolute -left-[9999px] h-px w-px opacity-0"
+    aria-hidden="true"
+  />
+  <input type="hidden" name="locale" value={lang} />
+  <input type="hidden" name="LANGUE" value={lang} />
+  <input type="hidden" name="PAGE_SOURCE" value={page} />
+
+  {kind !== 'newsletter' && (
+    <button type="submit" class="btn btn-primary mt-6" disabled={!action}>
+      {t.submit}
+    </button>
+  )}
+  <p class="form-status mt-4 text-sm font-semibold" role="status" aria-live="polite">
+    {!action && <span class="opacity-75">{t.unavailable}</span>}
+  </p>
+</form>
+
+<script>
+  import { track } from '~/lib/analytics';
+
+  for (const form of document.querySelectorAll<HTMLFormElement>('form.brevo-form[data-ready="true"]')) {
+    const status = form.querySelector<HTMLElement>('.form-status')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+      button.disabled = true;
+      status.textContent = form.dataset.msgSending ?? '';
+      try {
+        // Brevo ne renvoie pas d'en-têtes CORS : réponse opaque, on considère l'envoi réussi
+        // dès que la requête part (les erreurs réseau, elles, sont détectées).
+        await fetch(form.action, { method: 'POST', body: new FormData(form), mode: 'no-cors' });
+        status.textContent = form.dataset.msgSuccess ?? '';
+        form.reset();
+        track('generate_lead', { form: form.dataset.kind, lang: document.documentElement.lang });
+      } catch {
+        status.textContent = form.dataset.msgError ?? '';
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+</script>

@@ -149,7 +149,7 @@ const links = {
           )
           .join('');
         body.innerHTML = `
-          <p class="eyebrow" style="color:${esc(family.color)}">${icon(sprite, family.icon)} Lexicon</p>
+          <p class="eyebrow fam-text fam-${esc(family.id)}">${icon(sprite, family.icon)} Lexicon</p>
           <h2 id="scene-info-title" tabindex="-1" class="mt-2 pr-10 text-h3">${esc(family.title)}</h2>
           <p class="mt-2 font-mono text-sm text-straw-50/70">${family.datasets.length} ${esc(strings.datasets!)} · ${nf.format(family.rows)} ${esc(strings.rows!)}</p>
           <ul class="mt-4">${rows}</ul>

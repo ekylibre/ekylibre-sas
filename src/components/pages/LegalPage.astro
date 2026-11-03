@@ -1,0 +1,38 @@
+---
+// Pages légales (D8) : mentions légales, CGU, confidentialité, cookies — collection `legal`.
+import { getCollection, render } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import type { Locale } from '~/i18n/routes';
+import '../news/news-prose.css';
+
+interface Props {
+  lang: Locale;
+  routeKey: 'legal' | 'terms' | 'privacy' | 'cookies';
+}
+const { lang, routeKey } = Astro.props;
+const [entry] = await getCollection('legal', (e) => e.data.lang === lang && e.data.routeKey === routeKey);
+if (!entry) throw new Error(`Page légale manquante : ${routeKey} (${lang})`);
+const { Content } = await render(entry);
+const updated = new Intl.DateTimeFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', { dateStyle: 'long' }).format(
+  entry.data.updatedAt,
+);
+---
+
+<Base lang={lang} routeKey={routeKey} title={entry.data.title} description={entry.data.description}>
+  <section class="section-dark">
+    <div class="container-site py-16">
+      <h1 class="text-h1">{entry.data.title}</h1>
+      <p class="mt-3 text-sm text-straw-50/65">
+        {lang === 'fr' ? 'Mise à jour : ' : 'Last updated: '}
+        <time datetime={entry.data.updatedAt.toISOString()}>{updated}</time>
+      </p>
+    </div>
+  </section>
+  <section class="section-light py-16">
+    <div class="container-site">
+      <div class="prose-eky max-w-3xl">
+        <Content />
+      </div>
+    </div>
+  </section>
+</Base>

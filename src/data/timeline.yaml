@@ -1,0 +1,33 @@
+# Dates clés (page Entreprise). Uniquement des faits sourcés ; à compléter avec Ekylibre SAS
+# (création de la SAS, cofinancement FEDER, rapprochement avec Clic&Farm) — voir docs/contenus/fr/_notes.md.
+- date: 2008-09
+  title: { fr: Première ligne de code, en: First line of code }
+  text:
+    fr: Le premier commit du logiciel Ekylibre est enregistré, le 8 septembre 2008.
+    en: The first commit of the Ekylibre software is recorded, on 8 September 2008.
+  source: https://github.com/ekylibre/ekylibre
+- date: 2019-03
+  title: { fr: 1ʳᵉ entreprise labellisée Data-Agri, en: First Data-Agri certified company }
+  text:
+    fr: Au Salon international de l’agriculture, la FNSEA et Jeunes Agriculteurs annoncent les premières entreprises labellisées. Ekylibre est la première d’entre elles.
+    en: At the Paris International Agricultural Show, FNSEA and Jeunes Agriculteurs announce the first certified companies. Ekylibre is the first of them.
+- date: 2019-10
+  title: { fr: Lancement d’Ekyviti, en: Ekyviti launched }
+  text:
+    fr: Début d’Ekyviti, la version d’Ekylibre pour la vigne et le vin, construite avec des viticulteurs.
+    en: Ekyviti, the Ekylibre edition for vineyards and wine, gets under way, built with winegrowers.
+- date: 2023-10
+  title: { fr: OSFarm à l’Open Source Experience, en: OSFarm at Open Source Experience }
+  text:
+    fr: OSFarm présente à Paris son écosystème de solutions ouvertes pour l’agriculture, avec Ekylibre.
+    en: In Paris, OSFarm presents its ecosystem of open solutions for agriculture, including Ekylibre.
+- date: 2024-02
+  title: { fr: « Zéro saisie » au Salon de l’agriculture, en: “Zero data entry” at the Paris show }
+  text:
+    fr: Avec OSFarm, Ekylibre présente le projet « Zéro saisie » au Salon international de l’agriculture.
+    en: With OSFarm, Ekylibre presents its “Zero data entry” project at the Paris International Agricultural Show.
+- date: 2026
+  title: { fr: Lexicon et Aiffel, en: Lexicon and Aiffel }
+  text:
+    fr: Le Lexicon relie les données publiques agricoles françaises ; Aiffel fait entrer la voix dans les logiciels de la ferme.
+    en: Lexicon links French public agricultural data; Aiffel brings voice into farm software.

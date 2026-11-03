@@ -60,4 +60,15 @@ const news = defineCollection({
     }),
 });
 
-export const collections = { connectors, families, news };
+const legal = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: 'src/content/legal' }),
+  schema: z.object({
+    title: z.string(),
+    lang: z.enum(['fr', 'en']),
+    routeKey: z.enum(['legal', 'terms', 'privacy', 'cookies']),
+    description: z.string(),
+    updatedAt: z.coerce.date(),
+  }),
+});
+
+export const collections = { connectors, families, news, legal };

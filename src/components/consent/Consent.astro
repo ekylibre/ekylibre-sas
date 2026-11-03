@@ -1,0 +1,124 @@
+---
+// E2 — Bandeau de consentement (vanilla-cookieconsent 3, auto-hébergé).
+// Rendu uniquement si GA4 est configuré : sans mesure d'audience, le site ne dépose aucun cookie
+// et n'a pas besoin de bandeau. Refuser est aussi simple qu'accepter ; choix conservé 6 mois ;
+// rouvrable depuis le pied de page (« Gérer les cookies »).
+import { GA4_ID } from '~/lib/integrations';
+import { routePath, type Locale } from '~/i18n/routes';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const config = GA4_ID
+  ? {
+      ga4: GA4_ID,
+      lang,
+      text: {
+        title: fr ? 'Mesure d’audience' : 'Audience measurement',
+        description: fr
+          ? `Avec votre accord, nous utilisons Google Analytics pour mesurer la fréquentation du site et l’améliorer. Aucun cookie publicitaire. <a href="${routePath('cookies', lang)}">En savoir plus</a>`
+          : `With your consent, we use Google Analytics to measure and improve site traffic. No advertising cookies. <a href="${routePath('cookies', lang)}">Learn more</a>`,
+        accept: fr ? 'Accepter' : 'Accept',
+        reject: fr ? 'Refuser' : 'Reject',
+        manage: fr ? 'Choisir' : 'Customise',
+        save: fr ? 'Enregistrer mes choix' : 'Save my choices',
+        close: fr ? 'Fermer' : 'Close',
+        prefTitle: fr ? 'Vos choix de cookies' : 'Your cookie choices',
+        necessaryTitle: fr ? 'Fonctionnement du site' : 'Site operation',
+        necessaryText: fr
+          ? 'Mémorise vos choix de cookies. Toujours actif, sans mesure ni publicité.'
+          : 'Remembers your cookie choices. Always on, no tracking or advertising.',
+        analyticsTitle: fr ? 'Mesure d’audience (Google Analytics)' : 'Audience measurement (Google Analytics)',
+        analyticsText: fr
+          ? 'Statistiques de visite anonymisées par Google, pour comprendre quelles pages sont utiles. Cookies _ga, conservés 13 mois au plus.'
+          : 'Visit statistics, anonymised by Google, to understand which pages are useful. _ga cookies, kept for 13 months at most.',
+      },
+    }
+  : null;
+---
+
+{config && (
+  <script
+    is:inline
+    type="application/json"
+    id="consent-config"
+    set:html={JSON.stringify(config).replace(/</g, '\\u003c')}
+  />
+)}
+
+<script>
+  import 'vanilla-cookieconsent/dist/cookieconsent.css';
+  import './consent.css';
+
+  const el = document.getElementById('consent-config');
+  if (el) {
+    type Key =
+      | 'title'
+      | 'description'
+      | 'accept'
+      | 'reject'
+      | 'manage'
+      | 'save'
+      | 'close'
+      | 'prefTitle'
+      | 'necessaryTitle'
+      | 'necessaryText'
+      | 'analyticsTitle'
+      | 'analyticsText';
+    const cfg = JSON.parse(el.textContent ?? '{}') as { ga4: string; lang: string; text: Record<Key, string> };
+    const [CookieConsent, analytics] = await Promise.all([import('vanilla-cookieconsent'), import('~/lib/analytics')]);
+    const t = cfg.text;
+    await CookieConsent.run({
+      cookie: { name: 'eky_consent', expiresAfterDays: 182, sameSite: 'Lax' },
+      guiOptions: {
+        consentModal: { layout: 'box', position: 'bottom left', equalWeightButtons: true, flipButtons: false },
+        preferencesModal: { layout: 'box', equalWeightButtons: true },
+      },
+      categories: {
+        necessary: { enabled: true, readOnly: true },
+        analytics: {
+          autoClear: { cookies: [{ name: /^_ga/ }] },
+          services: { ga4: { label: 'Google Analytics 4' } },
+        },
+      },
+      onConsent: ({ cookie }) => {
+        if (cookie.categories.includes('analytics')) analytics.loadGa4(cfg.ga4);
+      },
+      onChange: ({ cookie }) => {
+        if (cookie.categories.includes('analytics')) analytics.loadGa4(cfg.ga4);
+        else analytics.revokeGa4();
+      },
+      language: {
+        default: cfg.lang,
+        translations: {
+          [cfg.lang]: {
+            consentModal: {
+              title: t.title,
+              description: t.description,
+              acceptAllBtn: t.accept,
+              acceptNecessaryBtn: t.reject,
+              showPreferencesBtn: t.manage,
+            },
+            preferencesModal: {
+              title: t.prefTitle,
+              acceptAllBtn: t.accept,
+              acceptNecessaryBtn: t.reject,
+              savePreferencesBtn: t.save,
+              closeIconLabel: t.close,
+              sections: [
+                { title: t.necessaryTitle, description: t.necessaryText, linkedCategory: 'necessary' },
+                { title: t.analyticsTitle, description: t.analyticsText, linkedCategory: 'analytics' },
+              ],
+            },
+          },
+        },
+      },
+    });
+    for (const button of document.querySelectorAll<HTMLButtonElement>('[data-consent-manage]')) {
+      button.hidden = false;
+      button.addEventListener('click', () => CookieConsent.showPreferences());
+    }
+  }
+</script>

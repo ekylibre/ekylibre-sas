@@ -1,13 +1,26 @@
 ---
 // Page 404 bilingue (GitHub Pages sert 404.html pour toutes les URL inconnues).
-// Duke y fera son apparition en C12.
 import Base from '~/layouts/Base.astro';
 import { routePath } from '~/i18n/routes';
+import Icon from '~/components/Icon.astro';
 ---
 
 <Base lang="fr" routeKey="home" title="Page introuvable · Page not found" noindex>
   <section class="section-dark">
-    <div class="container-site grid gap-16 py-28 md:grid-cols-2">
+    <div class="container-site py-28">
+      <div class="mb-12 flex items-center gap-5">
+        <span class="medallion size-24 text-6xl">
+          <Icon name="owl" />
+        </span>
+        <p class="max-w-md text-lead text-straw-50/80">
+          <strong class="font-display text-straw-50">Duke</strong> a cherché partout… sans trouver cette page.
+          <span lang="en" class="block text-base text-straw-50/60">
+            Duke looked everywhere… but couldn’t find this page.
+          </span>
+        </p>
+      </div>
+    </div>
+    <div class="container-site grid gap-16 pb-28 md:grid-cols-2">
       <div>
         <p class="eyebrow text-eky-green-light">Erreur 404</p>
         <h1 class="mt-4 text-h1">Cette page n’existe pas (ou plus).</h1>

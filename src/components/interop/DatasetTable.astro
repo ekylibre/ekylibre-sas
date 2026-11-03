@@ -1,7 +1,7 @@
 ---
 // Tableau des jeux de données du Lexicon, groupés par famille (équivalent HTML de la constellation).
 import Icon from '~/components/Icon.astro';
-import { lexiconFamilies, FAMILY_COLORS } from '~/lib/interop';
+import { lexiconFamilies } from '~/lib/interop';
 import { formatInt } from '~/lib/data';
 import type { Locale } from '~/i18n/routes';
 
@@ -23,7 +23,7 @@ const head = fr
       open={f.id === 'territoire'}
     >
       <summary class="flex cursor-pointer list-none items-center gap-4 px-5 py-4 [&::-webkit-details-marker]:hidden">
-        <span class="medallion size-10 shrink-0 text-lg" style={`border-color:${FAMILY_COLORS[f.id]}`}>
+        <span class={`medallion fam-border fam-${f.id} size-10 shrink-0 text-lg`}>
           <Icon name={f.icon} />
         </span>
         <span class="grow">

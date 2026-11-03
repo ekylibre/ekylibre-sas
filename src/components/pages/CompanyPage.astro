@@ -1,0 +1,252 @@
+---
+// Page Entreprise (D6) : mission, valeurs, communs et OSFarm, Data-Agri, histoire, chiffres.
+// Textes : docs/contenus/fr/entreprise.md (B10) ; frise : src/data/timeline.yaml ; chiffres : figures.yaml.
+import { readFileSync } from 'node:fs';
+import { parse } from 'yaml';
+import { Image } from 'astro:assets';
+import Base from '~/layouts/Base.astro';
+import Icon from '~/components/Icon.astro';
+import illusMetiers from '~/assets/illustrations/moisson.webp';
+import { routePath, type Locale } from '~/i18n/routes';
+import { stats, formatCompact, formatInt } from '~/lib/data';
+import { LINKS } from '~/lib/links';
+import type { IconName } from '~/lib/icon-names';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+
+type Item = { date: string | number; title: Record<Locale, string>; text: Record<Locale, string>; source?: string };
+const timeline = parse(readFileSync('src/data/timeline.yaml', 'utf8')) as Item[];
+const figures = parse(readFileSync('src/data/figures.yaml', 'utf8')) as {
+  farms: number | null;
+  hectares: number | null;
+  measuredAt: string | null;
+};
+const dateLabel = (d: string | number) => {
+  const [y, m] = String(d).split('-');
+  if (!m) return y;
+  return new Intl.DateTimeFormat(fr ? 'fr-FR' : 'en-GB', { month: 'long', year: 'numeric' }).format(
+    new Date(Number(y), Number(m) - 1, 1),
+  );
+};
+
+const values: Array<{ icon: IconName; title: string; text: string }> = [
+  {
+    icon: 'lightbulb-o',
+    title: fr ? 'Transparence' : 'Transparency',
+    text: fr
+      ? 'Notre code est public, nos sources de données sont citées, nos contrats ont été audités au regard de la charte Data-Agri.'
+      : 'Our code is public, our data sources are cited, our contracts have been audited against the Data-Agri charter.',
+  },
+  {
+    icon: 'leaf',
+    title: fr ? 'Durabilité' : 'Sustainability',
+    text: fr
+      ? 'Nous concevons des logiciels faits pour durer, sobres en ressources, au service d’une agriculture qui préserve les sols et ceux qui la font vivre.'
+      : 'We build software that is made to last and frugal with resources, serving a farming that protects soils and the people who make it live.',
+  },
+  {
+    icon: 'users',
+    title: fr ? 'Partage' : 'Sharing',
+    text: fr
+      ? 'Ce que nous développons revient à tous, sous licence libre, et enrichit des communs que d’autres peuvent reprendre.'
+      : 'What we build goes back to everyone under a free licence, and enriches commons that others can reuse.',
+  },
+  {
+    icon: 'wrench',
+    title: fr ? 'Pragmatisme' : 'Pragmatism',
+    text: fr
+      ? 'Nous partons du terrain et de ses contraintes, pas de la technologie. Un outil utile vaut mieux qu’un outil spectaculaire.'
+      : 'We start from the field and its constraints, not from technology. A useful tool beats a spectacular one.',
+  },
+];
+
+const numbers = [
+  {
+    value: String(new Date(stats.core.firstCommit).getFullYear()),
+    label: fr ? 'premier commit d’Ekylibre' : 'first Ekylibre commit',
+  },
+  {
+    value: formatInt(stats.core.commits, lang),
+    label: fr ? 'commits dans le dépôt principal' : 'commits in the main repository',
+  },
+  { value: formatInt(stats.core.contributors, lang), label: fr ? 'contributeurs au code' : 'code contributors' },
+  { value: formatInt(stats.stablePlugins, lang), label: fr ? 'connecteurs stables' : 'stable connectors' },
+  {
+    value: formatCompact(stats.lexicon.totalRows, lang),
+    label: fr ? 'données reliées dans le Lexicon' : 'records linked in Lexicon',
+  },
+  {
+    value: formatInt(stats.lexicon.byEkylibre, lang),
+    label: fr ? 'jeux du Lexicon produits par Ekylibre SAS' : 'Lexicon datasets produced by Ekylibre SAS',
+  },
+  ...(figures.farms
+    ? [{ value: formatInt(figures.farms, lang), label: fr ? 'exploitations utilisent Ekylibre' : 'farms use Ekylibre' }]
+    : []),
+  ...(figures.hectares
+    ? [
+        {
+          value: formatInt(figures.hectares, lang),
+          label: fr ? 'hectares gérés dans Ekylibre' : 'hectares managed in Ekylibre',
+        },
+      ]
+    : []),
+];
+---
+
+<Base
+  lang={lang}
+  routeKey="company"
+  title={fr ? 'Entreprise' : 'Company'}
+  description={
+    fr
+      ? 'Ekylibre SAS édite et opère des logiciels libres pour l’agriculture, portés avec OSFarm : mission, valeurs, label Data-Agri et histoire depuis 2008.'
+      : 'Ekylibre SAS publishes and operates free software for agriculture, developed with OSFarm: mission, values, Data-Agri label and history since 2008.'
+  }
+>
+  <section class="section-dark">
+    <div class="container-site py-20">
+      <p class="eyebrow text-eky-green-light">{fr ? 'L’entreprise' : 'The company'}</p>
+      <h1 class="mt-4 max-w-4xl text-h1">
+        {fr ? 'Des logiciels libres, au service de ceux qui cultivent' : 'Free software, serving those who farm'}
+      </h1>
+      <p class="mt-5 max-w-3xl text-lead text-straw-50/85">
+        {fr
+          ? 'Ekylibre SAS développe et fait vivre Ekylibre, Lexicon et Aiffel, des communs numériques portés avec l’association OSFarm. Nous vivons des services qui les font fonctionner chez nos clients.'
+          : 'Ekylibre SAS develops and runs Ekylibre, Lexicon and Aiffel, digital commons developed with the OSFarm association. We make our living from the services that put them to work for our clients.'}
+      </p>
+    </div>
+  </section>
+
+  <section class="section-light py-24">
+    <div class="container-site grid items-center gap-12 lg:grid-cols-[1.3fr_1fr]">
+      <div>
+        <h2 class="text-h2">{fr ? 'Notre mission' : 'Our mission'}</h2>
+        <p class="mt-4 text-lead text-muted">
+          {fr
+            ? 'Rendre aux agriculteurs le temps passé à ressaisir des données, et leur garantir la maîtrise de ces données. Pour cela, nous construisons un système d’information agricole ouvert : des logiciels libres, des données publiques reliées et des outils qui se parlent.'
+            : 'To give farmers back the time they spend re-entering data, and to guarantee them control over that data. To do so, we build an open farm information system: free software, linked public data and tools that talk to each other.'}
+        </p>
+      </div>
+      <Image
+        src={illusMetiers}
+        alt=""
+        widths={[330, 500]}
+        sizes="(min-width: 1024px) 26rem, 80vw"
+        class="mx-auto w-full max-w-sm rounded-2xl shadow-[var(--shadow-card)]"
+      />
+    </div>
+    <div class="container-site mt-20">
+      <h2 class="text-h2">{fr ? 'Nos valeurs' : 'Our values'}</h2>
+      <ul class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {values.map((v) => (
+          <li class="card">
+            <span class="medallion size-12 text-xl">
+              <Icon name={v.icon} />
+            </span>
+            <h3 class="mt-5 font-display text-lg font-semibold">{v.title}</h3>
+            <p class="mt-2 text-sm text-muted">{v.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section-dark py-24">
+    <div class="container-site grid gap-12 lg:grid-cols-2">
+      <div>
+        <h2 class="text-h2">
+          {fr ? 'Des communs numériques, portés avec OSFarm' : 'Digital commons, developed with OSFarm'}
+        </h2>
+        <p class="mt-4 text-straw-50/80">
+          {fr
+            ? 'Un commun numérique est une ressource partagée, gérée par une communauté qui en fixe les règles. Ekylibre, Lexicon et Aiffel sont des communs : leur code est libre et leur avenir ne dépend pas d’une seule entreprise. Ils sont portés avec OSFarm, une association qui fédère des solutions ouvertes pour le monde agricole ; Ekylibre SAS en est le contributeur principal.'
+            : 'A digital commons is a shared resource, managed by a community that sets its rules. Ekylibre, Lexicon and Aiffel are commons: their code is free and their future does not depend on a single company. They are developed with OSFarm, an association that brings together open solutions for agriculture; Ekylibre SAS is their main contributor.'}
+        </p>
+        <a href={LINKS.osfarm} rel="noopener" target="_blank" class="mt-5 inline-flex items-center gap-2 font-semibold">
+          {fr ? 'Découvrir OSFarm' : 'Discover OSFarm'} <Icon name="arrow-right" />
+        </a>
+      </div>
+      <div>
+        <h2 class="text-h2">{fr ? '1ʳᵉ entreprise labellisée Data-Agri' : 'First Data-Agri certified company'}</h2>
+        <p class="mt-4 text-straw-50/80">
+          {fr
+            ? 'En mars 2019, au Salon international de l’agriculture, la FNSEA et Jeunes Agriculteurs ont annoncé les premières entreprises labellisées Data-Agri. Ekylibre a été la première d’entre elles. Le label repose sur un audit juridique des contrats au regard de la charte de protection des données agricoles : sécurité, propriété et bon usage des données de l’agriculteur.'
+            : 'In March 2019, at the Paris International Agricultural Show, FNSEA and Jeunes Agriculteurs announced the first companies certified under the Data-Agri label. Ekylibre was the first of them. The label is based on a legal audit of contracts against the French farm data charter: security, ownership and proper use of farmers’ data.'}
+        </p>
+        <a
+          href="https://www.data-agri.fr/"
+          rel="noopener"
+          target="_blank"
+          class="mt-5 inline-flex items-center gap-2 font-semibold"
+        >
+          {fr ? 'La charte Data-Agri' : 'The Data-Agri charter'} <Icon name="arrow-right" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-cream py-24">
+    <div class="container-site">
+      <h2 class="text-h2">{fr ? 'Notre histoire' : 'Our story'}</h2>
+      <ol class="relative mt-12 space-y-10 border-l-2 border-eky-green-deep/40 pl-8">
+        {timeline.map((item) => (
+          <li class="relative">
+            <span
+              class="absolute top-1 -left-[2.6rem] size-4 rounded-full border-[3px] border-eky-green-deep bg-straw-100"
+              aria-hidden="true"
+            />
+            <p class="eyebrow text-eky-green-text">
+              <time datetime={String(item.date)}>{dateLabel(item.date)}</time>
+            </p>
+            <h3 class="mt-1 font-display text-lg font-semibold">{item.title[lang]}</h3>
+            <p class="mt-1 max-w-2xl text-muted">{item.text[lang]}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section-dark py-24">
+    <div class="container-site">
+      <h2 class="text-h2">{fr ? 'En chiffres' : 'In figures'}</h2>
+      <dl class="mt-10 grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-3">
+        {numbers.map((n) => (
+          <div class="flex flex-col-reverse gap-1.5 border-t border-white/12 pt-5">
+            <dt class="text-sm text-straw-50/70">{n.label}</dt>
+            <dd class="font-mono text-4xl font-semibold text-eky-green-light tabular-nums">{n.value}</dd>
+          </div>
+        ))}
+      </dl>
+      {figures.measuredAt && (
+        <p class="mt-6 text-xs text-straw-50/55">
+          {fr
+            ? `Exploitations et surfaces : mesure de ${figures.measuredAt}.`
+            : `Farms and areas: measured ${figures.measuredAt}.`}
+        </p>
+      )}
+    </div>
+  </section>
+
+  <section class="section-light py-24">
+    <div class="container-site text-center">
+      <h2 class="text-h2">{fr ? 'Envie d’en savoir plus ?' : 'Want to know more?'}</h2>
+      <p class="mx-auto mt-4 max-w-xl text-lead text-muted">
+        {fr
+          ? 'Projet, partenariat, presse ou simple curiosité : écrivez-nous.'
+          : 'Project, partnership, press or simple curiosity: get in touch.'}
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-4">
+        <a href={routePath('contact', lang)} class="btn btn-primary">
+          {fr ? 'Nous contacter' : 'Contact us'}
+        </a>
+        <a href={LINKS.discord} rel="noopener" target="_blank" class="btn btn-secondary">
+          {fr ? 'Rejoindre la communauté sur Discord' : 'Join the community on Discord'}
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -3,6 +3,7 @@ import '~/styles/global.css';
 import { Font } from 'astro:assets';
 import Header from '~/components/Header.astro';
 import Footer from '~/components/Footer.astro';
+import Consent from '~/components/consent/Consent.astro';
 import { alternates, routePath, withBase, type Locale, type RouteKey } from '~/i18n/routes';
 import { useTranslations } from '~/i18n/ui';
 
@@ -70,5 +71,6 @@ const indexable = !noindex && site.hostname === 'ekylibre.com';
       <slot />
     </main>
     <Footer lang={lang} />
+    <Consent lang={lang} />
   </body>
 </html>

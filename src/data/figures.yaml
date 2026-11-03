@@ -1,0 +1,5 @@
+# Chiffres fournis par Ekylibre SAS (D18). Laisser vide tant qu'ils ne sont pas confirmés :
+# le bandeau correspondant est alors masqué.
+farms: null # nombre d'exploitations utilisant Ekylibre
+hectares: null # surface gérée dans Ekylibre (ha)
+measuredAt: null # date de la mesure, AAAA-MM

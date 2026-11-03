@@ -128,6 +128,26 @@ export default defineConfig({
 
   markdown: { rehypePlugins: [rehypeSiteLinks] },
 
+  // E4 — Politique de sécurité (balise <meta>, GitHub Pages ne permet pas d'en-têtes HTTP).
+  // Astro calcule les empreintes des scripts et styles intégrés ; on ajoute les sources externes
+  // autorisées : Brevo (envoi des formulaires) et Google Analytics (après consentement uniquement).
+  security: {
+    csp: {
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com",
+        "font-src 'self'",
+        "connect-src 'self' blob: https://*.sibforms.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
+        "form-action 'self' https://*.sibforms.com",
+        "worker-src 'self' blob:",
+        "object-src 'none'",
+        "base-uri 'self'",
+      ],
+      // 'wasm-unsafe-eval' : décodeur Meshopt (WebAssembly) des modèles 3D ; blob: (connect-src) : textures glTF.
+      scriptDirective: { resources: ["'self'", "'wasm-unsafe-eval'", 'https://www.googletagmanager.com'] },
+    },
+  },
+
   vite: {
     plugins: [tailwindcss()],
   },

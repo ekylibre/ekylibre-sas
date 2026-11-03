@@ -1,0 +1,22 @@
+# Intégrations externes (E1–E3). Valeurs publiques par nature : elles apparaissent dans le HTML.
+# Tant qu'une valeur est vide, la fonction correspondante est désactivée proprement
+# et scripts/check-content.mjs le signale (bloquant pour la mise en ligne : CK-5).
+
+# Google Analytics 4 — identifiant de mesure « G-XXXXXXXXXX ».
+# Chargé UNIQUEMENT après consentement (bandeau vanilla-cookieconsent).
+ga4: ''
+
+# Formulaires Brevo : URL « action » du formulaire intégré (Brevo → Formulaires → Intégrer →
+# code HTML, attribut action="https://xxxx.sibforms.com/serve/…"), une par usage et par langue.
+# Attributs attendus dans Brevo (contacts) : PRENOM, NOM, ENTREPRISE, PROFIL, MESSAGE, SERVICE,
+# LANGUE, PAGE_SOURCE ; consentement OPT_IN ; double opt-in activé pour la lettre d'information.
+brevo:
+  demo:
+    fr: ''
+    en: ''
+  projet:
+    fr: ''
+    en: ''
+  newsletter:
+    fr: ''
+    en: ''

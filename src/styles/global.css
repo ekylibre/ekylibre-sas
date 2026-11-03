@@ -243,3 +243,17 @@
     }
   }
 }
+
+/* Couleur d'une famille Lexicon portée par une classe (pas d'attribut style : compatible CSP). */
+@layer components {
+  .fam-territoire { --family: var(--color-family-territoire); }
+  .fam-climat { --family: var(--color-family-climat); }
+  .fam-intrants { --family: var(--color-family-intrants); }
+  .fam-entreprises { --family: var(--color-family-entreprises); }
+  .fam-marches { --family: var(--color-family-marches); }
+  .fam-savoirs { --family: var(--color-family-savoirs); }
+  .fam-filiere { --family: var(--color-family-filiere); }
+  .fam-border { border-color: var(--family); }
+  .fam-text { color: var(--family); }
+  .fam-bg { background-color: var(--family); }
+}

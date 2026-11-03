@@ -3,6 +3,7 @@ import Logo from '~/assets/brand/ekylibre-logo.svg';
 import { routePath, type Locale, type RouteKey } from '~/i18n/routes';
 import { useTranslations, ROUTE_TITLES } from '~/i18n/ui';
 import { LINKS } from '~/lib/links';
+import BrevoForm from './forms/BrevoForm.astro';
 
 interface Props {
   lang: Locale;
@@ -35,6 +36,11 @@ const legal = internal(['legal', 'terms', 'privacy', 'cookies']);
       <Logo class="h-12 w-auto text-straw-50" aria-hidden="true" />
       <p class="mt-5 text-muted">{t('site.description')}</p>
       <p class="eyebrow mt-6 text-eky-green-light">{t('footer.opensource')}</p>
+      <div class="mt-10">
+        <h2 class="font-display text-base font-semibold">{t('footer.newsletter.title')}</h2>
+        <p class="mt-1 mb-4 text-sm text-muted">{t('footer.newsletter.text')}</p>
+        <BrevoForm kind="newsletter" lang={lang} tone="dark" />
+      </div>
     </div>
     <nav aria-label={t('a11y.footerNav')} class="grid gap-10 sm:grid-cols-3">
       {columns.map((col) => (
@@ -66,7 +72,16 @@ const legal = internal(['legal', 'terms', 'privacy', 'cookies']);
             </a>
           </li>
         ))}
-        <slot name="consent" />
+        <li>
+          <button
+            type="button"
+            data-consent-manage
+            hidden
+            class="cursor-pointer text-straw-50/60 underline-offset-3 hover:text-straw-50 hover:underline"
+          >
+            {t('footer.cookies')}
+          </button>
+        </li>
       </ul>
     </div>
   </div>

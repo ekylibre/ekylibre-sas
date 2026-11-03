@@ -1,0 +1,357 @@
+---
+// Page produit Aiffel (D3). Textes : docs/contenus/fr/aiffel.md, recoupés avec aiffel.org
+// (garanties, logiciels branchés, « même cœur open source »). Aiffel est en cours de lancement :
+// aucune offre ni aucun prix ici, renvoi vers aiffel.org. Exemple de conversation fictif, sans produit commercial.
+import Base from '~/layouts/Base.astro';
+import Icon from '~/components/Icon.astro';
+import ProductCta from './ProductCta.astro';
+import { softwareJsonLd } from './jsonld';
+import { routePath, type Locale } from '~/i18n/routes';
+import { LINKS } from '~/lib/links';
+import type { IconName } from '~/lib/icon-names';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+
+const title = fr
+  ? 'Aiffel, l’assistant qui range les données de la ferme'
+  : 'Aiffel, the assistant that files your farm data';
+const description = fr
+  ? 'Aiffel, l’assistant agricole à la voix ou par écrit : il prépare l’enregistrement, cite ses sources et n’écrit dans vos logiciels qu’après validation.'
+  : 'Aiffel, the farm assistant you talk or text to: it prepares the record, cites its sources and only writes to your software once you approve.';
+
+const steps: Array<{ icon: IconName; title: string; text: string }> = fr
+  ? [
+      {
+        icon: 'microphone',
+        title: 'Vous parlez.',
+        text: 'Un message vocal depuis la cabine ou un message écrit, avec les noms de parcelles de la ferme. Aiffel vous redit ce qu’il a compris.',
+      },
+      {
+        icon: 'shield-check',
+        title: 'Aiffel vérifie.',
+        text: 'Il complète ce qui manque, puis contrôle la dose, la zone non traitée et le délai avant récolte dans le Lexicon.',
+      },
+      {
+        icon: 'check',
+        title: 'Vous validez.',
+        text: 'L’enregistrement est écrit dans Ekylibre. Avant cela, tout se corrige ou s’annule.',
+      },
+    ]
+  : [
+      {
+        icon: 'microphone',
+        title: 'You speak.',
+        text: 'A voice message from the tractor cab or a text, using the farm’s own field names. Aiffel repeats back what it understood.',
+      },
+      {
+        icon: 'shield-check',
+        title: 'Aiffel checks.',
+        text: 'It fills in what is missing, then checks the rate, the buffer zone and the pre-harvest interval against Lexicon.',
+      },
+      {
+        icon: 'check',
+        title: 'You approve.',
+        text: 'The record is written to Ekylibre. Until then, everything can be corrected or cancelled.',
+      },
+    ];
+
+const guarantees: Array<{ icon: IconName; title: string; text: string }> = fr
+  ? [
+      {
+        icon: 'check',
+        title: 'Rien sans votre accord',
+        text: 'Aucun enregistrement n’est écrit sans votre validation, et l’IA ne peut pas valider à votre place.',
+      },
+      {
+        icon: 'book-open',
+        title: 'Des sources citées',
+        text: 'Chaque réponse indique d’où vient l’information, et Aiffel dit quand il ne sait pas.',
+      },
+      {
+        icon: 'database',
+        title: 'Vos données restent chez vous',
+        text: 'Votre logiciel reste la référence ; Aiffel y écrit sans en faire de copie.',
+      },
+      {
+        icon: 'lock',
+        title: 'Des accès protégés',
+        text: 'Mots de passe et clés sont gardés dans un coffre chiffré, et l’IA ne les voit jamais.',
+      },
+      {
+        icon: 'leaf',
+        title: 'La sobriété',
+        text: 'Le plus petit modèle d’IA suffisant est utilisé pour chaque tâche.',
+      },
+      {
+        icon: 'exchange',
+        title: 'La réversibilité',
+        text: 'Vous arrêtez quand vous voulez : vos données n’ont jamais quitté vos logiciels.',
+      },
+    ]
+  : [
+      {
+        icon: 'check',
+        title: 'Nothing without your approval',
+        text: 'No record is written until you approve it, and the AI cannot approve on your behalf.',
+      },
+      {
+        icon: 'book-open',
+        title: 'Sources cited',
+        text: 'Every answer says where the information comes from, and Aiffel says so when it does not know.',
+      },
+      {
+        icon: 'database',
+        title: 'Your data stays with you',
+        text: 'Your software remains the reference; Aiffel writes to it without keeping a copy.',
+      },
+      {
+        icon: 'lock',
+        title: 'Protected credentials',
+        text: 'Passwords and keys are kept in an encrypted vault, and the AI never sees them.',
+      },
+      {
+        icon: 'leaf',
+        title: 'Frugality',
+        text: 'The smallest AI model that does the job is used for each task.',
+      },
+      {
+        icon: 'exchange',
+        title: 'Reversibility',
+        text: 'Stop whenever you like: your data never left your software.',
+      },
+    ];
+
+const audiences = fr
+  ? [
+      ['Agriculteurs et viticulteurs', 'qui préfèrent dire les choses plutôt que remplir des formulaires.'],
+      ['Salariés et équipes de terrain', 'qui enregistrent leur travail depuis leur téléphone.'],
+      [
+        'Éditeurs de logiciels agricoles',
+        'qui veulent rendre leur outil accessible à la voix, via une API ou un serveur MCP.',
+      ],
+    ]
+  : [
+      ['Farmers and winegrowers', 'who would rather say things than fill in forms.'],
+      ['Farm workers and field teams', 'who record their work from their phone.'],
+      ['Farm software vendors', 'who want their tool to be usable by voice, through an API or an MCP server.'],
+    ];
+
+const chat = fr
+  ? {
+      voice: 'Message vocal · 0:06',
+      said: '« Traité le blé de la parcelle du Moulin ce matin. »',
+      recap: 'J’ai compris : traitement du blé, parcelle du Moulin, ce matin. Quel produit, et à quelle dose ?',
+      card: 'Intervention à valider',
+      checks: ['Dose contrôlée dans le Lexicon', 'Zone non traitée vérifiée', 'Délai avant récolte vérifié'],
+      actions: ['Valider', 'Corriger', 'Annuler'],
+      note: 'Exemple fictif',
+    }
+  : {
+      voice: 'Voice message · 0:06',
+      said: '“Sprayed the wheat on Mill field this morning.”',
+      recap: 'Got it: wheat treatment, Mill field, this morning. Which product, and at what rate?',
+      card: 'Intervention to approve',
+      checks: ['Rate checked against Lexicon', 'Buffer zone checked', 'Pre-harvest interval checked'],
+      actions: ['Approve', 'Correct', 'Cancel'],
+      note: 'Fictional example',
+    };
+
+const jsonLd = softwareJsonLd({ name: 'Aiffel', description, url: LINKS.aiffel });
+---
+
+<Base lang={lang} routeKey="aiffel" title={title} description={description}>
+  <script type="application/ld+json" slot="head" set:html={jsonLd} />
+  <section class="section-dark">
+    <div class="container-site grid gap-12 pt-16 pb-20 lg:grid-cols-[1.4fr_1fr] lg:items-center">
+      <div>
+        <p class="eyebrow text-eky-green-light">
+          {fr ? 'Aiffel · parler à ses logiciels' : 'Aiffel · talk to your software'}
+        </p>
+        <h1 class="mt-4 max-w-3xl text-h1">
+          {fr
+            ? 'Dites-le une fois. Aiffel le range au bon endroit.'
+            : 'Say it once. Aiffel files it in the right place.'}
+        </h1>
+        <p class="mt-5 max-w-2xl text-lead text-straw-50/85">
+          {fr
+            ? 'Aiffel est un assistant pour l’exploitation agricole. Vous lui dites, à la voix ou par écrit, ce que vous avez fait ; il prépare l’enregistrement, le vérifie et l’écrit dans votre logiciel de gestion, une fois que vous l’avez validé.'
+            : 'Aiffel is an assistant for the farm. You tell it what you did, by voice or text; it prepares the record, checks it and writes it to your farm management software once you have approved it.'}
+        </p>
+        <p class="mt-5 inline-flex items-center gap-2 rounded-full bg-night-700 px-4 py-1.5 text-sm ring-1 ring-white/10">
+          <span class="size-2 rounded-full bg-wheat-400" aria-hidden="true"></span>
+          {fr ? 'En cours de lancement' : 'Launching now'}
+        </p>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a href={LINKS.aiffel} rel="noopener" target="_blank" class="btn btn-primary">
+            {fr ? 'Découvrir Aiffel' : 'Discover Aiffel'}
+          </a>
+          <a href={routePath('services', lang)} class="btn btn-secondary">
+            {fr ? 'Parler de votre projet' : 'Discuss your project'}
+          </a>
+        </div>
+      </div>
+
+      <figure class="mx-auto w-full max-w-sm">
+        <div class="space-y-3 rounded-[1.5rem] bg-night-800 p-5 ring-1 ring-white/10" aria-hidden="true">
+          <div class="ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-sm bg-eky-green-deep/40 px-4 py-2.5 text-sm">
+            <p class="flex items-center gap-2 font-mono text-xs text-straw-50/70">
+              <Icon name="microphone" />
+              {chat.voice}
+            </p>
+            <p class="mt-1">{chat.said}</p>
+          </div>
+          <div class="w-fit max-w-[85%] rounded-2xl rounded-bl-sm bg-night-600 px-4 py-2.5 text-sm">{chat.recap}</div>
+          <div class="max-w-[90%] rounded-2xl rounded-bl-sm bg-night-600 px-4 py-3 text-sm">
+            <p class="font-display font-semibold">{chat.card}</p>
+            <ul class="mt-2 space-y-1">
+              {chat.checks.map((c) => (
+                <li class="flex items-center gap-2 text-straw-50/85">
+                  <Icon name="check" class="text-eky-green-light" /> {c}
+                </li>
+              ))}
+            </ul>
+            <div class="mt-3 flex gap-2">
+              {chat.actions.map((a, i) => (
+                <span
+                  class:list={[
+                    'rounded-full px-3 py-1 text-xs font-semibold',
+                    i === 0 ? 'bg-eky-green text-night-900' : 'ring-1 ring-white/25',
+                  ]}
+                >
+                  {a}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+        <figcaption class="mt-3 text-center font-mono text-xs text-straw-50/55">{chat.note}</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section-light py-20">
+    <div class="container-site grid gap-6 lg:grid-cols-[1fr_2fr]">
+      <h2 class="text-h2">{fr ? 'Qui fait quoi' : 'Who does what'}</h2>
+      <p class="text-lead text-muted">
+        {fr
+          ? 'Aiffel est un commun numérique pour l’agriculture, porté avec l’association OSFarm. Ekylibre SAS l’édite et l’opère. Son cœur est open source.'
+          : 'Aiffel is a digital commons for agriculture, run together with the OSFarm association. Ekylibre SAS publishes and operates it. Its core is open source.'}
+      </p>
+    </div>
+  </section>
+
+  <section class="section-cream py-24">
+    <div class="container-site">
+      <h2 class="max-w-2xl text-h2">
+        {fr ? 'Trois temps, et c’est vous qui validez' : 'Three steps, and you have the final say'}
+      </h2>
+      <ol class="mt-12 grid gap-6 md:grid-cols-3">
+        {steps.map((s, i) => (
+          <li class="card">
+            <span class="medallion size-12 text-xl">
+              <Icon name={s.icon} />
+            </span>
+            <p class="eyebrow mt-5 text-eky-green-text">0{i + 1}</p>
+            <h3 class="mt-1 text-h3">{s.title}</h3>
+            <p class="mt-3 text-muted">{s.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section-dark py-24">
+    <div class="container-site">
+      <h2 class="max-w-2xl text-h2">
+        {fr ? 'Des garanties inscrites dans le code' : 'Guarantees written into the code'}
+      </h2>
+      <p class="mt-4 max-w-2xl text-lead text-straw-50/75">
+        {fr
+          ? 'Ce ne sont pas des options : ces règles valent pour toutes les façons d’utiliser Aiffel.'
+          : 'These are not options: the rules apply however you use Aiffel.'}
+      </p>
+      <ul class="mt-12 grid gap-x-10 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
+        {guarantees.map((g) => (
+          <li class="border-t border-white/12 pt-5">
+            <h3 class="flex items-center gap-2 font-display text-lg font-semibold">
+              <Icon name={g.icon} class="text-eky-green-light" /> {g.title}
+            </h3>
+            <p class="mt-2 text-straw-50/75">{g.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section-light py-24">
+    <div class="container-site grid gap-12 lg:grid-cols-2">
+      <div>
+        <h2 class="text-h2">
+          {fr ? 'Aiffel écrit là où vous travaillez déjà' : 'Aiffel writes where you already work'}
+        </h2>
+        <p class="mt-5 text-lead text-muted">
+          {fr
+            ? 'Aiffel ne remplace aucun logiciel. Il est aujourd’hui branché sur Ekylibre et sur le Lexicon ; d’autres logiciels du marché sont prévus. Il s’y connecte de préférence par API ou par serveur MCP, sinon par fichiers.'
+            : 'Aiffel replaces no software. Today it is connected to Ekylibre and Lexicon, and other software on the market is planned. It connects through an API or an MCP server where available, otherwise through files.'}
+        </p>
+        <ul class="mt-8 flex flex-wrap gap-3">
+          <li>
+            <a href={routePath('ekylibre', lang)} class="btn btn-secondary">
+              Ekylibre
+            </a>
+          </li>
+          <li>
+            <a href={routePath('lexicon', lang)} class="btn btn-secondary">
+              Lexicon
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="text-h2">{fr ? 'Pour qui' : 'Who it is for'}</h2>
+        <ul class="mt-6 space-y-5">
+          {audiences.map(([who, why]) => (
+            <li class="border-t border-soil-800/10 pt-5">
+              <strong class="font-display">{who}</strong> {why}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-cream py-20">
+    <div class="container-site">
+      <div class="max-w-4xl">
+        <h2 class="text-h2">{fr ? 'Essayer Aiffel' : 'Try Aiffel'}</h2>
+        <p class="mt-5 text-lead text-muted">
+          {fr
+            ? 'Aiffel est en cours de lancement. Les offres, leur état d’avancement et l’inscription pour être prévenu sont sur aiffel.org. Pour brancher Aiffel sur votre logiciel ou sur un réseau d’exploitations, Ekylibre SAS vous accompagne.'
+            : 'Aiffel is launching now. The offers, their progress and the sign-up to be notified are on aiffel.org. To connect Aiffel to your software or to a network of farms, Ekylibre SAS can help.'}
+        </p>
+        <p class="mt-6">
+          <a href={LINKS.aiffel} rel="noopener" target="_blank" class="inline-flex items-center gap-2 font-semibold">
+            {fr ? 'Voir les offres sur aiffel.org' : 'See the offers on aiffel.org'}
+            <Icon name="arrow-right" />
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <ProductCta
+    lang={lang}
+    lead="project"
+    title={fr ? 'Votre logiciel peut-il parler avec Aiffel ?' : 'Can your software talk to Aiffel?'}
+    text={
+      fr
+        ? 'Éditeur, coopérative ou groupement : nous étudions avec vous le branchement d’Aiffel sur vos outils.'
+        : 'Software vendor, co-op or producer group: we will look at connecting Aiffel to your tools with you.'
+    }
+    site={{ href: LINKS.aiffel, label: fr ? 'Découvrir aiffel.org' : 'Visit aiffel.org' }}
+  />
+</Base>
