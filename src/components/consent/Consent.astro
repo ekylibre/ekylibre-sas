@@ -49,8 +49,9 @@ const config = GA4_ID
 )}
 
 <script>
-  import 'vanilla-cookieconsent/dist/cookieconsent.css';
-  import './consent.css';
+  // URL des feuilles de style (?url) : insérées à la main, uniquement si le bandeau est actif.
+  import ccCss from 'vanilla-cookieconsent/dist/cookieconsent.css?url';
+  import themeCss from './consent.css?url';
 
   const el = document.getElementById('consent-config');
   if (el) {
@@ -68,6 +69,11 @@ const config = GA4_ID
       | 'analyticsTitle'
       | 'analyticsText';
     const cfg = JSON.parse(el.textContent ?? '{}') as { ga4: string; lang: string; text: Record<Key, string> };
+    // Styles chargés seulement si le bandeau est actif (ils ne bloquent pas le rendu des autres pages).
+    for (const href of [ccCss, themeCss]) {
+      const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href });
+      document.head.append(link);
+    }
     const [CookieConsent, analytics] = await Promise.all([import('vanilla-cookieconsent'), import('~/lib/analytics')]);
     const t = cfg.text;
     await CookieConsent.run({

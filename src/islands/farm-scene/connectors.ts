@@ -84,11 +84,14 @@ export function createConnectorLayer(stage: Stage, anchors: AnchorRegistry, prop
     button.innerHTML =
       `<span class="scene-medallion__disc">${iconSvg(props.iconSprite, meta.icon)}</span>` +
       `<span class="scene-medallion__label"><strong>${escapeHtml(isHub ? 'Ekylibre' : meta.title)}</strong>` +
-      (subtitle ? `<span>${escapeHtml(subtitle)}</span>` : '') +
+      (subtitle ? ` <span>${escapeHtml(subtitle)}</span>` : '') +
       `</span>`;
+    // Le nom accessible commence par le texte visible, à l'identique (WCAG 2.5.3 « Label in Name »),
+    // puis donne la liste complète des connecteurs.
+    const connectorsList = list.map((c) => c.title).join(', ');
     button.setAttribute(
       'aria-label',
-      `${isHub ? 'Ekylibre' : meta.title}${list.length ? ` — ${list.map((c) => c.title).join(', ')}` : ''}`,
+      `${[isHub ? 'Ekylibre' : meta.title, subtitle].filter(Boolean).join(', ')}${connectorsList ? ` — ${connectorsList}` : ''}`,
     );
     button.addEventListener('click', () => {
       document.dispatchEvent(new CustomEvent('eky:select', { detail: { kind: 'zone', id: zoneId, origin: button } }));

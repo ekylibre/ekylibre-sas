@@ -18,19 +18,52 @@ interface Props {
   noindex?: boolean;
   /** URL propre à la page (base comprise) quand elle n'est pas une route de la table (articles). */
   canonicalUrl?: string;
+  /** URL de la version traduite de la page (base comprise), quand elle existe (articles). */
+  translationUrl?: string;
 }
 
-const { lang, routeKey, title, description, ogImage, noindex = false, canonicalUrl } = Astro.props;
+const { lang, routeKey, title, description, ogImage, noindex = false, canonicalUrl, translationUrl } = Astro.props;
 const t = useTranslations(lang);
 const site = Astro.site ?? new URL('https://ekylibre.com');
 const fullTitle = title ? `${title} · Ekylibre` : `Ekylibre · ${t('site.tagline')}`;
 const metaDescription = description ?? t('site.description');
 const canonical = new URL(canonicalUrl ?? routePath(routeKey, lang), site).href;
 // Une page sans équivalent traduit (article) ne déclare que sa propre langue.
-const alts = canonicalUrl ? [{ lang, href: canonical }] : alternates(routeKey, site);
-const og = ogImage ? new URL(withBase(ogImage), site).href : undefined;
+const otherLang: Locale = lang === 'fr' ? 'en' : 'fr';
+const alts = canonicalUrl
+  ? [
+      { lang, href: canonical },
+      ...(translationUrl ? [{ lang: otherLang, href: new URL(translationUrl, site).href }] : []),
+    ]
+  : alternates(routeKey, site);
+// Image de partage : celle de la page si fournie (articles), sinon l'image générée pour la route (scripts/og-images.mjs).
+const og = new URL(withBase(ogImage ?? `/og/${routeKey}-${lang}.jpg`), site).href;
 // Hors du domaine de production (recette sur ekylibre.github.io), aucune page n'est indexée.
 const indexable = !noindex && site.hostname === 'ekylibre.com';
+
+// Données structurées de l'entreprise et du site (accueil uniquement).
+const orgJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${site.origin}/#organization`,
+      name: 'Ekylibre SAS',
+      url: new URL(withBase('/'), site).href,
+      logo: new URL(withBase('/favicon.png'), site).href,
+      description: t('site.description'),
+      sameAs: ['https://github.com/ekylibre', 'https://ekylibre.org/', 'https://discord.gg/BSpD6hq7qR'],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${site.origin}/#website`,
+      name: 'Ekylibre',
+      url: new URL(withBase('/'), site).href,
+      inLanguage: ['fr-FR', 'en-GB'],
+      publisher: { '@id': `${site.origin}/#organization` },
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -57,16 +90,21 @@ const indexable = !noindex && site.hostname === 'ekylibre.com';
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={metaDescription} />
     <meta property="og:url" content={canonical} />
-    {og && <meta property="og:image" content={og} />}
-    <meta name="twitter:card" content={og ? 'summary_large_image' : 'summary'} />
+    <meta property="og:image" content={og} />
+    {!ogImage && <meta property="og:image:width" content="1200" />}
+    {!ogImage && <meta property="og:image:height" content="630" />}
+    <meta name="twitter:card" content="summary_large_image" />
 
     <Font cssVariable="--font-montserrat" preload={[{ weight: 700 }]} />
     <Font cssVariable="--font-inter" preload={[{ style: 'normal' }]} />
     <Font cssVariable="--font-jetbrains" />
+    {routeKey === 'home' && (
+      <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd).replace(/</g, '\\u003c')} />
+    )}
     <slot name="head" />
   </head>
   <body class="min-h-dvh">
-    <Header lang={lang} routeKey={routeKey} />
+    <Header lang={lang} routeKey={routeKey} {...(translationUrl ? { langSwitchHref: translationUrl } : {})} />
     <main id="contenu" tabindex="-1" class="outline-none">
       <slot />
     </main>

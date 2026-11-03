@@ -8,8 +8,10 @@ import { useTranslations, ROUTE_TITLES } from '~/i18n/ui';
 interface Props {
   lang: Locale;
   routeKey: RouteKey;
+  /** Cible explicite du sélecteur de langue (page traduite hors table des routes). */
+  langSwitchHref?: string;
 }
-const { lang, routeKey } = Astro.props;
+const { lang, routeKey, langSwitchHref } = Astro.props;
 const t = useTranslations(lang);
 
 const PRODUCTS: RouteKey[] = ['ekylibre', 'aiffel', 'lexicon'];
@@ -56,7 +58,7 @@ const isCurrent = (key: RouteKey) => (key === routeKey ? 'page' : undefined);
           </li>
         ))}
         <li class="mt-4 flex items-center gap-3 xl:mt-0 xl:ml-3">
-          <LangSwitch lang={lang} routeKey={routeKey} />
+          <LangSwitch lang={lang} routeKey={routeKey} {...(langSwitchHref ? { href: langSwitchHref } : {})} />
           <a href={routePath('contact', lang)} class="btn btn-primary px-5 py-2.5 text-sm whitespace-nowrap">
             {t('cta.demo')}
           </a>

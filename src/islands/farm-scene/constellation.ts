@@ -59,6 +59,9 @@ const FRAGMENT = /* glsl */ `
   }
 `;
 
+const escapeHtml = (s: string) =>
+  s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] ?? c);
+
 const iconSvg = (sprite: string, name: string) =>
   `<svg class="icon" aria-hidden="true" focusable="false"><use href="${sprite}#i-${name}"></use></svg>`;
 
@@ -114,8 +117,9 @@ export function createConstellation(
     }`;
     button.innerHTML =
       `<span class="scene-medallion__disc">${iconSvg(props.iconSprite, family.icon)}</span>` +
-      `<span class="scene-medallion__label"><strong>${family.title}</strong><span>${count}</span></span>`;
-    button.setAttribute('aria-label', `${family.title} — ${count}`);
+      `<span class="scene-medallion__label"><strong>${escapeHtml(family.title)}</strong> <span>${escapeHtml(count)}</span></span>`;
+    // Nom accessible = texte visible (WCAG 2.5.3).
+    button.setAttribute('aria-label', `${family.title}, ${count}`);
     button.addEventListener('click', () => {
       document.dispatchEvent(
         new CustomEvent('eky:select', { detail: { kind: 'family', id: family.id, origin: button } }),

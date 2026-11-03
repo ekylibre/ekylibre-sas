@@ -6,6 +6,7 @@ import Base from '~/layouts/Base.astro';
 import Icon from '~/components/Icon.astro';
 import NewsCover from './NewsCover.astro';
 import { routePath, type Locale } from '~/i18n/routes';
+import { getCollection } from 'astro:content';
 import { formatNewsDate, isoDate, newsUrl, tagLabel, type NewsEntry } from '~/lib/news';
 import './news-prose.css';
 
@@ -13,6 +14,11 @@ interface Props {
   entry: NewsEntry;
 }
 const { entry } = Astro.props;
+// Version traduite du même article (même translationKey), pour le sélecteur de langue et hreflang.
+const [translation] = await getCollection(
+  'news',
+  (e) => e.data.translationKey === entry.data.translationKey && e.data.lang !== entry.data.lang,
+);
 const lang: Locale = entry.data.lang;
 const { title, summary, tags, cover, source } = entry.data;
 const { Content } = await render(entry);
@@ -61,6 +67,7 @@ const copy = {
   lang={lang}
   routeKey="news"
   canonicalUrl={newsUrl(entry)}
+  {...(translation ? { translationUrl: newsUrl(translation) } : {})}
   title={title}
   {...(summary ? { description: summary } : {})}
   {...(ogPath ? { ogImage: ogPath } : {})}

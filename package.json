@@ -17,7 +17,11 @@
     "format": "prettier --write .",
     "check:content": "node scripts/check-content.mjs",
     "check:links": "node scripts/check-content.mjs --links",
-    "prepare:3d": "node scripts/prepare-3d.mjs"
+    "prepare:3d": "node scripts/prepare-3d.mjs",
+    "test": "playwright test",
+    "test:a11y": "playwright test a11y --project=desktop",
+    "test:smoke": "playwright test smoke",
+    "test:report": "playwright show-report"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.5",
@@ -37,6 +41,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
+    "@axe-core/playwright": "^4.14.0",
     "@gltf-transform/core": "^4.5.1",
     "@gltf-transform/extensions": "^4.5.1",
     "@gltf-transform/functions": "^4.5.1",

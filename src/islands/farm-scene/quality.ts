@@ -34,11 +34,17 @@ export function detectTier(): TierReport {
   gl.getExtension('WEBGL_lose_context')?.loseContext();
 
   const software = /swiftshader|llvmpipe|software|basic render/i.test(renderer);
+  // Rendu logiciel (pas de GPU : machines virtuelles, outils de mesure comme Lighthouse/PageSpeed)
+  // ou navigateur piloté par un robot : la 3D monopoliserait le processeur, on sert la version 2D.
+  // `?force3d` dans l'URL lève cette exclusion (tests automatisés de la scène).
+  const force3d = new URLSearchParams(location.search).has('force3d');
+  if (!force3d && software) return { tier: 'none', reason: 'software-renderer', reducedMotion };
+  if (!force3d && navigator.webdriver) return { tier: 'none', reason: 'automation', reducedMotion };
   const memory = nav.deviceMemory ?? 8;
   const cores = nav.hardwareConcurrency ?? 8;
   const coarse = matchMedia('(pointer: coarse)').matches;
 
-  if (saveData || slowNetwork || software || memory <= 4 || cores <= 4) {
+  if (software || saveData || slowNetwork || memory <= 4 || cores <= 4) {
     return { tier: 'low', reason: software ? 'software-renderer' : 'constrained-device', reducedMotion };
   }
   if (coarse || memory < 8) return { tier: 'medium', reason: 'mobile', reducedMotion };
