@@ -13,9 +13,10 @@ interface Props {
   lang: FarmSceneProps['lang'];
   view?: string;
   focusX?: number;
+  chapters?: FarmSceneProps['chapters'];
   class?: string;
 }
-const { mode = 'hero', lang, view = 'site', focusX, class: className } = Astro.props;
+const { mode = 'hero', lang, view = 'site', focusX, chapters, class: className } = Astro.props;
 
 const connectors = (await stableConnectors(lang)).map((c) => ({
   slug: c.slug,
@@ -30,12 +31,33 @@ const connectors = (await stableConnectors(lang)).map((c) => ({
   version: c.version,
   repoUrl: c.repoUrl,
 }));
+// Aiffel n'est pas un plugin d'Ekylibre : c'est l'assistant qui dialogue avec l'agriculteur, dans la cour.
+connectors.push({
+  slug: 'aiffel',
+  category: 'gestion',
+  icon: 'microphone',
+  zone: 'cour',
+  dataFlow: 'in',
+  title: 'Aiffel',
+  summary:
+    lang === 'fr'
+      ? 'L’assistant à qui l’on parle, à la voix ou par écrit : il prépare, vérifie dans le Lexicon et écrit dans Ekylibre après validation.'
+      : 'The assistant you talk to, by voice or text: it prepares, checks against Lexicon and writes to Ekylibre once approved.',
+  partner: 'aiffel.org',
+  partnerUrl: 'https://aiffel.org/',
+  version: '',
+  repoUrl: 'https://github.com/ekylibre/aiffel',
+});
 const families = (await lexiconFamilies(lang)).map((f) => ({ ...f, color: FAMILY_COLORS[f.id] ?? '#4ed164' }));
 const zones = Object.fromEntries(
   Object.entries(ZONE_META).map(([id, z]) => [id, { title: z.title[lang], icon: z.icon }]),
 );
 const strings = {
-  fr: { 'hub.subtitle': 'Le système d’information', 'family.datasets': 'jeux de données', 'family.dataset': 'jeu de données' },
+  fr: {
+    'hub.subtitle': 'Le système d’information',
+    'family.datasets': 'jeux de données',
+    'family.dataset': 'jeu de données',
+  },
   en: { 'hub.subtitle': 'The information system', 'family.datasets': 'datasets', 'family.dataset': 'dataset' },
 }[lang];
 
@@ -51,6 +73,7 @@ const props: FarmSceneProps = {
   zones,
   strings,
   ...(focusX === undefined ? {} : { focusX }),
+  ...(chapters ? { chapters } : {}),
 };
 ---
 

@@ -120,7 +120,7 @@ const links = {
             <p class="mt-2 flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs text-straw-50/60">
               <span class="text-eky-green-light">${esc(strings[c.dataFlow] ?? '')}</span>
               ${c.partner ? `<span>${esc(strings.partner!)} : ${c.partnerUrl ? external(c.partnerUrl, c.partner) : esc(c.partner)}</span>` : ''}
-              <span>${esc(strings.version!)} ${esc(c.version)}</span>
+              ${c.version ? `<span>${esc(strings.version!)} ${esc(c.version)}</span>` : ''}
               ${external(c.repoUrl, strings.source!)}
             </p>
           </li>`,

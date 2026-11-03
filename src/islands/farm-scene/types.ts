@@ -66,6 +66,14 @@ export interface SceneZoneMeta {
   icon: string;
 }
 
+/** Chapitre de la narration de l'accueil : vue caméra et éléments révélés. */
+export interface Chapter {
+  id: string;
+  view: string;
+  zones: string[] | 'all';
+  sky: boolean;
+}
+
 export interface FarmSceneProps {
   mode: 'hero' | 'explore';
   lang: 'fr' | 'en';
@@ -82,6 +90,7 @@ export interface FarmSceneProps {
   zones: Record<string, SceneZoneMeta>;
   iconSprite: string;
   strings: Record<string, string>;
+  chapters?: Chapter[];
 }
 
 export interface SelectDetail {
@@ -103,6 +112,8 @@ declare global {
     'eky:ready': CustomEvent<ReadyDetail>;
     'eky:fallback': CustomEvent<FallbackDetail>;
     'eky:chapter': CustomEvent<{ id: string; progress?: number }>;
+    'eky:view': CustomEvent<{ view: string }>;
+    'eky:filter': CustomEvent<{ zones: string[] | 'all'; sky: boolean }>;
     'eky:select': CustomEvent<SelectDetail>;
   }
 }

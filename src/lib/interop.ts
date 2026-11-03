@@ -73,7 +73,10 @@ export interface FamilyView {
 /** Familles du Lexicon avec leurs jeux de données (ordre du fichier de curation). */
 export async function lexiconFamilies(lang: Locale): Promise<FamilyView[]> {
   const byName = new Map(datasets.map((d) => [d.name, d]));
-  const families = await getCollection('families');
+  const ORDER = ['territoire', 'climat', 'intrants', 'entreprises', 'marches', 'savoirs', 'filiere'];
+  const families = (await getCollection('families')).sort(
+    (a, b) => ORDER.indexOf(a.data.id) - ORDER.indexOf(b.data.id),
+  );
   return families.map((f) => {
     const items = Object.entries(f.data.datasets)
       .map(([name, label]) => {

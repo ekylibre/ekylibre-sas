@@ -1,0 +1,342 @@
+---
+// Page Interopérabilité (D2) : ferme 3D explorable, trois couches, connecteurs, données publiques.
+// Textes : docs/contenus/fr/interoperabilite.md (B10), points [À CONFIRMER] écartés.
+import { Image, Picture } from 'astro:assets';
+import Base from '~/layouts/Base.astro';
+import Icon from '~/components/Icon.astro';
+import FarmScene from '~/components/FarmScene.astro';
+import ConnectorDiagram from '~/components/ConnectorDiagram.astro';
+import ConnectorTable from './ConnectorTable.astro';
+import DatasetTable from './DatasetTable.astro';
+import drone from '~/assets/images/la-vauzelle-drone.jpg';
+import medTracteur from '~/assets/illustrations/medaillon-tracteur.webp';
+import medRegistre from '~/assets/illustrations/medaillon-registre.webp';
+import medAgriculteur from '~/assets/illustrations/medaillon-agriculteur.webp';
+import { routePath, type Locale } from '~/i18n/routes';
+import { stats, datasets, formatCompact, formatInt } from '~/lib/data';
+import { LINKS } from '~/lib/links';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const rows = formatCompact(stats.lexicon.totalRows, lang);
+const open = datasets.filter((d) => d.scope === 'open').length;
+const members = datasets.length - open;
+
+const views = [
+  { id: 'synthese', label: fr ? 'Vue d’ensemble' : 'Overview' },
+  { id: 'champs', label: fr ? 'Les champs' : 'Fields' },
+  { id: 'elevage-vigne', label: fr ? 'Élevage et vigne' : 'Livestock & vineyard' },
+  { id: 'hub', label: fr ? 'Le bureau' : 'Office' },
+  { id: 'ciel', label: fr ? 'Le ciel de données' : 'Data sky' },
+];
+const filters = [
+  { id: 'all', label: fr ? 'Tout' : 'All', zones: 'all', sky: true },
+  { id: 'connectors', label: fr ? 'Connecteurs' : 'Connectors', zones: 'all', sky: false },
+  { id: 'data', label: fr ? 'Données publiques' : 'Public data', zones: ['hub'], sky: true },
+  { id: 'voice', label: fr ? 'Dialogue' : 'Dialogue', zones: ['hub', 'cour'], sky: false },
+];
+
+const layers = [
+  {
+    img: medTracteur,
+    title: fr ? 'Les connecteurs relient vos outils' : 'Connectors link your tools',
+    text: fr
+      ? 'Chaque connecteur est une extension d’Ekylibre, publiée en logiciel libre. Il récupère les données d’un outil (boîtier de tracteur, station météo, banque, logiciel de vente) et les transforme en interventions, relevés ou écritures dans Ekylibre. Certains fonctionnent dans les deux sens.'
+      : 'Each connector is an Ekylibre extension released as free software. It retrieves data from a tool (tractor box, weather station, bank, sales software) and turns it into interventions, readings or accounting entries in Ekylibre. Some work both ways.',
+  },
+  {
+    img: medRegistre,
+    title: fr ? 'Les données publiques servent de référence' : 'Public data as the reference',
+    text: fr
+      ? 'Le Lexicon rassemble les grands référentiels agricoles français : cadastre, parcelles PAC, produits phytosanitaires, météo, entreprises. Ils sont reliés par des clés communes : un numéro de parcelle mène à la commune, au sol et aux cultures déclarées.'
+      : 'Lexicon brings together France’s main agricultural reference data: land registry, CAP plots, plant protection products, weather, businesses. They are linked by shared keys: a plot number leads to its municipality, its soil and the declared crops.',
+  },
+  {
+    img: medAgriculteur,
+    title: fr ? 'Le dialogue remplace la saisie' : 'Talking replaces typing',
+    text: fr
+      ? 'Avec Aiffel, l’agriculteur dit ce qu’il a fait, à la voix ou par écrit. L’assistant prépare l’enregistrement, le vérifie dans le Lexicon et l’écrit dans Ekylibre après validation.'
+      : 'With Aiffel, farmers say what they did, by voice or text. The assistant prepares the record, checks it against Lexicon and writes it to Ekylibre once approved.',
+  },
+];
+
+const points = fr
+  ? [
+      [
+        'Des API documentées',
+        'Ekylibre expose une API REST (version 2) décrite au format OpenAPI. Le Lexicon répond en JSON et en CSV, et par un serveur MCP pour les assistants d’IA.',
+      ],
+      [
+        'Des formats ouverts',
+        'Les données entrent et sortent dans des formats ouverts et documentés, jamais dans un format fermé.',
+      ],
+      [
+        'Des référentiels partagés',
+        'Ekylibre s’appuie sur les nomenclatures Onoma et Lexicon : un produit, une variété ou une unité porte le même identifiant partout.',
+      ],
+      [
+        'La réversibilité',
+        'Le code d’Ekylibre est libre (licence AGPL) et sa base de données est PostgreSQL. Vos données restent récupérables, et le logiciel peut tourner ailleurs.',
+      ],
+      [
+        'Un espace par exploitation',
+        'Chaque exploitation dispose de son propre espace de données, séparé des autres. Les données appartiennent à l’agriculteur.',
+      ],
+      [
+        'Un engagement audité',
+        'En mars 2019, Ekylibre a été la première entreprise labellisée Data-Agri par la FNSEA et Jeunes Agriculteurs, après un audit de ses contrats au regard de la charte de protection des données agricoles.',
+      ],
+    ]
+  : [
+      [
+        'Documented APIs',
+        'Ekylibre exposes a REST API (version 2) described in OpenAPI. Lexicon answers in JSON and CSV, and through an MCP server for AI assistants.',
+      ],
+      ['Open formats', 'Data comes in and goes out in open, documented formats, never in a closed one.'],
+      [
+        'Shared references',
+        'Ekylibre relies on the Onoma and Lexicon nomenclatures: a product, a variety or a unit has the same identifier everywhere.',
+      ],
+      [
+        'Reversibility',
+        'Ekylibre’s code is free software (AGPL) and its database is PostgreSQL. Your data can always be retrieved, and the software can run elsewhere.',
+      ],
+      [
+        'One space per farm',
+        'Each farm has its own data space, separate from the others. The data belongs to the farmer.',
+      ],
+      [
+        'An audited commitment',
+        'In March 2019, Ekylibre was the first company to receive the Data-Agri label from FNSEA and Jeunes Agriculteurs, after an audit of its contracts against the French farm data charter.',
+      ],
+    ];
+---
+
+<Base
+  lang={lang}
+  routeKey="interop"
+  title={fr ? 'Interopérabilité' : 'Interoperability'}
+  description={
+    fr
+      ? 'Connecteurs, données publiques ouvertes, API et formats libres : comment Ekylibre relie les outils de la ferme et garde vos données réversibles.'
+      : 'Connectors, open public data, APIs and open formats: how Ekylibre connects the farm’s tools and keeps your data reversible.'
+  }
+>
+  <section class="section-dark">
+    <div class="container-site pt-16 pb-10">
+      <p class="eyebrow text-eky-green-light">{fr ? 'Interopérabilité' : 'Interoperability'}</p>
+      <h1 class="mt-4 max-w-3xl text-h1">
+        {fr ? 'La ferme connectée à tout son écosystème' : 'The farm connected to its whole ecosystem'}
+      </h1>
+      <p class="mt-5 max-w-3xl text-lead text-straw-50/85">
+        {fr
+          ? 'Une exploitation utilise des dizaines d’outils : machines, capteurs, banque, déclarations, logiciels de filière. Ekylibre les fait parler entre eux, pour que la même information ne soit jamais saisie deux fois.'
+          : 'A farm uses dozens of tools: machinery, sensors, banking, declarations, sector software. Ekylibre makes them talk to each other, so the same information is never entered twice.'}
+      </p>
+      <p class="mt-4 max-w-3xl text-sm text-straw-50/65">
+        {fr
+          ? 'Faites tourner la ferme, survolez un médaillon, cliquez pour ouvrir sa fiche. Tout ce que montre la scène figure aussi dans les tableaux plus bas.'
+          : 'Rotate the farm, hover a medallion, click to open its details. Everything shown in the scene is also listed in the tables below.'}
+        <a href="#tableaux" class="ml-1">
+          {fr ? 'Aller aux tableaux' : 'Skip to the tables'}
+        </a>
+      </p>
+    </div>
+
+    <div class="explore relative isolate h-[78svh] min-h-[32rem] overflow-hidden border-y border-white/8">
+      <Picture
+        src={drone}
+        alt=""
+        formats={['avif', 'webp']}
+        widths={[960, 1920, 2560]}
+        sizes="100vw"
+        class="absolute inset-0 h-full w-full object-cover"
+      />
+      <FarmScene lang={lang} mode="explore" view="synthese" class="absolute inset-0" />
+      <div class="explore-fallback absolute inset-0 hidden place-items-center bg-night-900/80 p-6">
+        <div class="w-full max-w-3xl">
+          <ConnectorDiagram lang={lang} />
+        </div>
+      </div>
+      <div class="explore-controls pointer-events-none absolute inset-x-0 bottom-0 flex flex-col gap-3 p-4 sm:p-6">
+        <div class="pointer-events-auto flex flex-wrap gap-2" role="group" aria-label={fr ? 'Vues' : 'Views'}>
+          {views.map((v, i) => (
+            <button type="button" class="chip" data-view={v.id} aria-pressed={i === 0 ? 'true' : 'false'}>
+              {v.label}
+            </button>
+          ))}
+        </div>
+        <div class="pointer-events-auto flex flex-wrap gap-2" role="group" aria-label={fr ? 'Afficher' : 'Show'}>
+          {filters.map((f, i) => (
+            <button
+              type="button"
+              class="chip chip-filter"
+              data-filter={JSON.stringify({ zones: f.zones, sky: f.sky })}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-light py-24">
+    <div class="container-site">
+      <h2 class="max-w-2xl text-h2">{fr ? 'Trois couches, une seule donnée' : 'Three layers, one source of truth'}</h2>
+      <p class="mt-4 max-w-2xl text-lead text-muted">
+        {fr
+          ? 'L’interopérabilité d’Ekylibre repose sur trois mécanismes complémentaires.'
+          : 'Ekylibre’s interoperability rests on three complementary mechanisms.'}
+      </p>
+      <ol class="mt-12 grid gap-6 md:grid-cols-3">
+        {layers.map((l, i) => (
+          <li class="card">
+            <Image src={l.img} alt="" width={104} height={104} class="size-20" />
+            <p class="eyebrow mt-5 text-eky-green-text">0{i + 1}</p>
+            <h3 class="mt-1 text-h3">{l.title}</h3>
+            <p class="mt-3 text-muted">{l.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section-dark py-24">
+    <div class="container-site">
+      <h2 class="max-w-2xl text-h2">{fr ? 'Interopérable, concrètement' : 'Interoperable, in practice'}</h2>
+      <p class="mt-4 max-w-2xl text-lead text-straw-50/75">
+        {fr
+          ? 'Le mot est souvent employé. Voici ce qu’il recouvre chez nous, point par point.'
+          : 'The word is often used. Here is what it means for us, point by point.'}
+      </p>
+      <ul class="mt-12 grid gap-x-10 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
+        {points.map(([title, text]) => (
+          <li class="border-t border-white/12 pt-5">
+            <h3 class="flex items-center gap-2 font-display text-lg font-semibold">
+              <Icon name="check" class="text-eky-green-light" /> {title}
+            </h3>
+            <p class="mt-2 text-straw-50/75">{text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section id="tableaux" class="section-light scroll-mt-20 py-24">
+    <div class="container-site">
+      <p class="eyebrow text-eky-green-text">{fr ? 'Connecteurs' : 'Connectors'}</p>
+      <h2 class="mt-3 text-h2">
+        {fr
+          ? `${stats.stablePlugins} connecteurs stables, en logiciel libre`
+          : `${stats.stablePlugins} stable connectors, all free software`}
+      </h2>
+      <p class="mt-4 max-w-3xl text-lead text-muted">
+        {fr
+          ? 'Chaque connecteur est un dépôt public sur GitHub. Nous n’affichons que ceux qui ont au moins une version publiée ; les autres apparaîtront ici dès leur première version.'
+          : 'Each connector is a public repository on GitHub. We only list those with at least one published release; others will appear here as soon as they are released.'}
+      </p>
+      <div class="mt-10">
+        <ConnectorTable lang={lang} />
+      </div>
+      <p class="mt-6 text-muted">
+        {fr
+          ? 'Il manque l’outil que vous utilisez ? Nous pouvons développer le connecteur avec vous.'
+          : 'Missing the tool you use? We can build the connector with you.'}
+        <a href={routePath('services', lang)} class="ml-1 font-semibold">
+          {fr ? 'Développement de connecteurs' : 'Connector development'}
+        </a>
+      </p>
+
+      <p class="eyebrow mt-24 text-eky-green-text">{fr ? 'Données publiques' : 'Public data'}</p>
+      <h2 class="mt-3 text-h2">
+        {fr
+          ? `${formatInt(stats.lexicon.datasets, lang)} jeux de données, ${rows} de lignes`
+          : `${formatInt(stats.lexicon.datasets, lang)} datasets, ${rows} records`}
+      </h2>
+      <p class="mt-4 max-w-3xl text-lead text-muted">
+        {fr
+          ? 'Le Lexicon reprend les données publiques de l’INSEE, de l’IGN, de l’ANSES, de Météo-France, de l’Agence Bio, de l’ASP et de bien d’autres, et les relie entre elles. Chaque jeu garde la licence de sa source.'
+          : 'Lexicon takes public data from INSEE, IGN, ANSES, Météo-France, Agence Bio, ASP and many others, and links it together. Each dataset keeps its source licence.'}
+      </p>
+      <div class="mt-10">
+        <DatasetTable lang={lang} />
+      </div>
+      <p class="mt-6 text-muted">
+        {fr
+          ? `${open} jeux sont ouverts à tous ; ${members} sont réservés aux adhérents de l’association OSFarm. Ekylibre SAS produit ${stats.lexicon.byEkylibre} de ces jeux, dont les itinéraires techniques, les modèles d’interventions et le plan comptable agricole.`
+          : `${open} datasets are open to all; ${members} are reserved for members of the OSFarm association. Ekylibre SAS produces ${stats.lexicon.byEkylibre} of them, including crop management plans, intervention templates and the agricultural chart of accounts.`}
+        <a href={LINKS.lexicon} rel="noopener" target="_blank" class="ml-1 font-semibold">
+          {fr ? 'Explorer le Lexicon' : 'Explore Lexicon'}
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section-dark py-24">
+    <div class="container-site grid gap-10 lg:grid-cols-[1.3fr_1fr] lg:items-center">
+      <div>
+        <h2 class="text-h2">
+          {fr
+            ? 'Éditeur, coopérative, organisme agricole : branchez-vous'
+            : 'Software vendor, co-op, farm organisation: plug in'}
+        </h2>
+        <p class="mt-4 text-lead text-straw-50/80">
+          {fr
+            ? 'Vous développez un outil agricole ou vous consolidez les données de vos adhérents ? Nous construisons les connecteurs, les flux et les reprises de données dont vous avez besoin, en logiciel libre.'
+            : 'Building a farm tool or consolidating your members’ data? We build the connectors, data flows and migrations you need, as free software.'}
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-4 lg:justify-end">
+        <a href={routePath('services', lang)} class="btn btn-primary">
+          {fr ? 'Parler de votre projet' : 'Discuss your project'}
+        </a>
+        <a href={routePath('developers', lang)} class="btn btn-secondary">
+          {fr ? 'Documentation développeurs' : 'Developer docs'}
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  @reference "../../styles/global.css";
+
+  .chip {
+    @apply rounded-full bg-night-900/80 px-3.5 py-1.5 font-display text-xs font-semibold text-straw-50/85 ring-1 ring-white/15 backdrop-blur-md transition hover:text-straw-50 hover:ring-white/35;
+  }
+  .chip[aria-pressed='true'] {
+    @apply bg-eky-green text-night-900 ring-eky-green;
+  }
+  :global(.explore:has(farm-scene[data-state='fallback'])) .explore-fallback {
+    display: grid;
+  }
+  :global(.explore:has(farm-scene[data-state='fallback'])) .explore-controls {
+    display: none;
+  }
+</style>
+
+<script>
+  const group = (selector: string) => [...document.querySelectorAll<HTMLButtonElement>(selector)];
+  const press = (buttons: HTMLButtonElement[], active: HTMLButtonElement) =>
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === active)));
+
+  const views = group('.explore [data-view]');
+  for (const b of views) {
+    b.addEventListener('click', () => {
+      press(views, b);
+      document.dispatchEvent(new CustomEvent('eky:view', { detail: { view: b.dataset.view! } }));
+    });
+  }
+  const filters = group('.explore [data-filter]');
+  for (const b of filters) {
+    b.addEventListener('click', () => {
+      press(filters, b);
+      document.dispatchEvent(new CustomEvent('eky:filter', { detail: JSON.parse(b.dataset.filter!) }));
+    });
+  }
+</script>

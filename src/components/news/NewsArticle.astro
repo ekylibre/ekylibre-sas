@@ -1,0 +1,146 @@
+---
+// Page d'un article d'actualité (D7).
+import { getImage, Picture } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import Icon from '~/components/Icon.astro';
+import NewsCover from './NewsCover.astro';
+import { routePath, type Locale } from '~/i18n/routes';
+import { formatNewsDate, isoDate, newsUrl, tagLabel, type NewsEntry } from '~/lib/news';
+import './news-prose.css';
+
+interface Props {
+  entry: NewsEntry;
+}
+const { entry } = Astro.props;
+const lang: Locale = entry.data.lang;
+const { title, summary, tags, cover, source } = entry.data;
+const { Content } = await render(entry);
+
+const site = Astro.site ?? new URL('https://ekylibre.com');
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
+// Image OpenGraph / JSON-LD : JPEG 1200 px au plus (Base ajoute la base de déploiement).
+const og = cover ? await getImage({ src: cover, width: Math.min(1200, cover.width), format: 'jpeg' }) : undefined;
+const ogPath = og ? og.src.slice(baseUrl.length) : undefined;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'NewsArticle',
+  headline: title,
+  description: summary || undefined,
+  datePublished: isoDate(entry),
+  inLanguage: lang === 'fr' ? 'fr-FR' : 'en-GB',
+  mainEntityOfPage: new URL(newsUrl(entry), site).href,
+  image: og ? [new URL(og.src, site).href] : undefined,
+  author: { '@type': 'Organization', name: 'Ekylibre SAS', url: new URL(routePath('home', 'fr'), site).href },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Ekylibre SAS',
+    url: new URL(routePath('home', 'fr'), site).href,
+    logo: { '@type': 'ImageObject', url: new URL(routePath('home', 'fr') + 'favicon.png', site).href },
+  },
+};
+
+const copy = {
+  fr: {
+    back: 'Toutes les actualités',
+    archive: 'Article publié sur l’ancien site ekylibre.com',
+    archiveLink: 'archive',
+    tags: 'Étiquettes',
+  },
+  en: {
+    back: 'All news',
+    archive: 'Article published on the former ekylibre.com website',
+    archiveLink: 'archive',
+    tags: 'Tags',
+  },
+}[lang];
+---
+
+<Base
+  lang={lang}
+  routeKey="news"
+  canonicalUrl={newsUrl(entry)}
+  title={title}
+  {...(summary ? { description: summary } : {})}
+  {...(ogPath ? { ogImage: ogPath } : {})}
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
+  <section class="section-dark relative isolate overflow-hidden">
+    <div
+      class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_85%_0%,rgb(0_193_93/0.14),transparent_55%)]"
+      aria-hidden="true"
+    ></div>
+    <div class="container-site pt-10 pb-16 md:pt-12 md:pb-20">
+      <a
+        href={routePath('news', lang)}
+        class="inline-flex items-center gap-2 text-sm font-semibold no-underline hover:underline"
+      >
+        <Icon name="arrow-right" class="rotate-180" />
+        {copy.back}
+      </a>
+      <div class="mt-10 max-w-3xl">
+        <p class="eyebrow flex flex-wrap items-center gap-x-3 gap-y-2 text-eky-green-light">
+          <time datetime={isoDate(entry)}>{formatNewsDate(entry, lang)}</time>
+          {tags.length > 0 && <span aria-hidden="true">·</span>}
+          {tags.map((tag, i) => (
+            <span>
+              {tagLabel(tag, lang)}
+              {i < tags.length - 1 && ','}
+            </span>
+          ))}
+        </p>
+        <h1 class="mt-4 text-h1">{title}</h1>
+      </div>
+    </div>
+  </section>
+
+  <article class="section-light pb-20">
+    {cover && (
+      <div class="container-site pt-10 md:pt-14">
+        {cover.width >= 1200 ? (
+          <NewsCover
+            entry={entry}
+            sizes="(min-width: 1248px) 1024px, 100vw"
+            widths={[640, 960, 1280, 1600]}
+            loading="eager"
+            class="mx-auto aspect-[16/9] max-w-5xl rounded-[var(--radius-card)] shadow-[var(--shadow-card)] md:aspect-[2/1]"
+          />
+        ) : (
+          <Picture
+            src={cover}
+            alt=""
+            formats={['avif', 'webp']}
+            widths={[...new Set([480, 800].filter((w) => w < cover.width).concat(cover.width))]}
+            sizes={`(min-width: ${cover.width}px) ${cover.width}px, 100vw`}
+            loading="eager"
+            class="mx-auto block h-auto max-h-[28rem] w-auto max-w-full rounded-[var(--radius-card)] shadow-[var(--shadow-card)]"
+          />
+        )}
+      </div>
+    )}
+    <div class="container-site pt-12 md:pt-16">
+      <div class="prose-eky mx-auto" lang={lang}>
+        <Content />
+      </div>
+
+      <footer class="mx-auto mt-16 max-w-[42rem] border-t border-soil-800/10 pt-8">
+        {source && (
+          <p class="flex items-start gap-3 text-sm text-muted">
+            <Icon name="book-open" class="mt-1 text-eky-green-text" />
+            <span>
+              {copy.archive} —{' '}
+              <a href={source} rel="noopener" target="_blank">
+                {copy.archiveLink}
+              </a>
+            </span>
+          </p>
+        )}
+        <a href={routePath('news', lang)} class="btn btn-secondary mt-8">
+          <Icon name="arrow-right" class="rotate-180" />
+          {copy.back}
+        </a>
+      </footer>
+    </div>
+  </article>
+</Base>

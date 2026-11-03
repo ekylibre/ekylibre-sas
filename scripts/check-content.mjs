@@ -90,17 +90,33 @@ async function checkContent() {
     else warning(msg);
   }
 
-  // Redirections : chaque ancienne URL recensée a une cible (B6)
+  // Redirections : chaque ancienne URL recensée a une cible, et chaque cible existe (B6)
   const legacyList = 'docs/brainstorm/anciennes-urls-ekylibre-com.txt';
   if (existsSync('src/data/redirects.yaml')) {
-    const redirects = await yaml('src/data/redirects.yaml');
-    const covered = new Set(Object.keys(redirects ?? {}));
+    const redirects = (await yaml('src/data/redirects.yaml')) ?? {};
+    // Routes du nouveau site : table ROUTES de src/i18n/routes.ts + articles (/actualites/<slug>/, /en/news/<slug>/).
+    const routesTs = await readFile('src/i18n/routes.ts', 'utf8');
+    const block = routesTs.slice(routesTs.indexOf('export const ROUTES'), routesTs.indexOf('} as const'));
+    const routes = new Set([...block.matchAll(/(?:fr|en): '([^']+)'/g)].map((m) => m[1]));
+    const covered = new Set(Object.keys(redirects));
     for (const f of news) {
-      const legacy = (await readFile(f, 'utf8')).match(/^legacyUrl:\s*(\S+)/m)?.[1];
-      if (legacy) covered.add(legacy);
+      const text = await readFile(f, 'utf8');
+      const slug = f.split(/[\\/]/).pop().replace(/\.md$/, '');
+      const lang = text.match(/^lang:\s*(\S+)/m)?.[1];
+      routes.add(lang === 'en' ? `/en/news/${slug}/` : `/actualites/${slug}/`);
+      const legacy = text.match(/^legacyUrl:\s*(\S+)/m)?.[1];
+      if (!legacy) continue;
+      if (covered.has(legacy)) error(`redirects.yaml : « ${legacy} » est aussi le legacyUrl de ${f}`);
+      covered.add(legacy);
     }
+    for (const [from, to] of Object.entries(redirects)) {
+      if (!/^\/(.*\/)?$/.test(from)) error(`redirects.yaml : source « ${from} » (chemin absolu terminé par / attendu)`);
+      if (routes.has(from)) error(`redirects.yaml : « ${from} » est une route du site, la redirection l'écraserait`);
+      if (!routes.has(to)) error(`redirects.yaml : « ${from} » → cible inconnue « ${to} »`);
+    }
+    // Une ancienne URL est couverte par une redirection, un legacyUrl ou une route existante.
     const legacy = (await readFile(legacyList, 'utf8')).split('\n').filter(Boolean);
-    const missing = legacy.filter((u) => !covered.has(u));
+    const missing = legacy.filter((u) => !covered.has(u) && !routes.has(u));
     if (missing.length)
       error(`${missing.length} ancienne(s) URL sans redirection : ${missing.slice(0, 5).join(', ')}…`);
   }

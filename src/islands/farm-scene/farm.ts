@@ -1,6 +1,8 @@
 // FarmLayer : chargement de la ferme (glTF Meshopt) et ambiance « heure dorée ».
 import {
+  CanvasTexture,
   Color,
+  SRGBColorSpace,
   DirectionalLight,
   Fog,
   HemisphereLight,
@@ -45,7 +47,7 @@ export async function loadFarm(stage: Stage, url: string): Promise<Object3D> {
 /** Lumière de fin de journée : soleil rasant de l'ouest, ciel froid, brouillard vers le vert-nuit. */
 function addGoldenHour(stage: Stage): void {
   const { scene } = stage;
-  scene.background = null;
+  scene.background = skyGradient();
   scene.fog = new Fog(NIGHT, 650, 2600);
 
   scene.add(new HemisphereLight('#cfe3ff', '#3d3524', 1.25));
@@ -68,4 +70,22 @@ function addGoldenHour(stage: Stage): void {
     sun.shadow.normalBias = 0.6;
   }
   scene.add(sun, sun.target);
+}
+
+/** Ciel de fin de journée : vert-nuit en haut, lueur chaude à l'horizon (fond plein, en espace écran). */
+function skyGradient(): CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = 4;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d')!;
+  const g = ctx.createLinearGradient(0, 0, 0, 256);
+  g.addColorStop(0, '#07140e');
+  g.addColorStop(0.55, '#0f2a1e');
+  g.addColorStop(0.82, '#3a3a22');
+  g.addColorStop(1, '#6b5530');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 4, 256);
+  const texture = new CanvasTexture(canvas);
+  texture.colorSpace = SRGBColorSpace;
+  return texture;
 }

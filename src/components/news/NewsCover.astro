@@ -1,0 +1,44 @@
+---
+// Visuel d'un article : image de couverture (AVIF/WebP) ou, à défaut, médaillon sur fond nuit.
+// Les petites images (logos importés de l'ancien site) sont présentées entières, sans recadrage.
+import { Picture } from 'astro:assets';
+import Icon from '~/components/Icon.astro';
+import type { NewsEntry } from '~/lib/news';
+
+interface Props {
+  entry: NewsEntry;
+  sizes: string;
+  /** Largeurs maximales générées ; plafonnées à la largeur d'origine. */
+  widths?: number[];
+  loading?: 'eager' | 'lazy';
+  class?: string;
+}
+const { entry, sizes, widths = [400, 640, 960], loading = 'lazy', class: className } = Astro.props;
+const cover = entry.data.cover;
+const small = cover ? cover.width < 600 : false;
+const usable = cover ? [...new Set([...widths.filter((w) => w < cover.width), cover.width])] : [];
+---
+
+<div class:list={['news-cover relative overflow-hidden', small || !cover ? 'bg-night-800' : 'bg-straw-100', className]}>
+  {cover ? (
+    <Picture
+      src={cover}
+      alt=""
+      formats={['avif', 'webp']}
+      widths={usable}
+      sizes={sizes}
+      loading={loading}
+      decoding="async"
+      class:list={[
+        'absolute inset-0 h-full w-full',
+        small ? 'object-contain p-8 opacity-95' : 'object-cover transition-transform duration-500 ease-out',
+      ]}
+    />
+  ) : (
+    <div class="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_30%_20%,rgb(0_193_93/0.18),transparent_60%)]">
+      <span class="medallion size-16 border-eky-green bg-night-700 text-3xl text-eky-green-light">
+        <Icon name="book-open" />
+      </span>
+    </div>
+  )}
+</div>

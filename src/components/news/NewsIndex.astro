@@ -1,0 +1,60 @@
+---
+// Liste des actualités (D7), partagée par /actualites/ et /en/news/.
+import Base from '~/layouts/Base.astro';
+import NewsCard from './NewsCard.astro';
+import { getNewsForListing } from '~/lib/news';
+import type { Locale } from '~/i18n/routes';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const items = await getNewsForListing(lang);
+const hasFallback = items.some((i) => i.fallback);
+
+const copy = {
+  fr: {
+    title: 'Actualités',
+    eyebrow: 'Ekylibre SAS · actualités',
+    h1: 'Actualités',
+    lead: 'Salons, partenariats, nouveautés logicielles : la vie d’Ekylibre et de ses communs numériques, de Clic & Farm à OSFarm.',
+    description:
+      'Les actualités d’Ekylibre SAS : salons, partenariats, communiqués et nouveautés d’Ekylibre, de Lexicon et d’Aiffel.',
+    note: '',
+  },
+  en: {
+    title: 'News',
+    eyebrow: 'Ekylibre SAS · news',
+    h1: 'News',
+    lead: 'Trade fairs, partnerships, software releases: the life of Ekylibre and its digital commons, from Clic & Farm to OSFarm.',
+    description:
+      'News from Ekylibre SAS: trade fairs, partnerships, press releases and updates on Ekylibre, Lexicon and Aiffel.',
+    note: 'Articles published on the former ekylibre.com website are available in French only.',
+  },
+}[lang];
+---
+
+<Base lang={lang} routeKey="news" title={copy.title} description={copy.description}>
+  <section class="section-dark relative isolate overflow-hidden">
+    <div
+      class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_85%_0%,rgb(0_193_93/0.16),transparent_55%),radial-gradient(ellipse_at_0%_100%,rgb(226_183_108/0.08),transparent_50%)]"
+      aria-hidden="true"
+    ></div>
+    <div class="container-site py-20 md:py-24">
+      <p class="eyebrow text-eky-green-light">{copy.eyebrow}</p>
+      <h1 class="mt-4 text-h1">{copy.h1}</h1>
+      <p class="mt-6 max-w-2xl text-lead text-straw-50/80">{copy.lead}</p>
+    </div>
+  </section>
+
+  <section class="section-light py-16 md:py-20">
+    <div class="container-site">
+      {hasFallback && copy.note && <p class="mb-8 max-w-2xl text-sm text-muted">{copy.note}</p>}
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        {items.map(({ entry, fallback }, i) => (
+          <NewsCard entry={entry} lang={lang} fallback={fallback} featured={i === 0} />
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

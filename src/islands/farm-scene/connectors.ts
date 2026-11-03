@@ -91,9 +91,7 @@ export function createConnectorLayer(stage: Stage, anchors: AnchorRegistry, prop
       `${isHub ? 'Ekylibre' : meta.title}${list.length ? ` — ${list.map((c) => c.title).join(', ')}` : ''}`,
     );
     button.addEventListener('click', () => {
-      document.dispatchEvent(
-        new CustomEvent('eky:select', { detail: { kind: 'zone', id: zoneId, origin: button } }),
-      );
+      document.dispatchEvent(new CustomEvent('eky:select', { detail: { kind: 'zone', id: zoneId, origin: button } }));
     });
     const label = new CSS2DObject(button);
     label.position.copy(anchor);
@@ -115,7 +113,7 @@ export function createConnectorLayer(stage: Stage, anchors: AnchorRegistry, prop
   // Pulsation des anneaux au sol (désactivée en mouvement réduit par l'appelant).
   stage.onFrame((_dt, t) => {
     for (const ring of rings) {
-      const k = ((t * 0.5 + (ring.userData.phase as number)) % 1 + 1) % 1;
+      const k = (((t * 0.5 + (ring.userData.phase as number)) % 1) + 1) % 1;
       ring.scale.setScalar(1 + k * 1.6);
       (ring.material as MeshBasicMaterial).opacity = 0.6 * (1 - k);
     }

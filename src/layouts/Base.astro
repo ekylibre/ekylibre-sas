@@ -15,15 +15,18 @@ interface Props {
   /** Image OpenGraph (URL absolue ou chemin du site). */
   ogImage?: string;
   noindex?: boolean;
+  /** URL propre à la page (base comprise) quand elle n'est pas une route de la table (articles). */
+  canonicalUrl?: string;
 }
 
-const { lang, routeKey, title, description, ogImage, noindex = false } = Astro.props;
+const { lang, routeKey, title, description, ogImage, noindex = false, canonicalUrl } = Astro.props;
 const t = useTranslations(lang);
 const site = Astro.site ?? new URL('https://ekylibre.com');
 const fullTitle = title ? `${title} · Ekylibre` : `Ekylibre · ${t('site.tagline')}`;
 const metaDescription = description ?? t('site.description');
-const canonical = new URL(routePath(routeKey, lang), site).href;
-const alts = alternates(routeKey, site);
+const canonical = new URL(canonicalUrl ?? routePath(routeKey, lang), site).href;
+// Une page sans équivalent traduit (article) ne déclare que sa propre langue.
+const alts = canonicalUrl ? [{ lang, href: canonical }] : alternates(routeKey, site);
 const og = ogImage ? new URL(withBase(ogImage), site).href : undefined;
 // Hors du domaine de production (recette sur ekylibre.github.io), aucune page n'est indexée.
 const indexable = !noindex && site.hostname === 'ekylibre.com';

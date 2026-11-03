@@ -1,0 +1,80 @@
+---
+// Carte d'un article dans la liste des actualités.
+import Icon from '~/components/Icon.astro';
+import NewsCover from './NewsCover.astro';
+import { formatNewsDate, isoDate, newsUrl, tagLabel, type NewsEntry } from '~/lib/news';
+import type { Locale } from '~/i18n/routes';
+
+interface Props {
+  entry: NewsEntry;
+  lang: Locale;
+  /** Article affiché dans une autre langue que la page (repli FR sur /en/news/). */
+  fallback?: boolean;
+  /** Première carte, mise en avant. */
+  featured?: boolean;
+}
+const { entry, lang, fallback = false, featured = false } = Astro.props;
+const { title, summary, tags } = entry.data;
+const href = newsUrl(entry);
+---
+
+<article
+  class:list={[
+    'news-card group relative flex overflow-hidden rounded-[var(--radius-card)] bg-white/70 shadow-[var(--shadow-card)] ring-1 ring-soil-800/5 transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgb(7_20_14/0.06),0_18px_40px_-12px_rgb(7_20_14/0.25)]',
+    featured ? 'flex-col md:col-span-2 md:flex-row lg:col-span-3' : 'flex-col',
+  ]}
+>
+  <NewsCover
+    entry={entry}
+    sizes={featured ? '(min-width: 768px) 50vw, 100vw' : '(min-width: 1024px) 380px, (min-width: 768px) 50vw, 100vw'}
+    widths={featured ? [640, 960, 1280] : [400, 640, 800]}
+    loading={featured ? 'eager' : 'lazy'}
+    class={featured ? 'aspect-[16/10] md:aspect-auto md:min-h-80 md:w-1/2' : 'aspect-[16/10]'}
+  />
+  <div class:list={['flex grow flex-col p-6', featured && 'md:w-1/2 md:justify-center md:p-10']}>
+    <p class="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-xs tracking-wide text-ink-500 uppercase">
+      <time datetime={isoDate(entry)}>{formatNewsDate(entry, lang)}</time>
+      {fallback && (
+        <span class="rounded-full bg-wheat-400/30 px-2.5 py-0.5 font-semibold tracking-wider text-soil-800" lang="en">
+          In French
+        </span>
+      )}
+    </p>
+    <h2
+      class:list={[
+        'mt-3 font-display font-bold tracking-tight text-balance text-soil-800',
+        featured ? 'text-h2' : 'text-h3',
+      ]}
+    >
+      <a
+        href={href}
+        hreflang={fallback ? 'fr' : undefined}
+        lang={fallback ? 'fr' : undefined}
+        class="text-inherit no-underline after:absolute after:inset-0 after:content-[''] group-hover:text-eky-green-text"
+      >
+        {title}
+      </a>
+    </h2>
+    {summary && (
+      <p
+        class:list={['mt-3 grow text-muted', featured ? 'line-clamp-4' : 'line-clamp-3']}
+        lang={fallback ? 'fr' : undefined}
+      >
+        {summary}
+      </p>
+    )}
+    <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
+      <ul class="flex flex-wrap gap-2" aria-label={lang === 'fr' ? 'Étiquettes' : 'Tags'}>
+        {tags.map((tag) => (
+          <li class="rounded-full bg-mint-100/70 px-2.5 py-0.5 text-xs font-medium text-night-700">
+            {tagLabel(tag, lang)}
+          </li>
+        ))}
+      </ul>
+      <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-eky-green-text" aria-hidden="true">
+        {lang === 'fr' ? 'Lire' : 'Read'}
+        <Icon name="arrow-right" class="transition-transform group-hover:translate-x-1" />
+      </span>
+    </div>
+  </div>
+</article>

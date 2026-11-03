@@ -1,0 +1,73 @@
+---
+// Tableau des jeux de données du Lexicon, groupés par famille (équivalent HTML de la constellation).
+import Icon from '~/components/Icon.astro';
+import { lexiconFamilies, FAMILY_COLORS } from '~/lib/interop';
+import { formatInt } from '~/lib/data';
+import type { Locale } from '~/i18n/routes';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const families = await lexiconFamilies(lang);
+const head = fr
+  ? ['Jeu de données', 'Producteur', 'Lignes', 'Licence', 'Accès']
+  : ['Dataset', 'Provider', 'Records', 'Licence', 'Access'];
+---
+
+<div class="space-y-4">
+  {families.map((f) => (
+    <details
+      class="group rounded-2xl bg-white/70 shadow-[var(--shadow-card)] ring-1 ring-soil-800/8"
+      open={f.id === 'territoire'}
+    >
+      <summary class="flex cursor-pointer list-none items-center gap-4 px-5 py-4 [&::-webkit-details-marker]:hidden">
+        <span class="medallion size-10 shrink-0 text-lg" style={`border-color:${FAMILY_COLORS[f.id]}`}>
+          <Icon name={f.icon} />
+        </span>
+        <span class="grow">
+          <span class="block font-display text-lg font-semibold">{f.title}</span>
+          <span class="block font-mono text-xs text-muted">
+            {f.datasets.length}{' '}
+            {fr ? (f.datasets.length > 1 ? 'jeux' : 'jeu') : f.datasets.length > 1 ? 'datasets' : 'dataset'} ·{' '}
+            {formatInt(f.rows, lang)} {fr ? 'lignes' : 'records'}
+          </span>
+        </span>
+        <Icon name="chevron-down" class="text-muted transition-transform group-open:rotate-180" />
+      </summary>
+      <div class="overflow-x-auto border-t border-soil-800/8">
+        <table class="w-full min-w-[44rem] text-left text-sm">
+          <caption class="sr-only">{f.title}</caption>
+          <thead class="font-display text-xs tracking-wide text-muted uppercase">
+            <tr>
+              {head.map((h, i) => (
+                <th scope="col" class:list={['px-5 py-2.5 font-semibold', i === 2 && 'text-right']}>
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-soil-800/6">
+            {f.datasets.map((d) => (
+              <tr>
+                <th scope="row" class="px-5 py-3 font-medium">
+                  <a href={d.href} rel="noopener" target="_blank">
+                    {d.label}
+                  </a>
+                  <span class="block font-mono text-[0.7rem] font-normal text-muted">{d.name}</span>
+                </th>
+                <td class="px-5 py-3">{d.provider}</td>
+                <td class="px-5 py-3 text-right font-mono text-xs tabular-nums">{formatInt(d.rows, lang)}</td>
+                <td class="px-5 py-3 text-xs">{d.licence}</td>
+                <td class="px-5 py-3 text-xs whitespace-nowrap">
+                  {d.scope === 'open' ? (fr ? 'Ouvert' : 'Open') : fr ? 'Adhérents OSFarm' : 'OSFarm members'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </details>
+  ))}
+</div>

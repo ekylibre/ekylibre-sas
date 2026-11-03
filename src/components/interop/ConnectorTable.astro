@@ -1,0 +1,71 @@
+---
+// Tableau des connecteurs stables : équivalent HTML de la scène 3D (US1, accessibilité).
+import Icon from '~/components/Icon.astro';
+import { stableConnectors, CATEGORY_META } from '~/lib/interop';
+import type { Locale } from '~/i18n/routes';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const connectors = await stableConnectors(lang);
+const FLOW = {
+  in: fr ? 'Vers Ekylibre' : 'Into Ekylibre',
+  out: fr ? 'Depuis Ekylibre' : 'From Ekylibre',
+  both: fr ? 'Dans les deux sens' : 'Both ways',
+};
+const head = fr
+  ? ['Connecteur', 'Fonction', 'Partenaire', 'Sens des données', 'Version', 'Dépôt']
+  : ['Connector', 'What it does', 'Partner', 'Data flow', 'Version', 'Repository'];
+---
+
+<div class="overflow-x-auto rounded-2xl bg-white/70 shadow-[var(--shadow-card)] ring-1 ring-soil-800/8">
+  <table class="w-full min-w-[56rem] text-left text-sm">
+    <caption class="sr-only">{fr ? 'Connecteurs stables d’Ekylibre' : 'Ekylibre stable connectors'}</caption>
+    <thead class="bg-straw-100 font-display text-xs tracking-wide text-soil-800 uppercase">
+      <tr>
+        {head.map((h) => (
+          <th scope="col" class="px-4 py-3 font-semibold">
+            {h}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-soil-800/8">
+      {connectors.map((c) => (
+        <tr class="align-top">
+          <th scope="row" class="px-4 py-4">
+            <span class="flex items-center gap-3 font-display font-semibold">
+              <span class="medallion size-9 shrink-0 text-base" title={CATEGORY_META[c.category].label[lang]}>
+                <Icon name={CATEGORY_META[c.category].icon} label={CATEGORY_META[c.category].label[lang]} />
+              </span>
+              {c.title}
+            </span>
+          </th>
+          <td class="max-w-md px-4 py-4 text-muted">{c.summary}</td>
+          <td class="px-4 py-4">
+            {c.partner ? (
+              c.partner.url ? (
+                <a href={c.partner.url} rel="noopener" target="_blank">
+                  {c.partner.name}
+                </a>
+              ) : (
+                c.partner.name
+              )
+            ) : (
+              <span class="text-muted">—</span>
+            )}
+          </td>
+          <td class="px-4 py-4 whitespace-nowrap">{FLOW[c.dataFlow]}</td>
+          <td class="px-4 py-4 font-mono text-xs whitespace-nowrap">{c.version}</td>
+          <td class="px-4 py-4">
+            <a href={c.repoUrl} rel="noopener" target="_blank" class="font-mono text-xs whitespace-nowrap">
+              {c.repoUrl.replace('https://github.com/', '')}
+            </a>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

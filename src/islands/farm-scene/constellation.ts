@@ -117,7 +117,9 @@ export function createConstellation(
       `<span class="scene-medallion__label"><strong>${family.title}</strong><span>${count}</span></span>`;
     button.setAttribute('aria-label', `${family.title} — ${count}`);
     button.addEventListener('click', () => {
-      document.dispatchEvent(new CustomEvent('eky:select', { detail: { kind: 'family', id: family.id, origin: button } }));
+      document.dispatchEvent(
+        new CustomEvent('eky:select', { detail: { kind: 'family', id: family.id, origin: button } }),
+      );
     });
     const label = new CSS2DObject(button);
     label.position.copy(center);

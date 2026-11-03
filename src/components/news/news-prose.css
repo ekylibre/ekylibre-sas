@@ -1,0 +1,123 @@
+/* Typographie des articles d'actualité (D7). Feuille autonome : n'utilise que les variables
+   du thème (src/styles/global.css), sans @apply. */
+.prose-eky {
+  max-width: 42rem;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--color-soil-800);
+}
+.prose-eky > * + * {
+  margin-top: 1.25em;
+}
+.prose-eky h2,
+.prose-eky h3,
+.prose-eky h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  color: var(--color-night-700);
+}
+.prose-eky h2 {
+  margin-top: 2.2em;
+  font-size: var(--text-h3);
+}
+.prose-eky h3 {
+  margin-top: 2em;
+  font-size: 1.25rem;
+}
+.prose-eky h4 {
+  margin-top: 1.75em;
+  font-size: 1.0625rem;
+}
+.prose-eky h2 + *,
+.prose-eky h3 + *,
+.prose-eky h4 + * {
+  margin-top: 0.6em;
+}
+.prose-eky strong {
+  font-weight: 650;
+  color: var(--color-night-700);
+}
+.prose-eky a {
+  overflow-wrap: anywhere;
+}
+.prose-eky ul,
+.prose-eky ol {
+  padding-left: 1.4em;
+}
+.prose-eky ul {
+  list-style: none;
+}
+.prose-eky ul > li {
+  position: relative;
+}
+.prose-eky ul > li::before {
+  content: '';
+  position: absolute;
+  left: -1.1em;
+  top: 0.72em;
+  width: 0.45em;
+  height: 0.45em;
+  border-radius: 9999px;
+  border: 2px solid var(--color-eky-green-deep);
+}
+.prose-eky ol {
+  list-style: decimal;
+}
+.prose-eky ol > li::marker {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--color-eky-green-text);
+}
+.prose-eky li + li {
+  margin-top: 0.4em;
+}
+.prose-eky blockquote {
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0.25em 0 0.25em 1.25em;
+  border-left: 3px solid var(--color-eky-green);
+  font-size: 1.125rem;
+  color: var(--color-night-600);
+}
+.prose-eky blockquote > * + * {
+  margin-top: 0.75em;
+}
+.prose-eky img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-card);
+}
+.prose-eky p:has(> img:only-child) {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+.prose-eky hr {
+  margin: 2.5em 0;
+  border: 0;
+  border-top: 1px solid rgb(58 44 32 / 0.12);
+}
+.prose-eky code {
+  font-size: 0.9em;
+  padding: 0.1em 0.35em;
+  border-radius: 0.3em;
+  background: var(--color-straw-100);
+}
+.prose-eky table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+}
+.prose-eky th,
+.prose-eky td {
+  padding: 0.5em 0.75em;
+  border-bottom: 1px solid rgb(58 44 32 / 0.12);
+  text-align: left;
+}
+.prose-eky > :first-child {
+  margin-top: 0;
+}

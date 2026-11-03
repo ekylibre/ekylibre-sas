@@ -1,126 +1,398 @@
 ---
-// Accueil — version squelette (J1). La scène 3D (C2) remplacera la photo du hero,
-// qui restera l'image d'attente (poster) et le repli 2D.
-import { Picture } from 'astro:assets';
+// Accueil (D1) : récit au défilement au-dessus de la ferme 3D (C9), puis produits, services, preuves.
+// Textes : docs/contenus/fr/accueil.md (B10) ; version anglaise rédigée pour le site (D17).
+import { Image, Picture } from 'astro:assets';
 import drone from '~/assets/images/la-vauzelle-drone.jpg';
+import illusBureau from '~/assets/illustrations/bureau.webp';
+import illusElevage from '~/assets/illustrations/elevage.webp';
+import illusMarche from '~/assets/illustrations/marche.webp';
 import Icon from '~/components/Icon.astro';
 import StatBand from '~/components/StatBand.astro';
 import FarmScene from '~/components/FarmScene.astro';
+import ScrollStory from '~/components/ScrollStory.astro';
+import ConnectorDiagram from '~/components/ConnectorDiagram.astro';
 import { routePath, type Locale } from '~/i18n/routes';
 import { useTranslations } from '~/i18n/ui';
+import { stats, formatCompact, formatInt } from '~/lib/data';
 import type { IconName } from '~/lib/icon-names';
+import type { Chapter } from '~/islands/farm-scene/types';
 
 interface Props {
   lang: Locale;
 }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+const fr = lang === 'fr';
+const rows = formatCompact(stats.lexicon.totalRows, lang);
+const datasets = formatInt(stats.lexicon.datasets, lang);
+const connectors = formatInt(stats.stablePlugins, lang);
+
+// Chapitres : vue caméra (public/3d/scene.json) et zones révélées, de façon cumulative.
+const FIELD = ['hub', 'hangars', 'meteo', 'maraichage'];
+const FARM = [...FIELD, 'elevage', 'vigne-chai'];
+const OFFICE = [...FARM, 'bureau'];
+const chapters: Array<Chapter & { eyebrow: string; title: string; text: string }> = [
+  {
+    id: 'ouverture',
+    view: 'hero',
+    zones: ['hub'],
+    sky: false,
+    eyebrow: '',
+    title: '',
+    text: '',
+  },
+  {
+    id: 'champs',
+    view: 'champs',
+    zones: FIELD,
+    sky: false,
+    eyebrow: fr ? '1 · Les champs parlent' : '1 · The fields talk',
+    title: fr ? 'Machines, météo et pièges, une seule saisie' : 'Machinery, weather and traps, one single entry',
+    text: fr
+      ? 'Les boîtiers Samsys enregistrent le travail des tracteurs, les stations Weenat et les objets Previmeteo relèvent la météo, les pièges CapTrap comptent les ravageurs. Tout arrive dans Ekylibre sous forme d’interventions et de relevés rattachés aux parcelles, sans ressaisie.'
+      : 'Samsys boxes record tractor work, Weenat stations and Previmeteo devices measure the weather, CapTrap traps count pests. Everything lands in Ekylibre as interventions and readings linked to each field, with nothing typed twice.',
+  },
+  {
+    id: 'elevage-vigne',
+    view: 'elevage-vigne',
+    zones: FARM,
+    sky: false,
+    eyebrow: fr ? '2 · Élevage et vigne' : '2 · Livestock and vineyard',
+    title: fr ? 'Chaque filière, ses règles et ses référentiels' : 'Every sector, its own rules and references',
+    text: fr
+      ? 'Les données animales s’échangent avec l’EDE grâce à EDNotif. Pour la vigne, l’extension Ekyviti suit la parcelle, la vendange et le chai jusqu’à la bouteille, et Baqio y fait remonter les ventes et les expéditions de vin.'
+      : 'Livestock data is exchanged with the official registries through EDNotif. For the vineyard, the Ekyviti extension follows the plot, the harvest and the cellar down to the bottle, while Baqio feeds back wine sales and shipments.',
+  },
+  {
+    id: 'bureau',
+    view: 'hub',
+    zones: OFFICE,
+    sky: false,
+    eyebrow: fr ? '3 · Le bureau' : '3 · The farm office',
+    title: fr ? 'Saisi une fois, retrouvé partout' : 'Entered once, found everywhere',
+    text: fr
+      ? 'Au bureau, tout converge : les relevés bancaires arrivent seuls pour le rapprochement, le planning compare le prévu et le réalisé, et l’assistant Hajimari reprend vos données existantes au démarrage. La comptabilité se nourrit de ce qui s’est passé au champ.'
+      : 'In the office, everything comes together: bank statements arrive on their own for reconciliation, planning compares what was planned with what was done, and the Hajimari assistant imports your existing data at start-up. Accounting is fed by what happened in the field.',
+  },
+  {
+    id: 'ciel',
+    view: 'ciel',
+    zones: OFFICE,
+    sky: true,
+    eyebrow: fr ? '4 · Le ciel de données' : '4 · The data sky',
+    title: fr ? `${rows} de données publiques, reliées` : `${rows} public records, all linked`,
+    text: fr
+      ? `Au-dessus de la ferme, le Lexicon : ${datasets} jeux de données publics, dont le cadastre, les parcelles déclarées à la PAC, les produits phytosanitaires autorisés et la météo. Ekylibre s’y réfère pour vérifier une dose, identifier une parcelle ou valoriser une récolte.`
+      : `Above the farm, Lexicon: ${datasets} public datasets, including the land registry, CAP-declared plots, authorised plant protection products and weather. Ekylibre relies on it to check a dose, identify a plot or value a harvest.`,
+  },
+  {
+    id: 'voix',
+    view: 'cour',
+    zones: [...OFFICE, 'cour'],
+    sky: true,
+    eyebrow: fr ? '5 · La voix' : '5 · The voice',
+    title: fr
+      ? 'Dites-le une fois. Aiffel le range au bon endroit.'
+      : 'Say it once. Aiffel files it in the right place.',
+    text: fr
+      ? 'Depuis la cour, l’agriculteur dicte son traitement ou sa récolte. Aiffel reformule, vérifie dans le Lexicon et n’écrit dans Ekylibre qu’après validation, en citant ses sources.'
+      : 'From the farmyard, the farmer dictates a treatment or a harvest. Aiffel rephrases it, checks it against Lexicon and only writes to Ekylibre once approved, citing its sources.',
+  },
+  {
+    id: 'synthese',
+    view: 'synthese',
+    zones: 'all',
+    sky: true,
+    eyebrow: fr ? '6 · Synthèse' : '6 · In short',
+    title: fr ? 'Une ferme ouverte sur tout son écosystème' : 'A farm open to its whole ecosystem',
+    text: fr
+      ? 'Des connecteurs vers les outils de la ferme, des données publiques reliées, un assistant qui écrit à votre place : tout est ouvert, documenté et réversible.'
+      : 'Connectors to the farm’s tools, linked public data, an assistant that does the typing for you: everything is open, documented and reversible.',
+  },
+];
+const sceneChapters: Chapter[] = chapters.map(({ id, view, zones, sky }) => ({ id, view, zones, sky }));
 
 const copy = {
-  fr: {
-    eyebrow: 'Ekylibre SAS · éditeur et opérateur de communs numériques agricoles',
-    title: 'Le système d’information agricole interopérable',
-    lead: 'Machines, capteurs, comptabilité, banques, filières et données publiques : Ekylibre relie tous les outils de la ferme, pour que chaque donnée ne soit saisie qu’une fois.',
-    alt: 'Vue aérienne du FarmLab La Vauzelle au coucher du soleil : corps de ferme, hangars, parcelles maraîchères et grandes cultures.',
-    productsTitle: 'Trois communs, une même donnée',
-    productsLead:
-      'Ekylibre SAS édite, opère et contribue en premier lieu à trois logiciels libres, portés avec l’association OSFarm.',
-  },
-  en: {
-    eyebrow: 'Ekylibre SAS · publisher and operator of agricultural digital commons',
-    title: 'The interoperable farm information system',
-    lead: 'Machinery, sensors, accounting, banks, supply chains and public data: Ekylibre connects every tool on the farm, so that each piece of data is entered only once.',
-    alt: 'Aerial view of the FarmLab La Vauzelle at sunset: farmhouse, sheds, market-garden plots and arable fields.',
-    productsTitle: 'Three commons, one source of truth',
-    productsLead:
-      'Ekylibre SAS publishes, operates and is the main contributor to three free software projects, developed with the OSFarm association.',
-  },
-}[lang];
+  eyebrow: fr
+    ? 'Ekylibre SAS · éditeur et opérateur de communs numériques agricoles'
+    : 'Ekylibre SAS · publisher and operator of agricultural digital commons',
+  title: fr ? 'Le système d’information agricole interopérable' : 'The interoperable farm information system',
+  lead: fr
+    ? 'Machines, capteurs, banque, comptabilité, filières, données publiques : Ekylibre relie les outils de la ferme pour que chaque information ne soit saisie qu’une seule fois.'
+    : 'Machinery, sensors, banking, accounting, supply chains, public data: Ekylibre connects the farm’s tools so that every piece of information is entered only once.',
+  alt: fr
+    ? 'Vue aérienne du FarmLab La Vauzelle au coucher du soleil : corps de ferme, hangars, parcelles maraîchères et grandes cultures.'
+    : 'Aerial view of the FarmLab La Vauzelle at sunset: farmhouse, sheds, market-garden plots and arable fields.',
+  scroll: fr ? 'Suivez la donnée, du champ au bureau' : 'Follow the data, from field to office',
+  place: 'FarmLab La Vauzelle',
+};
 
-const products: Array<{ key: 'ekylibre' | 'aiffel' | 'lexicon'; icon: IconName; text: Record<Locale, string> }> = [
+const products: Array<{
+  key: 'ekylibre' | 'aiffel' | 'lexicon';
+  icon: IconName;
+  name: string;
+  sub: string;
+  text: string;
+}> = [
   {
     key: 'ekylibre',
-    icon: 'tractor',
-    text: {
-      fr: 'Le logiciel libre de gestion de l’exploitation : cultures, élevage, stocks, ventes, comptabilité. Développé depuis 2008.',
-      en: 'The free-software farm management system: crops, livestock, stock, sales, accounting. Developed since 2008.',
-    },
+    icon: 'owl',
+    name: 'Ekylibre',
+    sub: fr ? 'Gérer l’exploitation' : 'Run the farm',
+    text: fr
+      ? 'Le logiciel de gestion de l’exploitation : cultures, élevage, stocks, ventes et comptabilité, dans une même base. Développé depuis 2008, sous licence AGPL.'
+      : 'The farm management software: crops, livestock, stock, sales and accounting in a single database. Developed since 2008, under the AGPL licence.',
   },
   {
     key: 'lexicon',
     icon: 'database',
-    text: {
-      fr: 'Le référentiel ouvert des données agricoles françaises, reliées entre elles et accessibles par API et MCP.',
-      en: 'The open reference of French agricultural data, linked together and available through API and MCP.',
-    },
+    name: 'Lexicon',
+    sub: fr ? 'Les données de référence' : 'The reference data',
+    text: fr
+      ? `Le référentiel ouvert des données agricoles françaises : ${rows} de données reliées entre elles, accessibles par API, en CSV et par serveur MCP.`
+      : `The open reference of French agricultural data: ${rows} linked records, available through an API, as CSV and via an MCP server.`,
   },
   {
     key: 'aiffel',
     icon: 'microphone',
-    text: {
-      fr: 'L’assistant qui écoute l’agriculteur et range chaque information dans le bon logiciel, après validation.',
-      en: 'The assistant that listens to farmers and files each piece of information in the right software, once approved.',
-    },
+    name: 'Aiffel',
+    sub: fr ? 'Parler à ses logiciels' : 'Talk to your software',
+    text: fr
+      ? 'L’assistant qui écoute l’agriculteur, à la voix ou par écrit, et range chaque information dans le bon logiciel, après validation.'
+      : 'The assistant that listens to farmers, by voice or text, and files each piece of information in the right software, once approved.',
+  },
+];
+
+const services = fr
+  ? ['Intégration', 'Formation', 'Transformation du système d’information', 'Développement de connecteurs', 'Support']
+  : ['Integration', 'Training', 'Information system transformation', 'Connector development', 'Support'];
+
+const proofs: Array<{ icon: IconName; title: string; text: string }> = [
+  {
+    icon: 'code-fork',
+    title: fr ? 'Open source' : 'Open source',
+    text: fr
+      ? 'Premier commit en septembre 2008, code sous licence AGPL sur GitHub.'
+      : 'First commit in September 2008, AGPL-licensed code on GitHub.',
+  },
+  {
+    icon: 'database',
+    title: fr ? 'Données ouvertes' : 'Open data',
+    text: fr ? `${rows} de données publiques reliées dans le Lexicon.` : `${rows} public records linked in Lexicon.`,
+  },
+  {
+    icon: 'plug',
+    title: fr ? 'Connecteurs' : 'Connectors',
+    text: fr
+      ? `${connectors} connecteurs publiés en version stable.`
+      : `${connectors} connectors released as stable versions.`,
+  },
+  {
+    icon: 'shield-check',
+    title: 'Data-Agri',
+    text: fr
+      ? '1ʳᵉ entreprise labellisée par la FNSEA et Jeunes Agriculteurs, en mars 2019.'
+      : 'First company to receive the label from FNSEA and Jeunes Agriculteurs, in March 2019.',
   },
 ];
 ---
 
-<section class="section-dark relative isolate overflow-hidden">
-  <Picture
-    src={drone}
-    alt={copy.alt}
-    formats={['avif', 'webp']}
-    widths={[640, 960, 1280, 1920, 2560]}
-    sizes="100vw"
-    loading="eager"
-    fetchpriority="high"
-    class="absolute inset-0 -z-10 h-full w-full object-cover object-[50%_40%]"
-  />
-  <FarmScene lang={lang} view="hero" focusX={0.68} class="absolute inset-0 -z-10" />
-  <div
-    class="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(100deg,rgb(7_20_14/0.94)_0%,rgb(7_20_14/0.78)_42%,rgb(7_20_14/0.15)_100%)]"
-    aria-hidden="true"
-  ></div>
-  <div
-    class="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-linear-to-t from-night-900/90 to-transparent"
-    aria-hidden="true"
-  ></div>
-  <div
-    class="container-site pointer-events-none flex min-h-[calc(100svh-4.5rem)] flex-col justify-center py-20 [&_a]:pointer-events-auto [&_button]:pointer-events-auto"
-  >
-    <p class="eyebrow max-w-xl text-eky-green-light">{copy.eyebrow}</p>
-    <h1 class="mt-5 max-w-3xl text-display">{copy.title}</h1>
-    <p class="mt-6 max-w-2xl text-lead text-straw-50/85">{copy.lead}</p>
-    <div class="mt-10 flex flex-wrap gap-4">
-      <a href={routePath('contact', lang)} class="btn btn-primary">
-        {t('cta.demo')}
-      </a>
-      <a href={routePath('interop', lang)} class="btn btn-secondary">
-        {lang === 'fr' ? 'Voir la ferme connectée' : 'Explore the connected farm'}
-        <Icon name="arrow-right" />
-      </a>
-    </div>
-    <StatBand lang={lang} class="mt-16" />
+<div data-story class="story section-dark relative">
+  <!-- Scène fixe : photo (image d'attente et repli), ferme 3D, voiles de lisibilité -->
+  <div class="story-stage sticky top-0 isolate h-svh overflow-hidden">
+    <Picture
+      src={drone}
+      alt={copy.alt}
+      formats={['avif', 'webp']}
+      widths={[640, 960, 1280, 1920, 2560]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+      class="absolute inset-0 h-full w-full object-cover object-[50%_40%]"
+    />
+    <FarmScene lang={lang} view="hero" focusX={0.68} chapters={sceneChapters} class="absolute inset-0" />
+    <div
+      class="pointer-events-none absolute inset-0 bg-[linear-gradient(100deg,rgb(7_20_14/0.92)_0%,rgb(7_20_14/0.72)_38%,rgb(7_20_14/0.1)_70%,rgb(7_20_14/0)_100%)] max-lg:bg-[linear-gradient(180deg,rgb(7_20_14/0.85)_0%,rgb(7_20_14/0.55)_45%,rgb(7_20_14/0.1)_100%)]"
+      aria-hidden="true"
+    ></div>
+    <div
+      class="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-night-900/90 to-transparent"
+      aria-hidden="true"
+    ></div>
+    <p
+      class="eyebrow pointer-events-none absolute right-5 bottom-5 hidden text-straw-50/55 sm:block"
+      aria-hidden="true"
+    >
+      {copy.place}
+    </p>
   </div>
-</section>
 
+  <!-- Récit qui défile par-dessus la scène -->
+  <div class="story-content pointer-events-none relative -mt-[100svh]">
+    <section
+      data-chapter="ouverture"
+      class="container-site flex min-h-[calc(100svh-4.5rem)] flex-col justify-center py-20 [&_a]:pointer-events-auto"
+    >
+      <p class="eyebrow max-w-xl text-eky-green-light">{copy.eyebrow}</p>
+      <h1 class="mt-5 max-w-3xl text-display">{copy.title}</h1>
+      <p class="mt-6 max-w-2xl text-lead text-straw-50/85">{copy.lead}</p>
+      <div class="mt-10 flex flex-wrap gap-4">
+        <a href={routePath('contact', lang)} class="btn btn-primary">
+          {t('cta.demo')}
+        </a>
+        <a href="#recit" class="btn btn-secondary">
+          {fr ? 'Voir la ferme connectée' : 'Explore the connected farm'}
+          <Icon name="chevron-down" />
+        </a>
+      </div>
+      <StatBand lang={lang} class="mt-16" />
+    </section>
+
+    <div id="recit">
+      {chapters.slice(1).map((c) => (
+        <section data-chapter={c.id} class="container-site flex min-h-[100svh] items-center py-24">
+          <div
+            data-chapter-card
+            class="pointer-events-auto max-w-md rounded-2xl bg-night-900/72 p-7 ring-1 ring-white/10 backdrop-blur-md sm:p-8"
+          >
+            <p class="eyebrow text-eky-green-light">{c.eyebrow}</p>
+            <h2 class="mt-3 text-h2">{c.title}</h2>
+            <p class="mt-4 text-straw-50/85">{c.text}</p>
+            {c.id === 'synthese' && (
+              <>
+                <div class="fallback-only mt-6 hidden">
+                  <ConnectorDiagram lang={lang} />
+                </div>
+                <div class="mt-7 flex flex-wrap gap-3">
+                  <a href={routePath('contact', lang)} class="btn btn-primary">
+                    {t('cta.demo')}
+                  </a>
+                  <a href={routePath('interop', lang)} class="btn btn-secondary">
+                    {fr ? 'Explorer l’interopérabilité' : 'Explore interoperability'}
+                  </a>
+                </div>
+              </>
+            )}
+          </div>
+        </section>
+      ))}
+    </div>
+  </div>
+</div>
+<ScrollStory />
+
+<!-- Les trois communs -->
 <section class="section-light py-24">
   <div class="container-site">
-    <h2 class="max-w-2xl text-h2">{copy.productsTitle}</h2>
-    <p class="mt-4 max-w-2xl text-lead text-muted">{copy.productsLead}</p>
+    <p class="eyebrow text-eky-green-text">{fr ? 'Nos logiciels' : 'Our software'}</p>
+    <h2 class="mt-3 max-w-2xl text-h2">
+      {fr ? 'Trois communs, une même donnée' : 'Three commons, one source of truth'}
+    </h2>
+    <p class="mt-4 max-w-2xl text-lead text-muted">
+      {fr
+        ? 'Ekylibre SAS édite, opère et contribue en premier lieu à trois logiciels libres, portés avec l’association OSFarm.'
+        : 'Ekylibre SAS publishes, operates and is the main contributor to three free software projects, developed with the OSFarm association.'}
+    </p>
     <ul class="mt-12 grid gap-6 md:grid-cols-3">
       {products.map((p) => (
         <li class="card flex flex-col">
           <span class="medallion size-16 text-3xl">
             <Icon name={p.icon} />
           </span>
-          <h3 class="mt-6 text-h3">{p.key === 'ekylibre' ? 'Ekylibre' : p.key === 'aiffel' ? 'Aiffel' : 'Lexicon'}</h3>
-          <p class="mt-3 grow text-muted">{p.text[lang]}</p>
+          <p class="eyebrow mt-6 text-muted">{p.sub}</p>
+          <h3 class="mt-1 text-h3">{p.name}</h3>
+          <p class="mt-3 grow text-muted">{p.text}</p>
           <a href={routePath(p.key, lang)} class="mt-6 inline-flex items-center gap-2 font-semibold">
-            {t('cta.discover')} <Icon name="arrow-right" />
+            {fr ? `Découvrir ${p.name}` : `Discover ${p.name}`} <Icon name="arrow-right" />
           </a>
         </li>
       ))}
     </ul>
   </div>
 </section>
+
+<!-- Services -->
+<section class="section-cream py-24">
+  <div class="container-site grid items-center gap-14 lg:grid-cols-[1.1fr_1fr]">
+    <div>
+      <p class="eyebrow text-eky-green-text">Services</p>
+      <h2 class="mt-3 text-h2">
+        {fr
+          ? 'Nos logiciels sont libres. Notre métier, c’est de vous accompagner.'
+          : 'Our software is free. Our job is to support you.'}
+      </h2>
+      <p class="mt-4 text-lead text-muted">
+        {fr
+          ? 'Ekylibre ne se vend pas par abonnement en ligne. Ekylibre SAS vend des services pour le mettre en place et le faire vivre chez vous.'
+          : 'Ekylibre is not sold as an online subscription. Ekylibre SAS sells services to set it up and keep it running for you.'}
+      </p>
+      <ul class="mt-8 grid gap-3 sm:grid-cols-2">
+        {services.map((s) => (
+          <li class="flex items-center gap-3 font-display font-semibold">
+            <Icon name="check" class="text-eky-green-deep" /> {s}
+          </li>
+        ))}
+      </ul>
+      <a href={routePath('services', lang)} class="btn btn-primary mt-10">
+        {fr ? 'Voir nos services' : 'See our services'} <Icon name="arrow-right" />
+      </a>
+    </div>
+    <div class="grid grid-cols-3 gap-3" aria-hidden="true">
+      {[illusBureau, illusElevage, illusMarche].map((img, i) => (
+        <Image
+          src={img}
+          alt=""
+          widths={[240, 330]}
+          sizes="(min-width: 1024px) 14rem, 30vw"
+          class:list={['w-full rounded-2xl shadow-[var(--shadow-card)]', i === 1 && 'translate-y-8']}
+        />
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- Preuves -->
+<section class="section-dark py-24">
+  <div class="container-site">
+    <h2 class="max-w-2xl text-h2">{fr ? 'Des preuves plutôt que des promesses' : 'Proof rather than promises'}</h2>
+    <ul class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {proofs.map((p) => (
+        <li class="card">
+          <span class="medallion size-12 text-xl">
+            <Icon name={p.icon} />
+          </span>
+          <h3 class="mt-5 font-display text-lg font-semibold">{p.title}</h3>
+          <p class="mt-2 text-sm text-muted">{p.text}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<!-- Appel final -->
+<section class="section-light py-24">
+  <div class="container-site text-center">
+    <h2 class="mx-auto max-w-3xl text-h2">
+      {fr ? 'Voyons ce que vos données peuvent faire ensemble' : 'Let’s see what your data can do together'}
+    </h2>
+    <p class="mx-auto mt-4 max-w-2xl text-lead text-muted">
+      {fr
+        ? 'Agriculteur, coopérative ou éditeur de logiciel : montrez-nous vos outils, nous vous montrons comment les relier.'
+        : 'Farmer, co-op or software vendor: show us your tools and we will show you how to connect them.'}
+    </p>
+    <div class="mt-10 flex flex-wrap justify-center gap-4">
+      <a href={routePath('contact', lang)} class="btn btn-primary">
+        {t('cta.demo')}
+      </a>
+      <a href={routePath('services', lang)} class="btn btn-secondary">
+        {t('cta.project')}
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .story[data-fallback='true'] .fallback-only {
+    display: block;
+  }
+</style>

@@ -1,0 +1,85 @@
+---
+// C10 — Schéma 2D de l'interopérabilité, dans le langage du « schéma de flux » de la documentation :
+// médaillons à anneau vert reliés au cœur Ekylibre. Sert de repli quand la 3D est indisponible
+// et de vue d'ensemble statique (SVG pur, sans JavaScript).
+import { stableConnectors, ZONE_META, CATEGORY_META } from '~/lib/interop';
+import { withBase, type Locale } from '~/i18n/routes';
+import { stats, formatCompact } from '~/lib/data';
+
+interface Props {
+  lang: Locale;
+  class?: string;
+}
+const { lang, class: className } = Astro.props;
+const fr = lang === 'fr';
+const sprite = withBase('/icons/agric.svg');
+
+const connectors = await stableConnectors(lang);
+const byZone = new Map<string, typeof connectors>();
+for (const c of connectors) byZone.set(c.zone, [...(byZone.get(c.zone) ?? []), c]);
+
+const nodes = [
+  ...[...byZone.entries()]
+    .filter(([zone]) => zone !== 'hub')
+    .map(([zone, list]) => ({
+      id: zone,
+      title: ZONE_META[zone]?.title[lang] ?? zone,
+      icon: ZONE_META[zone]?.icon ?? CATEGORY_META[list[0]!.category].icon,
+      detail: [...new Set(list.map((c) => c.partner?.name ?? c.title))].slice(0, 2).join(' · '),
+      color: '#00c15d',
+    })),
+  {
+    id: 'ciel',
+    title: 'Lexicon',
+    icon: 'database',
+    detail: `${formatCompact(stats.lexicon.totalRows, lang)} ${fr ? 'données' : 'records'}`,
+    color: '#4ed164',
+  },
+  { id: 'cour', title: 'Aiffel', icon: 'microphone', detail: fr ? 'Dialogue' : 'Dialogue', color: '#4ed164' },
+];
+
+const W = 640;
+const H = 460;
+const cx = W / 2;
+const cy = H / 2 - 8;
+const placed = nodes.map((n, i) => {
+  const a = (i / nodes.length) * Math.PI * 2 - Math.PI / 2;
+  return { ...n, x: cx + Math.cos(a) * 240, y: cy + Math.sin(a) * 160 };
+});
+const label = fr
+  ? `Schéma : Ekylibre au centre, relié à ${nodes.map((n) => n.title).join(', ')}.`
+  : `Diagram: Ekylibre at the centre, connected to ${nodes.map((n) => n.title).join(', ')}.`;
+---
+
+<svg
+  viewBox={`0 0 ${W} ${H}`}
+  role="img"
+  aria-label={label}
+  class:list={['connector-diagram w-full', className]}
+  font-family="var(--font-sans)"
+>
+  {placed.map((n) => (
+    <line x1={cx} y1={cy} x2={n.x} y2={n.y} stroke={n.color} stroke-width="2" stroke-dasharray="6 5" opacity="0.75" />
+  ))}
+  {placed.map((n) => (
+    <g transform={`translate(${n.x} ${n.y})`}>
+      <circle r="24" fill="#0f2a1e" stroke={n.color} stroke-width="3" />
+      <use href={`${sprite}#i-${n.icon}`} x="-12" y="-12" width="24" height="24" fill="#4ed164" />
+      <text y="42" text-anchor="middle" fill="#faf6ec" font-size="13" font-weight="600">
+        {n.title}
+      </text>
+      {n.detail && (
+        <text y="58" text-anchor="middle" fill="#faf6ec" fill-opacity="0.65" font-size="11">
+          {n.detail}
+        </text>
+      )}
+    </g>
+  ))}
+  <g transform={`translate(${cx} ${cy})`}>
+    <circle r="40" fill="#00c15d" />
+    <use href={`${sprite}#i-owl`} x="-22" y="-24" width="44" height="44" fill="#07140e" />
+    <text y="62" text-anchor="middle" fill="#faf6ec" font-size="15" font-weight="700">
+      Ekylibre
+    </text>
+  </g>
+</svg>

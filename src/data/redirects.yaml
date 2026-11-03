@@ -1,0 +1,137 @@
+# B6 — Redirections des anciennes URL d'ekylibre.com (docs/brainstorm/anciennes-urls-ekylibre-com.txt).
+# Ancien chemin → nouveau chemin, SANS la base de déploiement (astro.config.mjs l'ajoute).
+# Correspondances : docs/brainstorm/01-exigences-site-ekylibre.md §10.
+#
+# Ne figurent pas ici :
+# - les anciens articles repris : redirigés automatiquement vers /actualites/<slug>/
+#   grâce au champ `legacyUrl` de src/content/news/ (astro.config.mjs) ;
+# - les anciens chemins qui sont aussi des routes du nouveau site
+#   (/, /contact/, /cookies/, /developpeurs/, /terms-of-use/).
+# scripts/check-content.mjs vérifie que les 129 anciennes URL sont couvertes et que chaque
+# cible est une route existante.
+
+# --- Produits : Ekylibre (ex-Ekyagri, Ekyviti, Clic & Farm, offres et abonnements)
+/ekyagri/: /ekylibre/
+/ekyagri-plus/: /ekylibre/
+/ekyagri-premium/: /ekylibre/
+/ekyviti/: /ekylibre/
+/ekyviti/creer-mon-domaine/: /ekylibre/
+/clicnfarm/: /ekylibre/
+/features/: /ekylibre/
+/nos-offres/: /ekylibre/
+/subscription-ekyagri/: /ekylibre/
+/subscription-ekyviti/: /ekylibre/
+/type_slider/ekylibre/: /ekylibre/
+/type_slider/ekyviti/: /ekylibre/
+/type_testimonials/ekyviti/: /ekylibre/
+
+# --- Services : intégration, formation, support
+/ekyagri-integration/: /services/
+/custom-services/: /services/
+/formation/: /services/
+/support/: /services/
+/support-assistance/: /services/
+/faq/: /services/
+/type_testimonials/realisations/: /services/
+/type_partenaire/formation/: /services/
+
+# --- Développeurs et interopérabilité
+/open-source/: /developpeurs/
+/community/: /developpeurs/
+/connexions-partenaires/: /interoperabilite/
+/innovation/: /interoperabilite/
+
+# --- Entreprise : société, équipe, recrutement, presse, partenaires, label Data-Agri
+/about/: /entreprise/
+/equipe/administratif/: /entreprise/
+/equipe/administration-systemes/: /entreprise/
+/equipe/commercial-et-marketing/: /entreprise/
+/equipe/communication/: /entreprise/
+/equipe/design/: /entreprise/
+/equipe/developpeur/: /entreprise/
+/equipe/direction/: /entreprise/
+/equipe/expertise-metier/: /entreprise/
+/equipe/formation-et-support/: /entreprise/
+/equipe/integration-projets/: /entreprise/
+/equipe/r-d/: /entreprise/
+/jobs/: /entreprise/
+/on-recrute/: /entreprise/
+/category/job/: /entreprise/
+/press/: /entreprise/
+/partners/: /entreprise/
+/type_partenaire/ils-nous-font-deja-confiance/: /entreprise/
+/type_partenaire/membre/: /entreprise/
+/type_partenaire/premium/: /entreprise/
+/type_partenaire/soutien/: /entreprise/
+/data-agri-chart/: /entreprise/
+/data-agri-infos/: /entreprise/
+/data-agri-principles/: /entreprise/
+
+# --- Actualités : index, catégories, articles non repris, pages d'événements
+/news/: /actualites/
+/news/77/: /actualites/
+/category/actu-tech/: /actualites/
+/category/communique/: /actualites/
+/category/evenement/: /actualites/
+/category/software-news/: /actualites/
+/clic-and-farm-sia-2018/: /actualites/
+/des-solutions-connectees-pour-l-agriculture-quand-3-entreprises-innovantes-s-engagent/: /actualites/
+/formation-la-comptabilite-accessible-a-tous-7-11-19/: /actualites/
+/sia2022/: /actualites/
+/sia2023/: /actualites/
+/stand-lfd-sia2023/: /actualites/
+
+# --- Liens des anciens articles vers des pages absentes de l'inventaire
+/pmi/: /ekylibre/ # ancien calculateur « Indice de masse administrative » (les-chiffres-en-ekylibre)
+
+# --- Pages légales
+/terms/: /terms-of-use/
+/conditions-of-sale/: /terms-of-use/
+
+# --- Pages techniques de l'ancien WordPress → accueil
+/paiement-annule/: /
+/paiement-valide/: /
+/elementor-5229/: /
+/sitemap/: /
+/type_slider/accueil/: /
+/type_testimonials/accueil/: /
+
+# --- Ancienne version anglaise (/eng/*) → /en/*
+/eng/: /en/
+/eng/home/: /en/
+/eng/sitemap/: /en/
+/eng/ekyagri/: /en/ekylibre/
+/eng/ekyagri-2/: /en/ekylibre/
+/eng/ekyagri-premium/: /en/ekylibre/
+/eng/ekyviti/: /en/ekylibre/
+/eng/ekyviti/book-my-vineyard/: /en/ekylibre/
+/eng/book-my-vineyard/: /en/ekylibre/
+/eng/clicnfarm/: /en/ekylibre/
+/eng/features/: /en/ekylibre/
+/eng/our-offers/: /en/ekylibre/
+/eng/our-offers-3/: /en/ekylibre/
+/eng/subscription-ekyagri/: /en/ekylibre/
+/eng/subscription-ekyviti/: /en/ekylibre/
+/eng/ekyagri-integration/: /en/services/
+/eng/custom-services/: /en/services/
+/eng/training/: /en/services/
+/eng/support/: /en/services/
+/eng/support-and-assistance/: /en/services/
+/eng/faq/: /en/services/
+/eng/developers/: /en/developers/
+/eng/open-source/: /en/developers/
+/eng/community/: /en/developers/
+/eng/innovation/: /en/interoperability/
+/eng/about/: /en/company/
+/eng/jobs/: /en/company/
+/eng/press/: /en/company/
+/eng/partners/: /en/company/
+/eng/data-agri-chart/: /en/company/
+/eng/data-agri-infos/: /en/company/
+/eng/data-agri-principles/: /en/company/
+/eng/news/: /en/news/
+/eng/contact/: /en/contact/
+/eng/cookies/: /en/cookies/
+/eng/terms/: /en/terms-of-use/
+/eng/terms-of-use/: /en/terms-of-use/
+/eng/conditions-of-sale/: /en/terms-of-use/

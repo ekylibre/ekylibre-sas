@@ -1,0 +1,74 @@
+---
+// C9 — Narration au défilement de l'accueil.
+// Chaque bloc [data-chapter] qui passe au centre de l'écran émet `eky:chapter` : la scène 3D
+// déplace sa caméra et révèle de nouveaux éléments. Les cartes de texte apparaissent en fondu.
+// Mouvement réduit : pas de défilement doux ni d'animation de texte, la caméra coupe franc.
+---
+
+<script>
+  const story = document.querySelector<HTMLElement>('[data-story]');
+  if (story) {
+    const chapters = [...story.querySelectorAll<HTMLElement>('[data-chapter]')];
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let current = '';
+    const emit = (id: string) => {
+      if (id === current) return;
+      current = id;
+      story.dataset.chapter = id;
+      document.dispatchEvent(new CustomEvent('eky:chapter', { detail: { id } }));
+    };
+
+    // Version 2D de secours : la page affiche les éléments réservés au repli.
+    document.addEventListener('eky:fallback', () => (story.dataset.fallback = 'true'));
+
+    const start = async () => {
+      const [{ gsap }, { ScrollTrigger }] = await Promise.all([import('gsap'), import('gsap/ScrollTrigger')]);
+      gsap.registerPlugin(ScrollTrigger);
+
+      if (!reduced && !matchMedia('(pointer: coarse)').matches) {
+        const { default: Lenis } = await import('lenis');
+        const lenis = new Lenis({ lerp: 0.11, smoothWheel: true });
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => lenis.raf(time * 1000));
+        gsap.ticker.lagSmoothing(0);
+        // Les ancres internes (« Voir la ferme connectée »…) passent par Lenis.
+        document.addEventListener('click', (e) => {
+          const link = (e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
+          if (!link) return;
+          const target = document.querySelector(link.hash);
+          if (!target) return;
+          e.preventDefault();
+          lenis.scrollTo(target as HTMLElement, { offset: -72 });
+        });
+      }
+
+      for (const el of chapters) {
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 55%',
+          end: 'bottom 55%',
+          onToggle: (self) => self.isActive && emit(el.dataset.chapter!),
+        });
+        const card = el.querySelector('[data-chapter-card]');
+        if (card && !reduced) {
+          gsap.from(card, {
+            y: 48,
+            autoAlpha: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 75%', toggleActions: 'play none none reverse' },
+          });
+        }
+      }
+      // Si la scène est prête après le premier défilement, on lui rejoue le chapitre courant.
+      document.addEventListener('eky:ready', () => {
+        const id = current;
+        current = '';
+        if (id) emit(id);
+      });
+    };
+
+    const idle = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 300));
+    idle(() => void start(), { timeout: 2000 });
+  }
+</script>
