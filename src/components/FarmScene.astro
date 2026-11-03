@@ -2,8 +2,11 @@
 // Îlot 3D « La ferme connectée ». Le HTML ne contient qu'un conteneur vide : l'image d'attente
 // (photo ou rendu) est fournie par la page, en dessous. three.js n'est chargé que lorsque la
 // scène devient visible et que le navigateur est disponible, puis la scène apparaît en fondu.
+// La fiche de détail (InfoCard) est un frère du conteneur, pour échapper à son contexte d'empilement.
 import { withBase } from '~/i18n/routes';
+import { stableConnectors, lexiconFamilies, CATEGORY_META, ZONE_META, FAMILY_COLORS } from '~/lib/interop';
 import type { FarmSceneProps } from '~/islands/farm-scene/types';
+import InfoCard from './InfoCard.astro';
 
 interface Props {
   mode?: FarmSceneProps['mode'];
@@ -13,12 +16,40 @@ interface Props {
   class?: string;
 }
 const { mode = 'hero', lang, view = 'site', focusX, class: className } = Astro.props;
+
+const connectors = (await stableConnectors(lang)).map((c) => ({
+  slug: c.slug,
+  category: c.category,
+  icon: CATEGORY_META[c.category].icon,
+  zone: c.zone,
+  dataFlow: c.dataFlow,
+  title: c.title,
+  summary: c.summary,
+  partner: c.partner?.name,
+  partnerUrl: c.partner?.url,
+  version: c.version,
+  repoUrl: c.repoUrl,
+}));
+const families = (await lexiconFamilies(lang)).map((f) => ({ ...f, color: FAMILY_COLORS[f.id] ?? '#4ed164' }));
+const zones = Object.fromEntries(
+  Object.entries(ZONE_META).map(([id, z]) => [id, { title: z.title[lang], icon: z.icon }]),
+);
+const strings = {
+  fr: { 'hub.subtitle': 'Le système d’information', 'family.datasets': 'jeux de données', 'family.dataset': 'jeu de données' },
+  en: { 'hub.subtitle': 'The information system', 'family.datasets': 'datasets', 'family.dataset': 'dataset' },
+}[lang];
+
 const props: FarmSceneProps = {
   mode,
   lang,
   view,
   manifestUrl: withBase('/3d/scene.json'),
   modelUrl: withBase(mode === 'hero' ? '/3d/hero.glb' : '/3d/farm-full.glb'),
+  iconSprite: withBase('/icons/agric.svg'),
+  connectors,
+  families,
+  zones,
+  strings,
   ...(focusX === undefined ? {} : { focusX }),
 };
 ---
@@ -28,6 +59,7 @@ const props: FarmSceneProps = {
   data-props={JSON.stringify(props)}
   data-state="idle"
 ></farm-scene>
+<InfoCard lang={lang} />
 
 <style>
   .farm-scene {

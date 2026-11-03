@@ -101,3 +101,27 @@ export async function lexiconFamilies(lang: Locale): Promise<FamilyView[]> {
     };
   });
 }
+
+/** Zones de la ferme : titre affiché sur le médaillon et pictogramme (docs/design §8.3). */
+export const ZONE_META: Record<string, { icon: IconName; title: Record<Locale, string> }> = {
+  hub: { icon: 'owl', title: { fr: 'Ekylibre, le cœur', en: 'Ekylibre, the core' } },
+  bureau: { icon: 'calendar-check', title: { fr: 'Le bureau', en: 'The farm office' } },
+  hangars: { icon: 'tractor', title: { fr: 'Le hangar', en: 'The machinery shed' } },
+  elevage: { icon: 'cow', title: { fr: 'L’élevage', en: 'Livestock' } },
+  parcelles: { icon: 'wheat', title: { fr: 'Les grandes cultures', en: 'Arable fields' } },
+  meteo: { icon: 'cloudy', title: { fr: 'La météo', en: 'Weather' } },
+  maraichage: { icon: 'seedling-solid', title: { fr: 'Le maraîchage', en: 'Market garden' } },
+  'vigne-chai': { icon: 'grape', title: { fr: 'La vigne et le chai', en: 'Vineyard and cellar' } },
+  cour: { icon: 'mobile', title: { fr: 'L’agriculteur', en: 'The farmer' } },
+  ciel: { icon: 'database', title: { fr: 'Le ciel de données', en: 'The data sky' } },
+};
+
+export const FAMILY_COLORS: Record<string, string> = {
+  territoire: '#c46a3c',
+  climat: '#8ec5e8',
+  intrants: '#4ed164',
+  entreprises: '#f3ebd8',
+  marches: '#e2b76c',
+  savoirs: '#8db44f',
+  filiere: '#e8a39b',
+};

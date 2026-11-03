@@ -19,8 +19,8 @@ const items = [
   {
     value: formatInt(stats.lexicon.datasets, lang),
     label: {
-      fr: `jeux de données publics, de ${stats.lexicon.providers} producteurs`,
-      en: `public datasets from ${stats.lexicon.providers} providers`,
+      fr: 'jeux de données publics reliés par des clés communes',
+      en: 'public datasets linked by shared keys',
     }[lang],
   },
   {
@@ -30,8 +30,8 @@ const items = [
   {
     value: String(since),
     label: {
-      fr: `open source depuis, ${formatInt(stats.core.commits, lang)} contributions`,
-      en: `open source since, ${formatInt(stats.core.commits, lang)} commits`,
+      fr: `première ligne de code d’Ekylibre · ${formatInt(stats.core.commits, lang)} commits depuis`,
+      en: `Ekylibre’s first line of code · ${formatInt(stats.core.commits, lang)} commits since`,
     }[lang],
   },
 ];

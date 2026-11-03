@@ -35,6 +35,16 @@ for (const file of files) {
   names.push(name);
 }
 
+// Hibou de la marque Ekylibre (recadrage du logo) : pictogramme du cœur « Ekylibre » dans la scène.
+{
+  const owl = await readFile('src/assets/brand/ekylibre-owl.svg', 'utf8');
+  const viewBox = owl.match(/viewBox="([^"]+)"/)?.[1] ?? '0 0 24 24';
+  const { data } = optimize(owl, { plugins: [{ name: 'removeAttrs', params: { attrs: ['fill', 'style', 'data-name', 'id'] } }] });
+  const inner = data.replace(/^<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+  symbols.push(`<symbol id="i-owl" viewBox="${viewBox}">${inner}</symbol>`);
+  names.push('owl');
+}
+
 await mkdir('public/icons', { recursive: true });
 await writeFile(
   OUT_SPRITE,

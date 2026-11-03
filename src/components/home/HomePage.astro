@@ -42,8 +42,8 @@ const products: Array<{ key: 'ekylibre' | 'aiffel' | 'lexicon'; icon: IconName; 
     key: 'ekylibre',
     icon: 'tractor',
     text: {
-      fr: 'Le logiciel de gestion de l’exploitation : cultures, élevage, stocks, ventes, comptabilité. Open source depuis 2008.',
-      en: 'The farm management system: crops, livestock, stock, sales, accounting. Open source since 2008.',
+      fr: 'Le logiciel libre de gestion de l’exploitation : cultures, élevage, stocks, ventes, comptabilité. Développé depuis 2008.',
+      en: 'The free-software farm management system: crops, livestock, stock, sales, accounting. Developed since 2008.',
     },
   },
   {
@@ -78,14 +78,16 @@ const products: Array<{ key: 'ekylibre' | 'aiffel' | 'lexicon'; icon: IconName; 
   />
   <FarmScene lang={lang} view="hero" focusX={0.68} class="absolute inset-0 -z-10" />
   <div
-    class="absolute inset-0 -z-10 bg-[linear-gradient(100deg,rgb(7_20_14/0.94)_0%,rgb(7_20_14/0.78)_42%,rgb(7_20_14/0.15)_100%)]"
+    class="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(100deg,rgb(7_20_14/0.94)_0%,rgb(7_20_14/0.78)_42%,rgb(7_20_14/0.15)_100%)]"
     aria-hidden="true"
   ></div>
   <div
-    class="absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-linear-to-t from-night-900/90 to-transparent"
+    class="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-linear-to-t from-night-900/90 to-transparent"
     aria-hidden="true"
   ></div>
-  <div class="container-site flex min-h-[calc(100svh-4.5rem)] flex-col justify-center py-20">
+  <div
+    class="container-site pointer-events-none flex min-h-[calc(100svh-4.5rem)] flex-col justify-center py-20 [&_a]:pointer-events-auto [&_button]:pointer-events-auto"
+  >
     <p class="eyebrow max-w-xl text-eky-green-light">{copy.eyebrow}</p>
     <h1 class="mt-5 max-w-3xl text-display">{copy.title}</h1>
     <p class="mt-6 max-w-2xl text-lead text-straw-50/85">{copy.lead}</p>

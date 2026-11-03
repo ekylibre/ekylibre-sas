@@ -28,6 +28,44 @@ export interface ZoneDef {
   label?: string;
 }
 
+/** Connecteur affiché dans la scène (sous-ensemble de ConnectorView, déjà traduit). */
+export interface SceneConnector {
+  slug: string;
+  category: string;
+  icon: string;
+  zone: string;
+  dataFlow: 'in' | 'out' | 'both';
+  title: string;
+  summary: string;
+  partner?: string | undefined;
+  partnerUrl?: string | undefined;
+  version: string;
+  repoUrl: string;
+}
+
+export interface SceneDataset {
+  name: string;
+  label: string;
+  provider: string;
+  rows: number;
+  scope: 'open' | 'members';
+  href: string;
+}
+
+export interface SceneFamily {
+  id: string;
+  icon: string;
+  title: string;
+  color: string;
+  rows: number;
+  datasets: SceneDataset[];
+}
+
+export interface SceneZoneMeta {
+  title: string;
+  icon: string;
+}
+
 export interface FarmSceneProps {
   mode: 'hero' | 'explore';
   lang: 'fr' | 'en';
@@ -39,6 +77,18 @@ export interface FarmSceneProps {
   focusX?: number;
   /** Désactive l'orbite automatique (captures, débogage). */
   still?: boolean;
+  connectors: SceneConnector[];
+  families: SceneFamily[];
+  zones: Record<string, SceneZoneMeta>;
+  iconSprite: string;
+  strings: Record<string, string>;
+}
+
+export interface SelectDetail {
+  kind: 'zone' | 'family';
+  id: string;
+  /** Élément à qui rendre le focus à la fermeture de la fiche. */
+  origin?: HTMLElement;
 }
 
 export interface ReadyDetail {
@@ -53,6 +103,6 @@ declare global {
     'eky:ready': CustomEvent<ReadyDetail>;
     'eky:fallback': CustomEvent<FallbackDetail>;
     'eky:chapter': CustomEvent<{ id: string; progress?: number }>;
-    'eky:select': CustomEvent<{ kind: 'connector' | 'family' | 'dataset'; id: string }>;
+    'eky:select': CustomEvent<SelectDetail>;
   }
 }

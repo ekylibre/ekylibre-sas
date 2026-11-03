@@ -195,3 +195,51 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Médaillons de la scène 3D (couche CSS2D) — schéma de flux de la documentation
+   -------------------------------------------------------------------------- */
+@layer components {
+  .scene-medallion {
+    @apply pointer-events-auto flex cursor-pointer items-center gap-2 rounded-full border-0 bg-transparent p-0 text-left font-display text-straw-50;
+    transform-origin: center;
+  }
+  .scene-medallion__disc {
+    @apply grid size-11 shrink-0 place-items-center rounded-full border-[2.5px] border-eky-green bg-night-700/90 text-xl text-eky-green-light backdrop-blur-sm transition duration-200;
+    box-shadow:
+      0 0 0 4px rgb(0 193 93 / 0.12),
+      0 0 22px -2px rgb(0 193 93 / 0.6);
+  }
+  .scene-medallion__label {
+    @apply flex flex-col rounded-md bg-night-900/75 px-2 py-1 text-[0.72rem] leading-tight whitespace-nowrap backdrop-blur-sm;
+  }
+  .scene-medallion__label strong {
+    @apply text-[0.78rem] font-semibold;
+  }
+  .scene-medallion__label span {
+    @apply font-sans text-straw-50/70;
+  }
+  .scene-medallion:hover .scene-medallion__disc,
+  .scene-medallion:focus-visible .scene-medallion__disc,
+  .scene-medallion[aria-expanded='true'] .scene-medallion__disc {
+    @apply scale-115 bg-eky-green text-night-900;
+  }
+  .scene-medallion.is-hub .scene-medallion__disc {
+    @apply size-14 border-[3px] bg-eky-green text-2xl text-night-900;
+  }
+  .scene-medallion.is-family .scene-medallion__disc {
+    @apply size-9 text-base;
+    border-color: var(--family);
+    color: var(--family);
+    box-shadow: 0 0 18px -2px var(--family);
+  }
+  /* Petits écrans : seuls les disques, sans libellés (la fiche donne le détail). */
+  @media (width < 48rem) {
+    .scene-medallion__label {
+      @apply hidden;
+    }
+    .scene-medallion__disc {
+      @apply size-9 text-base;
+    }
+  }
+}

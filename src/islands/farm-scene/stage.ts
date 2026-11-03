@@ -2,6 +2,7 @@
 // - rendu continu seulement si quelque chose bouge (rotation, transition) ;
 // - pause quand la scène est hors écran ou l'onglet masqué.
 import { ACESFilmicToneMapping, PerspectiveCamera, Scene, SRGBColorSpace, Timer, Vector3, WebGLRenderer } from 'three';
+import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import type { Tier } from './quality';
 
 const DPR_CAP: Record<Exclude<Tier, 'none'>, number> = { high: 2, medium: 1.5, low: 1 };
@@ -13,6 +14,8 @@ export class Stage {
   readonly scene = new Scene();
   readonly camera: PerspectiveCamera;
   readonly target = new Vector3();
+  /** Couche HTML (médaillons, étiquettes) synchronisée avec la caméra. */
+  readonly labels = new CSS2DRenderer();
   /** Position horizontale souhaitée de la cible à l'écran (0,5 = centre). */
   focusX = 0.5;
 
@@ -44,6 +47,10 @@ export class Stage {
     canvas.setAttribute('aria-hidden', 'true');
     canvas.className = 'block h-full w-full';
     host.append(canvas);
+    const overlay = this.labels.domElement;
+    overlay.className = 'scene-overlay';
+    overlay.style.cssText = 'position:absolute;inset:0;pointer-events:none;overflow:hidden';
+    host.append(overlay);
 
     this.camera = new PerspectiveCamera(fov, 1, 1, 6000);
     this.resizeObserver = new ResizeObserver(() => this.resize());
@@ -90,6 +97,7 @@ export class Stage {
     if (animating || this.dirty) {
       this.camera.lookAt(this.target);
       this.renderer.render(this.scene, this.camera);
+      this.labels.render(this.scene, this.camera);
       this.dirty = false;
     }
     if (!animating) this.stop();
@@ -104,6 +112,7 @@ export class Stage {
     const { clientWidth: w, clientHeight: h } = this.host;
     if (!w || !h) return;
     this.renderer.setSize(w, h, false);
+    this.labels.setSize(w, h);
     this.camera.aspect = w / h;
     // Décale le cadrage pour placer la cible à focusX (laisse la place au texte du hero).
     const wide = w >= 1024;
@@ -127,5 +136,6 @@ export class Stage {
     document.removeEventListener('visibilitychange', this.kick);
     this.renderer.dispose();
     this.renderer.domElement.remove();
+    this.labels.domElement.remove();
   }
 }

@@ -3,6 +3,10 @@ import { Vector3 } from 'three';
 import { Stage } from './stage';
 import { loadFarm } from './farm';
 import { AnchorRegistry } from './anchors';
+import { createConnectorLayer, type ConnectorLayer } from './connectors';
+import { createFlowLayer, type FlowLayer } from './flows';
+import { createConstellation, type ConstellationLayer } from './constellation';
+import { createVineyard } from './vineyard';
 import type { TierReport } from './quality';
 import type { FarmSceneProps, SceneManifest } from './types';
 
@@ -13,6 +17,9 @@ const FOV = 26; // focale longue : rappelle l'isométrie des illustrations de la
 export interface FarmSceneHandle {
   stage: Stage;
   anchors: AnchorRegistry;
+  connectors: ConnectorLayer;
+  flows: FlowLayer;
+  constellation: ConstellationLayer;
   manifest: SceneManifest;
   setView(name: string): void;
   dispose(): void;
@@ -30,6 +37,13 @@ export async function mountFarmScene(
   stage.focusX = props.focusX ?? 0.5;
   const farm = await loadFarm(stage, props.modelUrl);
   const anchors = new AnchorRegistry(farm, manifest.zones);
+  const animate = !report.reducedMotion && !props.still;
+  createVineyard(stage, anchors);
+  const connectors = createConnectorLayer(stage, anchors, props);
+  const flows = createFlowLayer(stage, anchors, connectors.zones, animate);
+  const constellation = createConstellation(stage, anchors, props, animate);
+  // Accueil : le ciel de données n'apparaît qu'au chapitre « ciel » de la narration (C9).
+  if (props.mode === 'hero' && !props.still) constellation.setVisible(false);
 
   // Les vues de la maquette sont cadrées à 40° : on recule la caméra pour garder le même cadrage à 26°.
   // Sur un écran plus étroit que le format de référence (16:10), la caméra recule encore
@@ -80,5 +94,5 @@ export async function mountFarmScene(
     stage.invalidate();
   });
 
-  return { stage, anchors, manifest, setView, dispose: () => stage.dispose() };
+  return { stage, anchors, connectors, flows, constellation, manifest, setView, dispose: () => stage.dispose() };
 }
