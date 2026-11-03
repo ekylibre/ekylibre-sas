@@ -12,9 +12,9 @@ Le site ekylibre.com est édité par **EKYLIBRE**, société par actions simplif
 
 - Siège social : 8 rue du Bouil Bleu, 17250 Saint-Porchaire, France
 - Immatriculation : RCS Saintes 808 534 283 — SIRET du siège : 808 534 283 00045 — code APE 62.01Z
-- Capital social : [À COMPLÉTER : montant]
+- Capital social : 29 081 €
 - Numéro de TVA intracommunautaire : FR06 808 534 283
-- Contact : [À COMPLÉTER : adresse e-mail de contact]
+- Contact : [contact@ekylibre.com](mailto:contact@ekylibre.com)
 
 ## Directeur de la publication
 

@@ -12,9 +12,9 @@ The ekylibre.com website is published by **EKYLIBRE**, a French simplified joint
 
 - Registered office: 8 rue du Bouil Bleu, 17250 Saint-Porchaire, France
 - Registration: RCS Saintes 808 534 283 — head office SIRET: 808 534 283 00045 — APE code 62.01Z
-- Share capital: [À COMPLÉTER : amount]
+- Share capital: €29,081
 - VAT number: FR06 808 534 283
-- Contact: [À COMPLÉTER : contact email]
+- Contact: [contact@ekylibre.com](mailto:contact@ekylibre.com)
 
 ## Publication director
 

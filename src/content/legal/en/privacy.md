@@ -8,7 +8,7 @@ updatedAt: 2026-11-08
 
 ## Data controller
 
-Ekylibre SAS — 8 rue du Bouil Bleu, 17250 Saint-Porchaire, France. Contact for any question about your data: [À COMPLÉTER : data protection email].
+Ekylibre SAS — 8 rue du Bouil Bleu, 17250 Saint-Porchaire, France. Contact for any question about your data: [contact@ekylibre.com](mailto:contact@ekylibre.com).
 
 ## Data collected and purposes
 
@@ -28,7 +28,7 @@ The website uses no advertising cookies and never sells any data.
 
 ## Retention
 
-- Contact requests: [À COMPLÉTER : duration, e.g. 3 years after the last exchange].
+- Contact requests: 3 years after the last exchange.
 - Newsletter: until you unsubscribe.
 - Audience measurement cookies: 13 months at most; your cookie choice: 6 months.
 

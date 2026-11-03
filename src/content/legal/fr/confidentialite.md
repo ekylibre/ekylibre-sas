@@ -8,7 +8,7 @@ updatedAt: 2026-11-08
 
 ## Responsable du traitement
 
-Ekylibre SAS — 8 rue du Bouil Bleu, 17250 Saint-Porchaire, France. Contact pour toute question relative à vos données : [À COMPLÉTER : adresse e-mail dédiée aux données personnelles].
+Ekylibre SAS — 8 rue du Bouil Bleu, 17250 Saint-Porchaire, France. Contact pour toute question relative à vos données : [contact@ekylibre.com](mailto:contact@ekylibre.com).
 
 ## Données collectées et finalités
 
@@ -28,7 +28,7 @@ Le site ne contient aucun cookie publicitaire et ne revend aucune donnée.
 
 ## Durées de conservation
 
-- Demandes de contact : [À COMPLÉTER : durée, par ex. 3 ans après le dernier échange].
+- Demandes de contact : 3 ans après le dernier échange.
 - Lettre d’information : jusqu’à votre désinscription.
 - Cookies de mesure d’audience : 13 mois au plus ; votre choix de cookies : 6 mois.
 
