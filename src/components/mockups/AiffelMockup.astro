@@ -1,0 +1,48 @@
+---
+// Maquette Aiffel : dictée → reformulation sourcée → validation → écriture (Ekylibre ; Lyvre en cours).
+import MockFrame from './MockFrame.astro';
+import Icon from '~/components/Icon.astro';
+import type { Locale } from '~/i18n/routes';
+
+interface Props {
+  lang: Locale;
+  autoplay?: boolean;
+  class?: string;
+}
+const { lang, autoplay = false, class: className } = Astro.props;
+const fr = lang === 'fr';
+const label = fr
+  ? 'Exemple avec Aiffel : l’agriculteur dicte un traitement, Aiffel le reformule, vérifie la dose dans le Lexicon, et après validation l’écrit dans Ekylibre ; l’envoi de la pièce à Lyvre est en cours de développement.'
+  : 'Example with Aiffel: the farmer dictates a treatment, Aiffel rephrases it, checks the rate in Lexicon and, once approved, writes it to Ekylibre; sending the document to Lyvre is in development.';
+---
+
+<MockFrame lang={lang} title={fr ? 'aiffel · conversation' : 'aiffel · conversation'} autoplay={autoplay} label={label} class={className}>
+  <div class="flex justify-end">
+    <p class="mk-in max-w-[85%] rounded-2xl rounded-br-md bg-eky-green/90 px-4 py-2.5 text-night-900">
+      <Icon name="microphone" class="mr-1.5" />
+      {fr ? '« J’ai traité les Quarante ce matin, 3 kg de cuivre. »' : '“Sprayed Les Quarante this morning, 3 kg of copper.”'}
+    </p>
+  </div>
+  <div class="mk-card mk-in mk-d2 mt-3 max-w-[92%] rounded-bl-md">
+    <p class="mk-eyebrow">{fr ? 'Aiffel · je comprends' : 'Aiffel · here is what I understood'}</p>
+    <dl class="mt-2">
+      <div class="mk-row"><dt>{fr ? 'Intervention' : 'Job'}</dt><dd>{fr ? 'Pulvérisation' : 'Spraying'}</dd></div>
+      <div class="mk-row"><dt>{fr ? 'Parcelle' : 'Plot'}</dt><dd>Les Quarante · 04/11</dd></div>
+      <div class="mk-row"><dt>{fr ? 'Produit' : 'Product'}</dt><dd>{fr ? 'Bouillie bordelaise · 3 kg/ha' : 'Bordeaux mixture · 3 kg/ha'}</dd></div>
+    </dl>
+    <p class="mk-in mk-d4 mt-3">
+      <span class="mk-chip mk-chip-neutral">{fr ? 'Source · Lexicon · dose autorisée' : 'Source · Lexicon · authorised rate'}</span>
+    </p>
+    <p class="mk-in mk-d5 mt-3 flex items-center gap-3">
+      <span class="inline-flex items-center gap-2 rounded-full bg-eky-green px-4 py-1.5 font-semibold text-night-900">
+        <span class="mk-pop mk-d7">✓</span>
+        {fr ? 'Valider' : 'Approve'}
+      </span>
+      <span class="text-straw-50/70">{fr ? 'Corriger' : 'Edit'}</span>
+    </p>
+  </div>
+  <div class="mt-3 flex flex-wrap gap-2">
+    <span class="mk-chip mk-chip-ok mk-in mk-d8">✓ {fr ? 'Écrit dans Ekylibre' : 'Written to Ekylibre'}</span>
+    <span class="mk-chip mk-chip-wip mk-in mk-d9">◐ {fr ? 'Pièce pour Lyvre · en cours' : 'Document to Lyvre · in progress'}</span>
+  </div>
+</MockFrame>

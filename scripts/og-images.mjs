@@ -23,8 +23,8 @@ const PAGES = {
     en: ['Interoperability', 'The farm connected to its whole ecosystem'],
   },
   ekylibre: {
-    fr: ['Ekylibre', 'Le logiciel libre de gestion de l’exploitation'],
-    en: ['Ekylibre', 'Free software to run the whole farm'],
+    fr: ['Ekylibre', 'Gérer l’exploitation : matériels, stocks, GPS, capteurs'],
+    en: ['Ekylibre', 'Run the farm: machinery, stock, GPS, sensors'],
   },
   lexicon: {
     fr: ['Lexicon', 'Les données publiques agricoles françaises, reliées'],
@@ -33,6 +33,10 @@ const PAGES = {
   aiffel: {
     fr: ['Aiffel', 'Dites-le une fois. Aiffel le range au bon endroit.'],
     en: ['Aiffel', 'Say it once. Aiffel files it in the right place.'],
+  },
+  lyvre: {
+    fr: ['Lyvre', 'La comptabilité libre, sobre et souveraine'],
+    en: ['Lyvre', 'Free, frugal, self-hosted accounting'],
   },
   services: {
     fr: ['Services', 'Intégration, formation, connecteurs, support'],

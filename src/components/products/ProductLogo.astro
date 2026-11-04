@@ -1,0 +1,33 @@
+---
+// Logo officiel d'un logiciel, posé sur une pastille claire (docs/design/03-outils-lyvre.md §2.3) :
+// le fichier n'est jamais recoloré ni redessiné, la pastille garantit le contraste sur fond sombre.
+import { Image } from 'astro:assets';
+import type { Product } from '~/lib/products';
+
+interface Props {
+  product: Product;
+  size?: 'sm' | 'md' | 'lg';
+  /** Nom écrit juste à côté : le logo devient décoratif (alt vide). */
+  decorative?: boolean;
+  class?: string | undefined;
+}
+const { product, size = 'md', decorative = false, class: className } = Astro.props;
+// Ekylibre : logotype horizontal, la pastille s'élargit (même hauteur que les autres).
+const wide = product.key === 'ekylibre';
+const box = {
+  sm: ['h-10 p-1.5 rounded-lg', wide ? 'w-[4.5rem]' : 'w-10'],
+  md: ['h-14 p-2 rounded-xl', wide ? 'w-24' : 'w-14'],
+  lg: ['h-20 p-3 rounded-2xl', wide ? 'w-36' : 'w-20'],
+}[size];
+---
+
+<span
+  class:list={[
+    'product-logo inline-grid shrink-0 place-items-center bg-straw-50 shadow-[var(--shadow-card)] ring-1 ring-soil-800/10',
+    box,
+    className,
+  ]}
+  data-product={product.key}
+>
+  <Image src={product.logo} alt={decorative ? '' : product.name} class="size-full object-contain" />
+</span>

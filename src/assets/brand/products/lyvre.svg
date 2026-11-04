@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="240" height="240" role="img" aria-label="Lyvre">
+  <path d="M56 76 L54.5 85 M62 73.5 L62 85" stroke="#1E2421" stroke-width="1.8" stroke-linecap="round" fill="none"></path>
+  <path d="M83 28 C80 23 70 22 64 26 C58 30 52 38 46 46 C40 54 34 62 30 68 L10 98 L13 101 L16 99 L36 76 C46 78 58 76 66 68 C74 60 80 50 82 44 C83 41 84 38 85 36 Z" fill="#1E2421"></path>
+  <path d="M66 36 C58 40 46 52 38 62 L24 80 L32 74 C44 70 58 64 68 50 Z" fill="#3A4440"></path>
+  <path d="M52 58 L36 70 M55 61 L38 72.5 M56 64 L42 70" stroke="#DDE8DF" stroke-width="1.2" stroke-linecap="round" fill="none"></path>
+  <circle cx="76" cy="29" r="1.7" fill="#F6F4EE"></circle>
+  <circle cx="95" cy="36" r="4.8" fill="#D9A441"></circle>
+  <circle cx="95" cy="36" r="3.3" stroke="#A97A22" stroke-width="0.8" fill="none"></circle>
+  <path d="M92.8 34.4 A2.8 2.8 0 0 1 96 33.2" stroke="#F4DFA6" stroke-width="1" stroke-linecap="round" fill="none"></path>
+  <path d="M107 21 L107.7 23.3 L110 24 L107.7 24.7 L107 27 L106.3 24.7 L104 24 L106.3 23.3 Z" fill="#D9A441"></path>
+  <path d="M83 26.5 C90 26 97 28 102 31.5 C96 31.5 90 32 84 33 Z M84 35 C90 37 96 39 100 40.5 C94 41 88 40.5 85 39.5 Z" fill="#1E2421"></path>
+  <path d="M8 86 C40 84 80 84 108 85.5" stroke="#2F6B4F" stroke-width="2.5" stroke-linecap="round" fill="none"></path>
+  <path d="M8 91 L90 91" stroke="#2F6B4F" stroke-width="1.2" stroke-linecap="round" fill="none"></path>
+  <path d="M108 85.5 C109 80 113 77 117 77 C116 81 113 84.5 108 85.5 Z" fill="#2F6B4F"></path>
+  <path d="M51 85 L57.5 85 M58.5 85 L65.5 85" stroke="#1E2421" stroke-width="1.4" stroke-linecap="round" fill="none"></path>
+</svg>

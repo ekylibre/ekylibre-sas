@@ -18,7 +18,8 @@
     "check:content": "node scripts/check-content.mjs",
     "check:links": "node scripts/check-content.mjs --links",
     "prepare:3d": "node scripts/prepare-3d.mjs",
-    "test": "playwright test",
+    "test": "node --experimental-strip-types --test tests/unit/*.test.ts && playwright test",
+    "test:unit": "node --experimental-strip-types --test tests/unit/*.test.ts",
     "test:a11y": "playwright test a11y --project=desktop",
     "test:smoke": "playwright test smoke",
     "test:report": "playwright show-report"

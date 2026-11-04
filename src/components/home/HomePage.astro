@@ -16,6 +16,8 @@ import { useTranslations } from '~/i18n/ui';
 import { stats, formatCompact, formatInt } from '~/lib/data';
 import type { IconName } from '~/lib/icon-names';
 import type { Chapter } from '~/islands/farm-scene/types';
+import SystemDiagram from '~/components/system/SystemDiagram.astro';
+import ToolStory from '~/components/system/ToolStory.astro';
 
 interface Props {
   lang: Locale;
@@ -71,8 +73,8 @@ const chapters: Array<Chapter & { eyebrow: string; title: string; text: string }
     eyebrow: fr ? '3 · Le bureau' : '3 · The farm office',
     title: fr ? 'Saisi une fois, retrouvé partout' : 'Entered once, found everywhere',
     text: fr
-      ? 'Au bureau, tout converge : les relevés bancaires arrivent seuls pour le rapprochement, le planning compare le prévu et le réalisé, et l’assistant Hajimari reprend vos données existantes au démarrage. La comptabilité se nourrit de ce qui s’est passé au champ.'
-      : 'In the office, everything comes together: bank statements arrive on their own for reconciliation, planning compares what was planned with what was done, and the Hajimari assistant imports your existing data at start-up. Accounting is fed by what happened in the field.',
+      ? 'Au bureau, tout converge : les relevés bancaires arrivent seuls pour le rapprochement, le planning compare le prévu et le réalisé, et l’assistant Hajimari reprend vos données existantes au démarrage. Lyvre en tire la comptabilité, sans ressaisie.'
+      : 'In the office, everything comes together: bank statements arrive on their own for reconciliation, planning compares what was planned with what was done, and the Hajimari assistant imports your existing data at start-up. Lyvre turns it into the accounts, with no re-keying.',
   },
   {
     id: 'ciel',
@@ -126,42 +128,6 @@ const copy = {
   scroll: fr ? 'Suivez la donnée, du champ au bureau' : 'Follow the data, from field to office',
   place: 'FarmLab La Vauzelle',
 };
-
-const products: Array<{
-  key: 'ekylibre' | 'aiffel' | 'lexicon';
-  icon: IconName;
-  name: string;
-  sub: string;
-  text: string;
-}> = [
-  {
-    key: 'ekylibre',
-    icon: 'owl',
-    name: 'Ekylibre',
-    sub: fr ? 'Gérer l’exploitation' : 'Run the farm',
-    text: fr
-      ? 'Le logiciel de gestion de l’exploitation : cultures, élevage, stocks, ventes et comptabilité, dans une même base. Développé depuis 2008, sous licence AGPL.'
-      : 'The farm management software: crops, livestock, stock, sales and accounting in a single database. Developed since 2008, under the AGPL licence.',
-  },
-  {
-    key: 'lexicon',
-    icon: 'database',
-    name: 'Lexicon',
-    sub: fr ? 'Les données de référence' : 'The reference data',
-    text: fr
-      ? `Le référentiel ouvert des données agricoles françaises : ${rows} de données reliées entre elles, accessibles par API, en CSV et par serveur MCP.`
-      : `The open reference of French agricultural data: ${rows} linked records, available through an API, as CSV and via an MCP server.`,
-  },
-  {
-    key: 'aiffel',
-    icon: 'microphone',
-    name: 'Aiffel',
-    sub: fr ? 'Parler à ses logiciels' : 'Talk to your software',
-    text: fr
-      ? 'L’assistant qui écoute l’agriculteur, à la voix ou par écrit, et range chaque information dans le bon logiciel, après validation.'
-      : 'The assistant that listens to farmers, by voice or text, and files each piece of information in the right software, once approved.',
-  },
-];
 
 const services = fr
   ? ['Intégration', 'Formation', 'Transformation du système d’information', 'Développement de connecteurs', 'Support']
@@ -292,33 +258,28 @@ const proofs: Array<{ icon: IconName; title: string; text: string }> = [
 </div>
 <ScrollStory />
 
-<!-- Les trois communs -->
-<section class="section-light py-24">
+<!-- Nos logiciels : schéma du système (F2) puis récit à onglets (F3) -->
+<section id="logiciels" class="section-light pt-24 pb-16">
   <div class="container-site">
     <p class="eyebrow text-eky-green-text">{fr ? 'Nos logiciels' : 'Our software'}</p>
     <h2 class="mt-3 max-w-2xl text-h2">
-      {fr ? 'Trois communs, une même donnée' : 'Three commons, one source of truth'}
+      {fr ? 'Quatre logiciels libres, un seul système' : 'Four free software projects, one system'}
     </h2>
     <p class="mt-4 max-w-2xl text-lead text-muted">
       {fr
-        ? 'Ekylibre SAS édite, opère et contribue en premier lieu à trois logiciels libres, portés avec l’association OSFarm.'
-        : 'Ekylibre SAS publishes, operates and is the main contributor to three free software projects, developed with the OSFarm association.'}
+        ? 'Ekylibre SAS édite, opère et contribue en premier lieu à quatre logiciels libres. Le Lexicon est un commun de l’association OSFarm.'
+        : 'Ekylibre SAS publishes, operates and is the main contributor to four free software projects. Lexicon is a commons of the OSFarm association.'}
     </p>
-    <ul class="mt-12 grid gap-6 md:grid-cols-3">
-      {products.map((p) => (
-        <li class="card flex flex-col">
-          <span class="medallion size-16 text-3xl">
-            <Icon name={p.icon} />
-          </span>
-          <p class="eyebrow mt-6 text-muted">{p.sub}</p>
-          <h3 class="mt-1 text-h3">{p.name}</h3>
-          <p class="mt-3 grow text-muted">{p.text}</p>
-          <a href={routePath(p.key, lang)} class="mt-6 inline-flex items-center gap-2 font-semibold">
-            {fr ? `Découvrir ${p.name}` : `Discover ${p.name}`} <Icon name="arrow-right" />
-          </a>
-        </li>
-      ))}
-    </ul>
+    <SystemDiagram lang={lang} class="mt-10" />
+  </div>
+</section>
+<section class="section-dark py-20">
+  <div class="container-site">
+    <p class="eyebrow text-eky-green-light">{fr ? 'Du terrain à l’écran' : 'From the field to the screen'}</p>
+    <h2 class="mt-3 max-w-3xl text-h2">
+      {fr ? 'Chaque logiciel, à l’œuvre' : 'Each product, at work'}
+    </h2>
+    <ToolStory lang={lang} />
   </div>
 </section>
 

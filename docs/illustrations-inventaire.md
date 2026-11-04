@@ -84,3 +84,15 @@ Les médaillons de `accueil/schema-flux.png` ne font que 104 px : à afficher en
 - Les 12 bandes `*/illus-*.png` (1000×175 px, 6 médaillons chacune, environ 170 px) : météo, fromages, phytosanitaires, salariés, matériel, élevage, logos eky (ces derniers à ne pas reprendre). Le script s'étend facilement : ajouter une entrée dans `MEDALLIONS`.
 - Variantes du bureau avec surimpression (`commun/ekylibre.png`, `chapitre7/ventes.png` panneau 1, `chapitre5/comptabilite.png` panneau 1), scènes avec texte (`chapitre2/parcellaire` « telepac », `notes-version` « 2023/2024 ») et scènes « interface numérique » sur fond violet ou nuit (`chapitre4`, `chapitre10`, `videos`, `achats-carre`), qui ne relèvent pas du registre agricole.
 - Les illustrations à plat du `.ai` (style différent, non isométrique).
+
+## Logos des logiciels (`src/assets/brand/products/`, copiés le 2026-11-04)
+
+Fichiers officiels, non recolorés ni redessinés ; affichés en `<img>` sur une pastille claire
+(`ProductLogo.astro`). Référencés par `src/data/products.yaml`.
+
+| Fichier | Source | Ayant droit | Traitement |
+|---|---|---|---|
+| `ekylibre.svg` | `src/assets/brand/ekylibre-logo.svg` (identique aux logos des anciens sites : monochrome, aucune version couleur officielle trouvée dans `ekylibre-old`) | Ekylibre SAS | aucun |
+| `lexicon.svg` | `lexicon-rest-api/public/images/lexicon-logo.svg` | OSFarm | svgo (tracés et couleurs inchangés, 50 → 41 ko) |
+| `aiffel.svg` | `https://aiffel.org/favicon.svg` | Ekylibre SAS | aucun |
+| `lyvre.svg` | `compta-asso/frontend/src/assets/lyvre-symbole.svg` (symbole ; le nom est écrit en texte) | Ekylibre SAS | aucun |

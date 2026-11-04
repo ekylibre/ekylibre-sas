@@ -1,0 +1,147 @@
+/* Maquettes d'interface animées (docs/design/03-outils-lyvre.md §4.4).
+   État par défaut = état final (lisible sans JavaScript et en mouvement réduit) ;
+   les animations ne jouent que sous [data-play], posé par src/scripts/tools.ts. */
+@reference "./global.css";
+
+.mockup {
+  @apply overflow-hidden rounded-2xl bg-night-800 text-left text-sm text-straw-50 shadow-[0_24px_60px_-24px_rgb(0_0_0/0.6)] ring-1 ring-white/10;
+}
+.mockup-bar {
+  @apply flex items-center gap-3 border-b border-white/8 bg-night-700/60 px-4 py-2.5 font-mono text-[0.7rem] tracking-[0.14em] text-straw-50/70 uppercase;
+}
+.mockup-dots {
+  @apply flex gap-1.5;
+}
+.mockup-dots span {
+  @apply size-2 rounded-full bg-straw-50/25;
+}
+.mockup-body {
+  @apply p-4 sm:p-5;
+}
+.mk-card {
+  @apply rounded-xl bg-night-700/80 p-3.5 ring-1 ring-white/6;
+}
+.mk-eyebrow {
+  @apply font-mono text-[0.68rem] tracking-[0.14em] text-straw-50/70 uppercase;
+}
+.mk-row {
+  @apply flex items-baseline justify-between gap-3 border-t border-white/6 py-1.5 first:border-t-0;
+}
+.mk-row dt {
+  @apply text-straw-50/70;
+}
+.mk-row dd {
+  @apply text-right font-medium;
+}
+.mk-chip {
+  @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[0.68rem] tracking-wider uppercase ring-1;
+}
+.mk-chip-ok {
+  @apply bg-eky-green/12 text-eky-green-light ring-eky-green/35;
+}
+.mk-chip-wip {
+  @apply bg-wheat-400/12 text-wheat-400 ring-wheat-400/40;
+}
+.mk-chip-neutral {
+  @apply bg-white/5 text-straw-50/80 ring-white/12;
+}
+.mk-skeleton {
+  @apply inline-block h-1.5 rounded-full bg-straw-50/15;
+}
+.mk-bar {
+  @apply h-2 overflow-hidden rounded-full bg-white/8;
+}
+.mk-bar > span {
+  @apply block h-full origin-left rounded-full bg-eky-green;
+}
+.mk-svg-line {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* --- Animations ------------------------------------------------------------------------- */
+[data-play] .mk-in {
+  animation: mk-in 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+[data-play] .mk-pop {
+  animation: mk-pop 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+}
+[data-play] .mk-grow {
+  animation: mk-grow 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+[data-play] .mk-draw {
+  stroke-dasharray: 1;
+  animation: mk-draw 2.2s ease-in-out both;
+}
+[data-play] .mk-type {
+  @apply inline-block overflow-hidden align-bottom whitespace-nowrap;
+  animation: mk-type 1.4s steps(30, end) both;
+}
+[data-play] .mk-strike {
+  animation: mk-strike 0.5s ease both;
+}
+@keyframes mk-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes mk-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+@keyframes mk-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes mk-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes mk-type {
+  from {
+    max-width: 0;
+  }
+  to {
+    max-width: 40ch;
+  }
+}
+@keyframes mk-strike {
+  to {
+    opacity: 0.62;
+    text-decoration: line-through;
+  }
+}
+/* L'élément barré garde son état final hors lecture */
+.mk-strike {
+  opacity: 0.62;
+  text-decoration: line-through;
+}
+
+/* Délais en cascade (0,35 s par pas) */
+.mk-d1 { animation-delay: 0.35s !important; }
+.mk-d2 { animation-delay: 0.7s !important; }
+.mk-d3 { animation-delay: 1.05s !important; }
+.mk-d4 { animation-delay: 1.4s !important; }
+.mk-d5 { animation-delay: 1.75s !important; }
+.mk-d6 { animation-delay: 2.1s !important; }
+.mk-d7 { animation-delay: 2.45s !important; }
+.mk-d8 { animation-delay: 2.8s !important; }
+.mk-d9 { animation-delay: 3.15s !important; }
+.mk-d10 { animation-delay: 3.5s !important; }
+.mk-d11 { animation-delay: 3.85s !important; }
+.mk-d12 { animation-delay: 4.2s !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-play] :is(.mk-in, .mk-pop, .mk-grow, .mk-draw, .mk-type, .mk-strike) {
+    animation: none !important;
+  }
+}

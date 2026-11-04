@@ -28,6 +28,7 @@ const strings = {
     hubLink: 'Découvrir Ekylibre',
     interop: 'Voir tous les connecteurs',
     empty: 'Connecteurs en préparation pour cette zone.',
+    page: 'Découvrir',
   },
   en: {
     close: 'Close',
@@ -46,6 +47,7 @@ const strings = {
     hubLink: 'Discover Ekylibre',
     interop: 'See all connectors',
     empty: 'Connectors for this area are on their way.',
+    page: 'Discover',
   },
 }[lang];
 const links = {
@@ -115,13 +117,19 @@ const links = {
           .map(
             (c) => `
           <li class="border-t border-white/10 pt-4">
-            <p class="flex items-center gap-2 font-display font-semibold">${icon(sprite, c.icon)} ${esc(c.title)}</p>
+            <p class="flex items-center gap-2 font-display font-semibold">${
+              c.logo
+                ? `<img src="${esc(c.logo)}" alt="" width="28" height="28" class="size-7 rounded-md bg-straw-50 p-0.5" />`
+                : icon(sprite, c.icon)
+            } ${esc(c.title)}</p>
+            ${c.statusLabel ? `<p class="mt-2 font-mono text-xs tracking-wider text-wheat-400 uppercase">${esc(c.statusLabel)}</p>` : ''}
             <p class="mt-1.5 text-sm text-straw-50/80">${esc(c.summary)}</p>
             <p class="mt-2 flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs text-straw-50/60">
               <span class="text-eky-green-light">${esc(strings[c.dataFlow] ?? '')}</span>
               ${c.partner ? `<span>${esc(strings.partner!)} : ${c.partnerUrl ? external(c.partnerUrl, c.partner) : esc(c.partner)}</span>` : ''}
               ${c.version ? `<span>${esc(strings.version!)} ${esc(c.version)}</span>` : ''}
               ${external(c.repoUrl, strings.source!)}
+              ${c.pageUrl ? `<a href="${esc(c.pageUrl)}">${esc(strings.page!)} ${esc(c.title)}</a>` : ''}
             </p>
           </li>`,
           )

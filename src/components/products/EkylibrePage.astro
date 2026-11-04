@@ -13,6 +13,9 @@ import { routePath, type Locale } from '~/i18n/routes';
 import { stats, formatInt } from '~/lib/data';
 import { stableConnectors, CATEGORY_META } from '~/lib/interop';
 import { LINKS } from '~/lib/links';
+import { getProduct } from '~/lib/products';
+import ProductLogo from './ProductLogo.astro';
+import ProductHero from './ProductHero.astro';
 import type { IconName } from '~/lib/icon-names';
 
 interface Props {
@@ -28,15 +31,16 @@ const connectors = await stableConnectors(lang);
 
 const title = fr ? 'Ekylibre, logiciel libre de gestion agricole' : 'Ekylibre, free farm management software';
 const description = fr
-  ? 'Cultures, élevage, vigne, stocks, ventes, comptabilité : Ekylibre gère toute l’exploitation dans un logiciel libre, connecté et réversible.'
-  : 'Crops, livestock, vineyard, stock, sales and accounting: Ekylibre runs the whole farm in free software that is connected and reversible.';
+  ? 'Matériels, stocks, suivi GPS, capteurs, agronomie, élevage et vigne : Ekylibre gère l’exploitation dans un logiciel libre, connecté et réversible. La comptabilité est tenue par Lyvre.'
+  : 'Machinery, stock, GPS tracking, sensors, agronomy, livestock and vineyard: Ekylibre runs the farm in free software that is connected and reversible. The books are kept in Lyvre.';
+const lyvre = getProduct('lyvre', lang);
 
 const features: Array<{ icon: IconName; title: string; text: string }> = fr
   ? [
       {
         icon: 'land-parcels',
-        title: 'Parcelles et cultures',
-        text: 'Parcellaire cartographié, assolement, interventions et traçabilité des intrants.',
+        title: 'Parcelles et agronomie',
+        text: 'Parcellaire cartographié, assolement, interventions, fertilisation et traçabilité des intrants.',
       },
       {
         icon: 'cow',
@@ -49,19 +53,19 @@ const features: Array<{ icon: IconName; title: string; text: string }> = fr
         text: 'Avec l’extension Ekyviti, de la parcelle de vigne jusqu’à la bouteille.',
       },
       {
+        icon: 'tractor',
+        title: 'Matériels et suivi GPS',
+        text: 'Parc de matériel, temps de travail, entretien ; traces GPS des boîtiers de tracteurs reprises en interventions.',
+      },
+      {
+        icon: 'satellite',
+        title: 'Capteurs',
+        text: 'Stations météo, sondes et pièges connectés : les relevés arrivent seuls et s’attachent à la bonne parcelle.',
+      },
+      {
         icon: 'barn',
-        title: 'Stocks et matériel',
-        text: 'Entrées, sorties, inventaires et temps de travail du matériel.',
-      },
-      {
-        icon: 'shopping-basket',
-        title: 'Ventes et achats',
-        text: 'Devis, factures, clients et fournisseurs.',
-      },
-      {
-        icon: 'money',
-        title: 'Comptabilité',
-        text: 'Écritures générées à partir de l’activité, rapprochement bancaire, plan comptable agricole.',
+        title: 'Stocks',
+        text: 'Entrées, sorties et inventaires, décomptés automatiquement à chaque intervention.',
       },
       {
         icon: 'chart-donut',
@@ -77,8 +81,8 @@ const features: Array<{ icon: IconName; title: string; text: string }> = fr
   : [
       {
         icon: 'land-parcels',
-        title: 'Fields and crops',
-        text: 'Mapped field register, crop rotation, interventions and input traceability.',
+        title: 'Fields and agronomy',
+        text: 'Mapped field register, crop rotation, interventions, fertilisation and input traceability.',
       },
       {
         icon: 'cow',
@@ -91,19 +95,19 @@ const features: Array<{ icon: IconName; title: string; text: string }> = fr
         text: 'With the Ekyviti extension, from the vineyard plot all the way to the bottle.',
       },
       {
+        icon: 'tractor',
+        title: 'Machinery and GPS tracking',
+        text: 'Machinery fleet, working hours, maintenance; GPS tracks from tractor boxes turned into interventions.',
+      },
+      {
+        icon: 'satellite',
+        title: 'Sensors',
+        text: 'Weather stations, probes and connected traps: readings arrive on their own and attach to the right plot.',
+      },
+      {
         icon: 'barn',
-        title: 'Stock and machinery',
-        text: 'Receipts, issues, stocktakes and machinery working time.',
-      },
-      {
-        icon: 'shopping-basket',
-        title: 'Sales and purchasing',
-        text: 'Quotes, invoices, customers and suppliers.',
-      },
-      {
-        icon: 'money',
-        title: 'Accounting',
-        text: 'Entries generated from farm activity, bank reconciliation, the French agricultural chart of accounts.',
+        title: 'Stock',
+        text: 'Receipts, issues and stocktakes, updated automatically with every intervention.',
       },
       {
         icon: 'chart-donut',
@@ -174,46 +178,35 @@ const jsonLd = softwareJsonLd({
 
 <Base lang={lang} routeKey="ekylibre" title={title} description={description}>
   <script type="application/ld+json" slot="head" set:html={jsonLd} />
-  <section class="section-dark">
-    <div class="container-site grid gap-12 pt-16 pb-20 lg:grid-cols-[1.4fr_1fr] lg:items-center">
-      <div>
-        <p class="eyebrow text-eky-green-light">{fr ? 'Ekylibre · gérer l’exploitation' : 'Ekylibre · run the farm'}</p>
-        <h1 class="mt-4 max-w-3xl text-h1">
-          {fr ? 'Toute l’exploitation, dans un seul logiciel' : 'The whole farm, in one piece of software'}
-        </h1>
-        <p class="mt-5 max-w-2xl text-lead text-straw-50/85">
-          {fr
-            ? 'Ekylibre est un logiciel libre de gestion de l’exploitation agricole (en anglais, FMIS). Cultures, élevage, vigne, stocks, ventes et comptabilité partagent la même base de données : une intervention saisie au champ se retrouve dans les stocks et dans les comptes.'
-            : 'Ekylibre is free software for running a farm: a farm management information system (FMIS). Crops, livestock, vineyard, stock, sales and accounting share the same database, so an intervention recorded in the field shows up in the stock and in the books.'}
-        </p>
-        <div class="mt-8 flex flex-wrap gap-4">
-          <a href={routePath('contact', lang)} class="btn btn-primary">
-            {fr ? 'Demander une démo' : 'Request a demo'}
-          </a>
-          <a href={LINKS.demo} rel="noopener" target="_blank" class="btn btn-secondary">
-            {fr ? 'Essayer la démo en ligne' : 'Try the online demo'}
-          </a>
-        </div>
-      </div>
-      <Image
-        src={illusBureau}
-        alt=""
-        widths={[240, 332]}
-        sizes="(min-width: 1024px) 20rem, 60vw"
-        class="mx-auto w-full max-w-[20rem] rounded-2xl lg:mr-0"
-        loading="eager"
-      />
-    </div>
-  </section>
+  <ProductHero lang={lang} product="ekylibre" title={fr ? 'Toute l’exploitation, dans un seul logiciel' : 'The whole farm, in one piece of software'}>
+    {fr
+      ? 'Ekylibre est un logiciel libre de gestion de l’exploitation agricole (en anglais, FMIS). Matériels, stocks, suivi GPS, capteurs, agronomie, élevage et vigne partagent la même base de données : une intervention saisie au champ, ou relevée par le boîtier du tracteur, se retrouve dans les stocks, sur la carte et, avec Lyvre, dans les comptes.'
+      : 'Ekylibre is free software for running a farm: a farm management information system (FMIS). Machinery, stock, GPS tracking, sensors, agronomy, livestock and vineyard share the same database, so an intervention recorded in the field, or picked up by the tractor’s box, shows up in the stock, on the map and, with Lyvre, in the books.'}
+    <Fragment slot="actions">
+      <a href={routePath('contact', lang)} class="btn btn-primary">
+        {fr ? 'Demander une démo' : 'Request a demo'}
+      </a>
+      <a href={LINKS.demo} rel="noopener" target="_blank" class="btn btn-secondary">
+        {fr ? 'Essayer la démo en ligne' : 'Try the online demo'}
+      </a>
+    </Fragment>
+  </ProductHero>
 
   <section class="section-light py-20">
-    <div class="container-site grid gap-6 lg:grid-cols-[1fr_2fr]">
+    <div class="container-site grid items-center gap-6 lg:grid-cols-[1fr_2fr_auto] lg:gap-10">
       <h2 class="text-h2">{fr ? 'Qui fait quoi' : 'Who does what'}</h2>
       <p class="text-lead text-muted">
         {fr
           ? 'Ekylibre est un commun numérique, porté avec l’association OSFarm. Ekylibre SAS l’édite et l’opère : nous développons le logiciel, publions son code, l’hébergeons pour nos clients et les accompagnons. Le code, lui, reste à tous.'
           : 'Ekylibre is a digital commons, run together with the OSFarm association. Ekylibre SAS publishes and operates it: we develop the software, release its code, host it for our customers and support them. The code itself belongs to everyone.'}
       </p>
+      <Image
+        src={illusBureau}
+        alt=""
+        widths={[240, 332]}
+        sizes="(min-width: 1024px) 14rem, 60vw"
+        class="mx-auto w-full max-w-[14rem] rounded-2xl"
+      />
     </div>
   </section>
 
@@ -236,6 +229,25 @@ const jsonLd = softwareJsonLd({
           </li>
         ))}
       </ul>
+      <a
+        href={routePath('lyvre', lang)}
+        class="card mt-5 flex flex-col gap-5 no-underline transition hover:ring-eky-green/40 sm:flex-row sm:items-center"
+      >
+        <ProductLogo product={lyvre} size="md" decorative />
+        <span class="grow">
+          <span class="block font-display text-lg font-semibold text-night-900">
+            {fr ? 'Comptabilité, ventes et achats : avec Lyvre' : 'Accounting, sales and purchasing: with Lyvre'}
+          </span>
+          <span class="mt-1 block text-sm text-muted">
+            {fr
+              ? 'Ekylibre se concentre sur la gestion de l’exploitation. Lyvre, la brique comptable de l’écosystème, reçoit ses données et tient les comptes.'
+              : 'Ekylibre focuses on running the farm. Lyvre, the accounting building block of the ecosystem, receives its data and keeps the books.'}
+          </span>
+        </span>
+        <span class="inline-flex shrink-0 items-center gap-2 font-semibold text-eky-green-text">
+          {fr ? 'Découvrir Lyvre' : 'Discover Lyvre'} <Icon name="arrow-right" />
+        </span>
+      </a>
     </div>
   </section>
 

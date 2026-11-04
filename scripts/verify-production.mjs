@@ -15,7 +15,7 @@ async function get(path, init = {}) {
 
 // 1. Pages principales FR/EN
 const pages = ['/', '/en/', '/interoperabilite/', '/en/interoperability/', '/ekylibre/', '/lexicon/', '/aiffel/', '/services/',
-  '/developpeurs/', '/entreprise/', '/actualites/', '/contact/', '/mentions-legales/', '/terms-of-use/', '/confidentialite/', '/cookies/'];
+  '/lyvre/', '/en/lyvre/', '/developpeurs/', '/entreprise/', '/actualites/', '/contact/', '/mentions-legales/', '/terms-of-use/', '/confidentialite/', '/cookies/'];
 for (const path of pages) {
   const res = await get(path);
   const html = res.status === 200 ? await res.text() : '';

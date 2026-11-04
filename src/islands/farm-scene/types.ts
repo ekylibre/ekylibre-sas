@@ -41,6 +41,12 @@ export interface SceneConnector {
   partnerUrl?: string | undefined;
   version: string;
   repoUrl: string;
+  /** Logiciels de l'écosystème (Aiffel, Lyvre) : logo officiel, état, page produit. */
+  logo?: string | undefined;
+  statusLabel?: string | undefined;
+  pageUrl?: string | undefined;
+  /** Liaisons en cours de développement (zones reliées par un arc ocre immobile). */
+  wipLinks?: string[] | undefined;
 }
 
 export interface SceneDataset {

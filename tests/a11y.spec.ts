@@ -31,6 +31,15 @@ for (const p of pages) {
     await page.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => {});
     // Les animations d'entrée (GSAP) peuvent laisser du texte semi-transparent : on attend leur fin.
     await page.waitForTimeout(500);
+    // Maquettes animées (animations CSS « mk-* ») : on attend qu'elles aient fini avant l'analyse.
+    await page.evaluate(() =>
+      Promise.all(
+        document
+          .getAnimations()
+          .filter((a) => (a as CSSAnimation).animationName?.startsWith('mk-'))
+          .map((a) => a.finished.catch(() => {})),
+      ),
+    );
 
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'])

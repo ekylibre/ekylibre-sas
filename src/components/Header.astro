@@ -4,6 +4,7 @@ import Icon from './Icon.astro';
 import LangSwitch from './LangSwitch.astro';
 import { routePath, type Locale, type RouteKey } from '~/i18n/routes';
 import { useTranslations, ROUTE_TITLES } from '~/i18n/ui';
+import { PRODUCT_KEYS } from '~/lib/products';
 
 interface Props {
   lang: Locale;
@@ -14,7 +15,7 @@ interface Props {
 const { lang, routeKey, langSwitchHref } = Astro.props;
 const t = useTranslations(lang);
 
-const PRODUCTS: RouteKey[] = ['ekylibre', 'aiffel', 'lexicon'];
+const PRODUCTS: RouteKey[] = [...PRODUCT_KEYS];
 const MAIN: RouteKey[] = ['interop', 'services', 'developers', 'company', 'news'];
 const isCurrent = (key: RouteKey) => (key === routeKey ? 'page' : undefined);
 ---

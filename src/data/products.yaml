@@ -1,0 +1,145 @@
+# Les logiciels édités par Ekylibre SAS (docs/design/03-outils-lyvre.md §2).
+# Source unique : menu, pied de page, accueil, schéma, récit, pages produit, JSON-LD.
+# Logos : src/assets/brand/products/<logo>, copies non modifiées des logos officiels.
+# Statuts : service | en-cours | beta.
+
+products:
+  - key: ekylibre
+    name: Ekylibre
+    logo: ekylibre.svg
+    status: service
+    role:
+      fr: Gérer l’exploitation
+      en: Run the farm
+    tagline:
+      fr: Matériels, stocks, suivi GPS, capteurs et agronomie, au même endroit.
+      en: Machinery, stock, GPS tracking, sensors and agronomy, all in one place.
+    summary:
+      fr: "Le logiciel libre de gestion de l’exploitation : parcelles et agronomie, matériels suivis au GPS, stocks, capteurs, élevage et vigne. Développé depuis 2008, sous licence AGPL."
+      en: "Free software to run the farm: fields and agronomy, GPS-tracked machinery, stock, sensors, livestock and vineyard. Developed since 2008, under the AGPL licence."
+    points:
+      fr:
+        - Une intervention saisie au champ met à jour le stock, la parcelle et le temps du matériel.
+        - Traces GPS des tracteurs et relevés des capteurs, repris par les connecteurs.
+        - Doses et délais vérifiés dans le Lexicon.
+      en:
+        - An intervention recorded in the field updates the stock, the plot and the machine’s hours.
+        - Tractor GPS tracks and sensor readings, brought in by connectors.
+        - Doses and intervals checked against Lexicon.
+    links:
+      site: https://ekylibre.org/
+      code: https://github.com/ekylibre/ekylibre
+
+  - key: lexicon
+    name: Lexicon
+    logo: lexicon.svg
+    status: service
+    steward: OSFarm
+    role:
+      fr: Les données de référence
+      en: The reference data
+    tagline:
+      fr: Les données publiques agricoles françaises, reliées entre elles.
+      en: French public agricultural data, linked together.
+    summary:
+      fr: Le référentiel ouvert des données agricoles françaises, accessible par API, en CSV et par serveur MCP. Un commun de l’association OSFarm, dont Ekylibre SAS est le contributeur principal.
+      en: The open reference of French agricultural data, available through an API, as CSV and via an MCP server. A commons of the OSFarm association, with Ekylibre SAS as its main contributor.
+    points:
+      fr:
+        - Cadastre, parcelles PAC, produits phytosanitaires, météo, entreprises.
+        - Chaque ligne cite sa source et sa date de mise à jour.
+        - API JSON et CSV, paquets PostgreSQL, serveur MCP pour les assistants.
+      en:
+        - Land registry, CAP plots, plant protection products, weather, companies.
+        - Every record cites its source and update date.
+        - JSON and CSV API, PostgreSQL packages, an MCP server for assistants.
+    links:
+      site: https://lexicon.osfarm.org/
+      code: https://github.com/osfarm/lexicon
+
+  - key: aiffel
+    name: Aiffel
+    logo: aiffel.svg
+    status: beta
+    role:
+      fr: Parler à ses logiciels
+      en: Talk to your software
+    tagline:
+      fr: Dites-le une fois. Aiffel le range au bon endroit.
+      en: Say it once. Aiffel files it in the right place.
+    summary:
+      fr: L’assistant qui écoute l’agriculteur, à la voix ou par écrit, vérifie dans le Lexicon et range chaque information dans le bon logiciel, après validation.
+      en: The assistant that listens to farmers, by voice or text, checks against Lexicon and files each piece of information in the right software, once approved.
+    points:
+      fr:
+        - À la voix ou par écrit, depuis la cour ou le tracteur.
+        - Il reformule, cite ses sources et n’écrit rien sans validation.
+        - Il alimente Ekylibre aujourd’hui, Lyvre demain.
+      en:
+        - By voice or text, from the farmyard or the tractor cab.
+        - It rephrases, cites its sources and writes nothing without approval.
+        - It feeds Ekylibre today, Lyvre next.
+    links:
+      site: https://aiffel.org/
+      code: https://github.com/ekylibre/aiffel
+
+  - key: lyvre
+    name: Lyvre
+    logo: lyvre.svg
+    status: service
+    subStatus:
+      fr: Partie agricole en cours
+      en: Farm accounting in progress
+    role:
+      fr: Tenir la comptabilité
+      en: Keep the books
+    tagline:
+      fr: La comptabilité libre, sobre et souveraine, et bientôt celle de la ferme.
+      en: Free, frugal, self-hosted accounting, and soon for the farm too.
+    summary:
+      fr: "La brique comptable de l’écosystème : banque, achats, ventes, baux, clôture et FEC, pour les associations et les SCI aujourd’hui, pour les exploitations agricoles bientôt. Logiciel libre sous licence AGPL, hébergé chez vous."
+      en: "The accounting building block of the ecosystem: banking, purchases, sales, leases, year-end closing and FEC export, for associations and property companies today, for farms soon. Free software under the AGPL licence, hosted on your own servers."
+    points:
+      fr:
+        - Banque rapprochée sans ressaisie, factures lues automatiquement, FEC prêt pour l’expert-comptable.
+        - Plan comptable agricole, fermages et calendrier fiscal en cours d’ajout.
+        - Reçoit les données d’Ekylibre et d’Aiffel, s’appuie sur le Lexicon.
+      en:
+        - Bank reconciliation without re-entry, invoices read automatically, FEC ready for the accountant.
+        - Farm chart of accounts, land rents and tax calendar being added.
+        - Receives data from Ekylibre and Aiffel, relies on Lexicon.
+    links:
+      site: https://lyvre.seconde-nature.net/about
+      # D23 : dépôt actuel ; seule valeur à changer au transfert vers ekylibre/lyvre.
+      code: https://github.com/asso-seconde-nature/seconde-compta
+
+# Flux entre les logiciels (schéma du système, récits). « farmer » = l’agriculteur.
+flows:
+  - from: farmer
+    to: aiffel
+    status: service
+    label: { fr: 'dicte', en: 'dictates' }
+  - from: aiffel
+    to: ekylibre
+    status: service
+    label: { fr: 'interventions, récoltes, stocks', en: 'interventions, harvests, stock' }
+  - from: lexicon
+    to: aiffel
+    status: service
+    label: { fr: 'vérifie et cite', en: 'checks and cites' }
+  - from: lexicon
+    to: ekylibre
+    status: service
+    label: { fr: 'produits phyto, parcelles, météo', en: 'plant protection, plots, weather' }
+  - from: ekylibre
+    to: lyvre
+    status: en-cours
+    label: { fr: 'achats, ventes, stocks valorisés', en: 'purchases, sales, stock valuation' }
+  - from: aiffel
+    to: lyvre
+    status: en-cours
+    label: { fr: 'pièces, écritures', en: 'documents, entries' }
+  - from: lexicon
+    to: lyvre
+    status: en-cours
+    label: { fr: 'plan comptable agricole, indices', en: 'farm chart of accounts, indices' }

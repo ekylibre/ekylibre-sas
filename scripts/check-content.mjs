@@ -51,6 +51,16 @@ async function checkContent() {
       warning(`plugin stable « ${p.slug} » sans curation dans connectors.yaml (affiché au bureau avec son README)`);
   }
 
+  // Logiciels (products.yaml) ↔ logos ↔ routes (docs/design/03-outils-lyvre.md §2.2)
+  const products = await yaml('src/data/products.yaml');
+  const routes = await readFile('src/i18n/routes.ts', 'utf8');
+  for (const p of products.products ?? []) {
+    const logo = join('src/assets/brand/products', p.logo);
+    if (!existsSync(logo)) error(`products.yaml : logo introuvable pour « ${p.key} » (${logo})`);
+    else if (/\sstyle=/.test(await readFile(logo, 'utf8'))) warning(`${logo} : attribut style (vérifier la CSP)`);
+    if (!new RegExp(`^\\s*${p.key}: \\{`, 'm').test(routes)) error(`products.yaml : « ${p.key} » n’a pas de route`);
+  }
+
   // Jeux Lexicon ↔ familles
   const seen = new Map();
   for (const f of families) {

@@ -1,0 +1,78 @@
+---
+// Maquette Lyvre : facture lue → banque rapprochée → compte de résultat ; comptes agricoles « en cours ».
+import MockFrame from './MockFrame.astro';
+import type { Locale } from '~/i18n/routes';
+
+interface Props {
+  lang: Locale;
+  autoplay?: boolean;
+  class?: string;
+}
+const { lang, autoplay = false, class: className } = Astro.props;
+const fr = lang === 'fr';
+const label = fr
+  ? 'Exemple dans Lyvre : une facture fournisseur lue automatiquement, rapprochée de la banque, puis reportée au compte de résultat ; les comptes agricoles sont en cours d’ajout.'
+  : 'Example in Lyvre: a supplier invoice read automatically, matched with the bank statement, then carried to the income statement; farm accounts are being added.';
+const bank = [
+  { w: 'w-24', amount: '− 494,40 €', d: 'mk-d3', match: true },
+  { w: 'w-16', amount: '+ 1 820,00 €', d: 'mk-d4', match: true },
+  { w: 'w-20', amount: '− 62,90 €', d: 'mk-d5', match: true },
+  { w: 'w-14', amount: '− 18,00 €', d: 'mk-d6', match: false },
+];
+const result = [
+  { label: fr ? 'Produits' : 'Income', w: 'w-[82%]', d: 'mk-d7' },
+  { label: fr ? 'Charges' : 'Expenses', w: 'w-[58%]', d: 'mk-d8' },
+];
+---
+
+<MockFrame lang={lang} title={fr ? 'lyvre · comptabilité' : 'lyvre · accounting'} autoplay={autoplay} label={label} class={className}>
+  <div class="grid gap-3 sm:grid-cols-2">
+    <div class="mk-card mk-in">
+      <p class="mk-eyebrow">{fr ? 'Facture fournisseur' : 'Supplier invoice'} · 2026-0418</p>
+      <dl class="mt-2">
+        <div class="mk-row"><dt>{fr ? 'Fournisseur' : 'Supplier'}</dt><dd>{fr ? 'Coop. de Saintonge' : 'Saintonge co-op'}</dd></div>
+        <div class="mk-row"><dt>{fr ? 'Montant HT' : 'Net amount'}</dt><dd>412,00 €</dd></div>
+        <div class="mk-row"><dt>{fr ? 'TVA' : 'VAT'}</dt><dd>82,40 €</dd></div>
+      </dl>
+      <p class="mk-in mk-d2 mt-3"><span class="mk-chip mk-chip-ok">{fr ? 'Lue · Factur-X' : 'Read · Factur-X'}</span></p>
+    </div>
+    <div class="mk-card mk-in mk-d1">
+      <p class="mk-eyebrow">{fr ? 'Banque rapprochée' : 'Bank reconciled'}</p>
+      <ul class="mt-2">
+        {
+          bank.map((b) => (
+            <li class="mk-row items-center">
+              <span class:list={['mk-skeleton', b.w]} />
+              <span class="flex items-center gap-2 font-mono text-xs">
+                {b.amount}
+                {b.match ? (
+                  <span class:list={['mk-pop text-eky-green-light', b.d]}>✓</span>
+                ) : (
+                  <span class="text-straw-50/70">·</span>
+                )}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+  <div class="mk-card mk-in mk-d6 mt-3">
+    <p class="mk-eyebrow">{fr ? 'Compte de résultat · 2026' : 'Income statement · 2026'}</p>
+    <div class="mt-2 grid gap-2">
+      {
+        result.map((r) => (
+          <div class="grid grid-cols-[5.5rem_1fr] items-center gap-3">
+            <span class="text-straw-50/70">{r.label}</span>
+            <div class="mk-bar"><span class:list={['mk-grow', r.w, r.d]} /></div>
+          </div>
+        ))
+      }
+    </div>
+    <p class="mk-in mk-d10 mt-3 flex flex-wrap gap-2">
+      <span class="mk-chip mk-chip-neutral">60111 {fr ? 'Engrais' : 'Fertiliser'}</span>
+      <span class="mk-chip mk-chip-neutral">31151 {fr ? 'Avances aux cultures' : 'Crop advances'}</span>
+      <span class="mk-chip mk-chip-wip">◐ {fr ? 'Agricole · en cours' : 'Farm · in progress'}</span>
+    </p>
+  </div>
+</MockFrame>

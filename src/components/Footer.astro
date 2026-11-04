@@ -1,5 +1,6 @@
 ---
 import Logo from '~/assets/brand/ekylibre-logo.svg';
+import { PRODUCT_KEYS } from '~/lib/products';
 import { routePath, type Locale, type RouteKey } from '~/i18n/routes';
 import { useTranslations, ROUTE_TITLES } from '~/i18n/ui';
 import { LINKS } from '~/lib/links';
@@ -15,7 +16,7 @@ const year = new Date().getFullYear();
 const internal = (keys: RouteKey[]) =>
   keys.map((key) => ({ href: routePath(key, lang), label: ROUTE_TITLES[key][lang] }));
 const columns = [
-  { title: t('footer.products'), links: internal(['ekylibre', 'aiffel', 'lexicon', 'interop']) },
+  { title: t('footer.products'), links: internal([...PRODUCT_KEYS, 'interop']) },
   { title: t('footer.company'), links: internal(['services', 'company', 'news', 'contact']) },
   {
     title: t('footer.resources'),

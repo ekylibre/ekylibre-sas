@@ -12,6 +12,8 @@ interface SoftwareInput {
   description: string;
   url: string;
   license?: string;
+  /** Catégorie schema.org (BusinessApplication par défaut). */
+  category?: string;
   publisher?: Org;
   contributor?: Org;
 }
@@ -26,7 +28,7 @@ export function softwareJsonLd(input: SoftwareInput): string {
     name: input.name,
     description: input.description,
     url: input.url,
-    applicationCategory: 'BusinessApplication',
+    applicationCategory: input.category ?? 'BusinessApplication',
     operatingSystem: 'Web',
     ...(input.license ? { license: input.license } : {}),
     publisher: org(input.publisher ?? EKYLIBRE_SAS),

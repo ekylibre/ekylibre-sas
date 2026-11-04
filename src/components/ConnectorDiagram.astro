@@ -36,7 +36,9 @@ const nodes = [
     color: '#4ed164',
   },
   { id: 'cour', title: 'Aiffel', icon: 'microphone', detail: fr ? 'Dialogue' : 'Dialogue', color: '#4ed164' },
-];
+  // Lyvre : liaison en cours de développement (ocre, pointillés fins), comme dans la scène 3D.
+  { id: 'lyvre', title: 'Lyvre', icon: 'book-open', detail: fr ? 'Comptabilité · en cours' : 'Accounting · in progress', color: '#e2b76c', wip: true },
+] as Array<{ id: string; title: string; icon: string; detail: string; color: string; wip?: boolean }>;
 
 const W = 640;
 const H = 460;
@@ -59,7 +61,7 @@ const label = fr
   font-family="var(--font-sans)"
 >
   {placed.map((n) => (
-    <line x1={cx} y1={cy} x2={n.x} y2={n.y} stroke={n.color} stroke-width="2" stroke-dasharray="6 5" opacity="0.75" />
+    <line x1={cx} y1={cy} x2={n.x} y2={n.y} stroke={n.color} stroke-width="2" stroke-dasharray={n.wip ? '2 6' : '6 5'} opacity="0.75" />
   ))}
   {placed.map((n) => (
     <g transform={`translate(${n.x} ${n.y})`}>

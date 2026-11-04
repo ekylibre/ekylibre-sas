@@ -1,0 +1,28 @@
+---
+// État d'un logiciel ou d'un flux (F4) : En service, En cours, Bêta.
+import { STATUS_LABEL, type Status } from '~/lib/products';
+import type { Locale } from '~/i18n/routes';
+
+interface Props {
+  status: Status;
+  lang: Locale;
+  /** Précision affichée après l'état (ex. « Partie agricole en cours »). */
+  detail?: string | undefined;
+  class?: string | undefined;
+}
+const { status, lang, detail, class: className } = Astro.props;
+const tone = {
+  service: 'text-eky-green-text bg-eky-green/10 ring-eky-green/30 [.section-dark_&]:text-eky-green-light',
+  'en-cours': 'text-soil-800 bg-wheat-400/20 ring-wheat-400/50 [.section-dark_&]:text-wheat-400',
+  beta: 'text-night-700 bg-sky-300/25 ring-sky-300/60 [.section-dark_&]:text-sky-300',
+}[status];
+const dot = { service: '●', 'en-cours': '◐', beta: '◇' }[status];
+---
+
+<span class:list={['status-badge inline-flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs tracking-[0.12em] uppercase', className]}>
+  <span class:list={['inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 ring-1', tone]} data-status={status}>
+    <span aria-hidden="true">{dot}</span>
+    {STATUS_LABEL[status][lang]}
+  </span>
+  {detail && <span class="text-muted">{detail}</span>}
+</span>

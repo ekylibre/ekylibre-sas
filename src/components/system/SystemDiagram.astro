@@ -1,0 +1,501 @@
+---
+// F2 — Schéma isométrique du système (docs/design/03-outils-lyvre.md §4.2), inspiré d'oskale.com :
+// Aiffel au centre, Ekylibre, Lexicon et Lyvre autour, l'agriculteur au premier plan.
+// Le dessin est calculé au build (src/lib/iso.ts) ; les logiciels sont de vrais boutons HTML posés
+// au-dessus du SVG ; le panneau texte (aria-live) dit l'essentiel, schéma ou pas.
+import ProductLogo from '~/components/products/ProductLogo.astro';
+import StatusBadge from '~/components/products/StatusBadge.astro';
+import Icon from '~/components/Icon.astro';
+import { box, cylinder, curve, curvePoint, path, project, type Point2, type Projection } from '~/lib/iso';
+import { getFlows, getProducts, STATUS_LABEL, type ProductKey } from '~/lib/products';
+import { routePath, type Locale } from '~/i18n/routes';
+
+interface Props {
+  lang: Locale;
+  tone?: 'light' | 'dark';
+  /** Logiciel mis en avant (pages produit) : pas d'avance automatique. */
+  focus?: ProductKey;
+  caption?: boolean;
+  class?: string | undefined;
+}
+const { lang, tone = 'light', focus, caption = true, class: className } = Astro.props;
+const fr = lang === 'fr';
+const products = getProducts(lang);
+const byKey = Object.fromEntries(products.map((p) => [p.key, p])) as Record<ProductKey, (typeof products)[number]>;
+const flows = getFlows(lang);
+const farmerLabel = fr ? 'Agriculteur' : 'Farmer';
+const nameOf = (k: ProductKey | 'farmer') => (k === 'farmer' ? farmerLabel : byKey[k].name);
+const initial: ProductKey = focus ?? 'aiffel';
+// Ordre de tabulation : Aiffel au centre d'abord, puis les autres dans le sens de lecture.
+const ORDER: ProductKey[] = ['aiffel', 'ekylibre', 'lexicon', 'lyvre'];
+
+// --- Géométrie (unités monde ; voir src/lib/iso.ts) ---------------------------------------
+const P: Projection = { ox: 600, oy: 360, scale: 1.1 };
+const W = 1200;
+const H = 680;
+
+// Ancres écran des flux (les traits partent du cœur de chaque élément ; les volumes les recouvrent).
+const anchor: Record<ProductKey | 'farmer', Point2> = {
+  aiffel: project([0, 0, 20], P),
+  ekylibre: project([-185, 185, 30], P),
+  lexicon: project([-205, -205, 30], P),
+  lyvre: project([185, -185, 10], P),
+  farmer: project([215, 215, 20], P),
+};
+// Courbure de chaque flux : vers l'extérieur du schéma ; Ekylibre → Lyvre passe sous Aiffel.
+const BEND: Record<string, number> = {
+  'farmer>aiffel': 0,
+  'aiffel>ekylibre': -30,
+  'lexicon>aiffel': 0,
+  'lexicon>ekylibre': 50,
+  'ekylibre>lyvre': 390,
+  'aiffel>lyvre': 30,
+  'lexicon>lyvre': -50,
+};
+const flowShapes = flows.map((f) => {
+  const bend = BEND[`${f.from}>${f.to}`] ?? 0;
+  const a = anchor[f.from];
+  const b = anchor[f.to];
+  // Position de l'étiquette le long de la courbe (évite les volumes et l'agriculteur).
+  const T: Record<string, number> = { 'lexicon>aiffel': 0.3, 'ekylibre>lyvre': 0.25, 'aiffel>ekylibre': 0.55 };
+  // Ekylibre → Lyvre : étiquette alignée à droite, entre le bouton d'Ekylibre et celui d'Aiffel.
+  const anchorText = f.from === 'ekylibre' && f.to === 'lyvre' ? 'end' : 'middle';
+  const [lx, ly] = curvePoint(a, b, bend, T[`${f.from}>${f.to}`] ?? 0.5);
+  return { ...f, d: curve(a, b, bend), lx, ly, anchorText };
+});
+
+// Aiffel : socle, anneau, plaque « voix » avec forme d'onde.
+const slab = box(-120, -120, 0, 240, 240, 14, P);
+const ring = cylinder(0, 0, 14, 82, 0, P).top;
+const plate = box(-55, -24, 14, 110, 12, 74, P);
+const wave = [10, 26, 42, 30, 18, 38, 22, 12]
+  .map((h, i) => path([[-44 + i * 12.5, -12, 51 - h / 2], [-44 + i * 12.5, -12, 51 + h / 2]], P, false))
+  .join('');
+
+// Ekylibre : hangar à toit à deux pans, tracteur, capteur sur mât.
+const [hx0, hy0, hx1, hy1, hw, hr] = [-245, 135, -135, 225, 55, 85];
+const hangar = {
+  back: path([[hx0, hy0, hw], [hx1, hy0, hw], [hx1, 180, hr], [hx0, 180, hr]], P),
+  wall: path([[hx0, hy1, 0], [hx1, hy1, 0], [hx1, hy1, hw], [hx0, hy1, hw]], P),
+  gable: path([[hx1, hy0, 0], [hx1, hy1, 0], [hx1, hy1, hw], [hx1, 180, hr], [hx1, hy0, hw]], P),
+  roof: path([[hx0, 180, hr], [hx1, 180, hr], [hx1, hy1, hw], [hx0, hy1, hw]], P),
+  door: path([[hx1, 160, 0], [hx1, 160, 36], [hx1, 200, 36], [hx1, 200, 0]], P, false),
+};
+const tractor = {
+  rear: box(-122, 232, 0, 18, 8, 18, P),
+  body: box(-122, 212, 8, 44, 20, 16, P),
+  cab: box(-122, 212, 24, 20, 20, 22, P),
+  front: box(-92, 232, 0, 11, 7, 11, P),
+};
+const mastFoot = project([-268, 250, 0], P);
+const mastTop = project([-268, 250, 96], P);
+const sensor = box(-275, 243, 96, 14, 14, 10, P);
+const [sx, sy] = project([-261, 250, 104], P);
+const signal = `M${sx + 12} ${sy - 10}a12 12 0 0 1 0 20M${sx + 20} ${sy - 17}a20 20 0 0 1 0 34`;
+
+// Lexicon : trois disques de données empilés.
+const discs = [0, 30, 60].map((z) => cylinder(-205, -205, z, 58, 21, P));
+
+// Lyvre : registre ouvert sur sa couverture, pile de pièces.
+const cover = box(128, -238, 0, 114, 96, 10, P);
+const pageL = box(134, -232, 10, 102, 41, 6, P);
+const pageR = box(134, -189, 10, 102, 41, 6, P);
+const lines = [0, 1, 2, 3]
+  .flatMap((i) => [
+    path([[146, -224 + i * 9, 16], [222, -224 + i * 9, 16]], P, false),
+    path([[146, -181 + i * 9, 16], [i === 3 ? 190 : 222, -181 + i * 9, 16]], P, false),
+  ])
+  .join('');
+const coins = [0, 6, 12, 18].map((z) => cylinder(262, -120, z, 15, 5, P));
+
+// Agriculteur : silhouette et ondes de voix vers Aiffel.
+const body = cylinder(215, 215, 0, 11, 36, P);
+const [fx, fy] = project([215, 215, 48], P);
+const voice = `M${fx - 14} ${fy - 18}a18 18 0 0 1 28 0M${fx - 22} ${fy - 28}a28 28 0 0 1 44 0`;
+const [labelX, labelY] = project([215, 215, 0], P);
+---
+
+<figure
+  class:list={['system', `system--${tone}`, className]}
+  data-system
+  data-active={initial}
+  data-autoplay={focus ? 'off' : 'on'}
+>
+  <div class="relative">
+    <svg viewBox={`0 0 ${W} ${H}`} class="block h-auto w-full" aria-hidden="true" focusable="false">
+      <g class="flows">
+        {
+          flowShapes.map((f) => (
+            <g class:list={['flow', `is-${f.status}`]} data-from={f.from} data-to={f.to}>
+              <path class="flow-line" d={f.d} />
+            </g>
+          ))
+        }
+      </g>
+
+      <g class="node" data-node="lexicon">
+        {
+          discs.map((c) => (
+            <>
+              <path class="face side" d={c.side} />
+              <path class="face top" d={c.top} />
+            </>
+          ))
+        }
+      </g>
+
+      <g class="node" data-node="ekylibre">
+        <path class="face top" d={hangar.back} />
+        <path class="face left" d={hangar.wall} />
+        <path class="face right" d={hangar.gable} />
+        <path class="face top" d={hangar.roof} />
+        <path class="detail" d={hangar.door} />
+        <line class="detail" x1={mastFoot[0]} y1={mastFoot[1]} x2={mastTop[0]} y2={mastTop[1]} />
+        <path class="face left" d={sensor.left} /><path class="face right" d={sensor.right} /><path class="face top" d={sensor.top} />
+        <path class="detail signal" d={signal} />
+        {
+          [tractor.rear, tractor.body, tractor.cab, tractor.front].map((b) => (
+            <>
+              <path class="face left" d={b.left} />
+              <path class="face right" d={b.right} />
+              <path class="face top" d={b.top} />
+            </>
+          ))
+        }
+      </g>
+
+      <g class="node" data-node="lyvre">
+        <path class="face left" d={cover.left} /><path class="face right" d={cover.right} /><path class="face top" d={cover.top} />
+        <path class="face left" d={pageL.left} /><path class="face right" d={pageL.right} /><path class="face top" d={pageL.top} />
+        <path class="face left" d={pageR.left} /><path class="face right" d={pageR.right} /><path class="face top" d={pageR.top} />
+        <path class="detail" d={lines} />
+        {
+          coins.map((c) => (
+            <>
+              <path class="face side" d={c.side} />
+              <path class="face top" d={c.top} />
+            </>
+          ))
+        }
+      </g>
+
+      <g class="node" data-node="aiffel">
+        <path class="face left" d={slab.left} /><path class="face right" d={slab.right} /><path class="face top" d={slab.top} />
+        <path class="detail" d={ring} />
+        <path class="face right" d={plate.right} /><path class="face top" d={plate.top} /><path class="face left" d={plate.left} />
+        <path class="detail wave" d={wave} />
+      </g>
+
+      <g class="farmer">
+        <path class="face side" d={body.side} />
+        <path class="face top" d={body.top} />
+        <circle class="face top" cx={fx} cy={fy} r="10" />
+        <path class="detail signal" d={voice} />
+        <text class="farmer-label" x={labelX} y={labelY + 46} text-anchor="middle">{farmerLabel}</text>
+      </g>
+
+      <g class="flow-labels">
+        {
+          flowShapes.map((f) => (
+            <text class="flow-label" data-from={f.from} data-to={f.to} x={f.lx} y={f.ly - 8} text-anchor={f.anchorText}>
+              {f.label}
+            </text>
+          ))
+        }
+      </g>
+    </svg>
+
+    <ul class="system-nodes">
+      {
+        ORDER.map((key) => (
+          <li class="system-node" data-key={key}>
+            <button
+              type="button"
+              class="system-button"
+              data-key={key}
+              aria-pressed={key === initial ? 'true' : 'false'}
+              aria-controls={`system-panel-${key}`}
+            >
+              <ProductLogo product={byKey[key]} size="sm" decorative />
+              <span class="flex flex-col items-start text-left leading-tight">
+                <span class="font-display font-semibold">{byKey[key].name}</span>
+                <span class="hidden text-xs opacity-75 sm:inline">{byKey[key].role}</span>
+              </span>
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div class="system-panels" aria-live="polite">
+    {
+      ORDER.map((key) => {
+        const p = byKey[key];
+        const touching = flows.filter((f) => f.from === key || f.to === key);
+        return (
+          <div id={`system-panel-${key}`} class="system-panel" data-key={key} hidden={key !== initial}>
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <h3 class="font-display text-xl font-semibold">
+                {p.name} <span class="font-normal opacity-70">· {p.role}</span>
+              </h3>
+              <StatusBadge status={p.status} lang={lang} detail={p.subStatus} />
+            </div>
+            <p class="mt-2 max-w-3xl opacity-85">{p.tagline}</p>
+            <ul class="mt-4 grid gap-2 text-sm sm:grid-cols-2">
+              {touching.map((f) => (
+                <li class="flex flex-wrap items-baseline gap-x-2">
+                  <span class="font-mono text-xs tracking-wider uppercase">
+                    {nameOf(f.from)} <span aria-hidden="true">→</span>
+                    <span class="sr-only">{fr ? 'vers' : 'to'}</span> {nameOf(f.to)}
+                  </span>
+                  <span>{f.label}</span>
+                  <span class:list={['font-mono text-xs', f.status === 'service' ? 'flow-ok' : 'flow-wip']}>
+                    ({STATUS_LABEL[f.status][lang].toLowerCase()})
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <a href={routePath(key, lang)} class="mt-4 inline-flex items-center gap-2 font-semibold">
+              {fr ? `Découvrir ${p.name}` : `Discover ${p.name}`} <Icon name="arrow-right" />
+            </a>
+          </div>
+        );
+      })
+    }
+  </div>
+
+  {
+    caption && (
+      <figcaption class="system-caption">
+        {fr ? 'fig. 01 · le système · touchez un logiciel' : 'fig. 01 · the system · tap a product'}
+        <span class="mx-2" aria-hidden="true">·</span>
+        <span class="legend legend-ok">{fr ? 'flux en service' : 'live flow'}</span>
+        <span class="legend legend-wip">{fr ? 'flux en cours' : 'flow in progress'}</span>
+      </figcaption>
+    )
+  }
+</figure>
+
+<script>
+  import { initSystems } from '~/scripts/tools';
+  initSystems();
+</script>
+
+<style>
+  @reference "../../styles/global.css";
+
+  .system {
+    --stroke: rgb(58 44 32 / 0.55);
+    --top: #fffdf7;
+    --left: #efe7d3;
+    --right: #e4d9bf;
+    --hi-top: rgb(0 193 93 / 0.16);
+    --hi-stroke: var(--color-eky-green-deep);
+    --wip: var(--color-ochre-400);
+    --ok: var(--color-eky-green-text);
+    --bg: var(--color-straw-50);
+  }
+  .system--dark {
+    --stroke: rgb(250 246 236 / 0.4);
+    --top: var(--color-night-700);
+    --left: var(--color-night-800);
+    --right: var(--color-night-600);
+    --hi-top: rgb(0 193 93 / 0.22);
+    --hi-stroke: var(--color-eky-green-light);
+    --wip: var(--color-wheat-400);
+    --ok: var(--color-eky-green-light);
+    --bg: var(--color-night-900);
+  }
+
+  /* Volumes au trait */
+  .face {
+    stroke: var(--stroke);
+    stroke-width: 1.25;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    transition:
+      fill 0.3s,
+      stroke 0.3s;
+  }
+  .face.top {
+    fill: var(--top);
+  }
+  .face.left,
+  .face.side {
+    fill: var(--left);
+  }
+  .face.right {
+    fill: var(--right);
+  }
+  .detail {
+    fill: none;
+    stroke: var(--stroke);
+    stroke-width: 1.25;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+  .node {
+    transition: opacity 0.3s;
+  }
+  .farmer-label {
+    @apply font-mono text-[15px] tracking-[0.18em] uppercase;
+    fill: currentColor;
+    opacity: 0.7;
+  }
+
+  /* Flux : tirets qui défilent (en service), pointillés immobiles (en cours) */
+  .flow-line {
+    fill: none;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    transition:
+      opacity 0.3s,
+      stroke-width 0.3s;
+  }
+  .is-service .flow-line {
+    stroke: var(--ok);
+    stroke-dasharray: 5 7;
+    animation: system-flow 1.4s linear infinite;
+  }
+  .is-en-cours .flow-line,
+  .is-beta .flow-line {
+    stroke: var(--wip);
+    stroke-dasharray: 2 7;
+  }
+  @keyframes system-flow {
+    to {
+      stroke-dashoffset: -24;
+    }
+  }
+  .flow-label {
+    @apply font-mono text-[15px] tracking-wider;
+    fill: currentColor;
+    paint-order: stroke;
+    stroke: var(--bg);
+    stroke-width: 6px;
+    stroke-linejoin: round;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  @media (width < 40rem) {
+    .flow-labels {
+      display: none;
+    }
+  }
+
+  /* Mise en avant du logiciel actif : son volume, ses flux et leurs étiquettes */
+  [data-active] .node,
+  [data-active] .flow {
+    opacity: 0.45;
+  }
+  [data-active='aiffel'] .node[data-node='aiffel'],
+  [data-active='ekylibre'] .node[data-node='ekylibre'],
+  [data-active='lexicon'] .node[data-node='lexicon'],
+  [data-active='lyvre'] .node[data-node='lyvre'],
+  [data-active='aiffel'] .flow:is([data-from='aiffel'], [data-to='aiffel']),
+  [data-active='ekylibre'] .flow:is([data-from='ekylibre'], [data-to='ekylibre']),
+  [data-active='lexicon'] .flow:is([data-from='lexicon'], [data-to='lexicon']),
+  [data-active='lyvre'] .flow:is([data-from='lyvre'], [data-to='lyvre']) {
+    opacity: 1;
+  }
+  [data-active='aiffel'] .node[data-node='aiffel'] .face,
+  [data-active='ekylibre'] .node[data-node='ekylibre'] .face,
+  [data-active='lexicon'] .node[data-node='lexicon'] .face,
+  [data-active='lyvre'] .node[data-node='lyvre'] .face {
+    stroke: var(--hi-stroke);
+  }
+  [data-active='aiffel'] .node[data-node='aiffel'] .face.top,
+  [data-active='ekylibre'] .node[data-node='ekylibre'] .face.top,
+  [data-active='lexicon'] .node[data-node='lexicon'] .face.top,
+  [data-active='lyvre'] .node[data-node='lyvre'] .face.top {
+    fill: color-mix(in srgb, var(--color-eky-green) 9%, var(--top));
+  }
+  [data-active='aiffel'] .flow-label:is([data-from='aiffel'], [data-to='aiffel']),
+  [data-active='ekylibre'] .flow-label:is([data-from='ekylibre'], [data-to='ekylibre']),
+  [data-active='lexicon'] .flow-label:is([data-from='lexicon'], [data-to='lexicon']),
+  [data-active='lyvre'] .flow-label:is([data-from='lyvre'], [data-to='lyvre']) {
+    opacity: 1;
+  }
+  [data-active] .flow .flow-line {
+    stroke-width: 1.6;
+  }
+  [data-active='aiffel'] .flow:is([data-from='aiffel'], [data-to='aiffel']) .flow-line,
+  [data-active='ekylibre'] .flow:is([data-from='ekylibre'], [data-to='ekylibre']) .flow-line,
+  [data-active='lexicon'] .flow:is([data-from='lexicon'], [data-to='lexicon']) .flow-line,
+  [data-active='lyvre'] .flow:is([data-from='lyvre'], [data-to='lyvre']) .flow-line {
+    stroke-width: 2.4;
+  }
+
+  /* Boutons : grille sous le schéma sur mobile, posés sur les volumes au-delà de 40rem */
+  .system-nodes {
+    @apply mt-4 grid grid-cols-2 gap-3;
+  }
+  .system-button {
+    @apply flex min-h-11 w-full cursor-pointer items-center gap-3 rounded-full bg-straw-50 py-1.5 pr-4 pl-1.5 text-soil-800 shadow-[var(--shadow-card)] ring-1 ring-soil-800/10 transition;
+  }
+  .system-button:hover,
+  .system-button[aria-pressed='true'] {
+    @apply ring-2 ring-eky-green-deep;
+  }
+  .system-button:focus-visible {
+    @apply outline-2 outline-offset-2 outline-eky-green;
+  }
+  @media (width >= 40rem) {
+    .system-nodes {
+      @apply absolute inset-0 m-0 block;
+    }
+    .system-node {
+      @apply absolute -translate-x-1/2 -translate-y-1/2;
+    }
+    .system-button {
+      @apply w-auto;
+    }
+    /* Positions en % du viewBox 1200 × 680 (sous chaque volume ; Lexicon à droite de sa pile) */
+    .system-node[data-key='aiffel'] {
+      left: 50%;
+      top: 70%;
+    }
+    .system-node[data-key='ekylibre'] {
+      left: 19%;
+      top: 76%;
+    }
+    .system-node[data-key='lexicon'] {
+      left: 67%;
+      top: 15%;
+    }
+    .system-node[data-key='lyvre'] {
+      left: 81%;
+      top: 76%;
+    }
+  }
+
+  .system-panels {
+    @apply mt-8 min-h-[13rem] border-t border-current/15 pt-6;
+  }
+  .flow-ok {
+    color: var(--ok);
+  }
+  .flow-wip {
+    color: var(--wip);
+  }
+  .system--light .flow-wip {
+    @apply text-soil-800;
+  }
+  .system-caption {
+    @apply mt-6 font-mono text-xs tracking-[0.16em] uppercase opacity-70;
+  }
+  .legend::before {
+    content: '';
+    @apply mr-2 ml-3 inline-block w-6 border-t-2 align-middle;
+  }
+  .legend-ok::before {
+    border-color: var(--ok);
+    border-top-style: dashed;
+  }
+  .legend-wip::before {
+    border-color: var(--wip);
+    border-top-style: dotted;
+  }
+</style>

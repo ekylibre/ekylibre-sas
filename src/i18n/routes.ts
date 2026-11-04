@@ -10,6 +10,7 @@ export const ROUTES = {
   ekylibre: { fr: '/ekylibre/', en: '/en/ekylibre/' },
   aiffel: { fr: '/aiffel/', en: '/en/aiffel/' },
   lexicon: { fr: '/lexicon/', en: '/en/lexicon/' },
+  lyvre: { fr: '/lyvre/', en: '/en/lyvre/' },
   services: { fr: '/services/', en: '/en/services/' },
   developers: { fr: '/developpeurs/', en: '/en/developers/' },
   company: { fr: '/entreprise/', en: '/en/company/' },

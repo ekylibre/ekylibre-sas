@@ -5,6 +5,7 @@
 import Base from '~/layouts/Base.astro';
 import Icon from '~/components/Icon.astro';
 import ProductCta from './ProductCta.astro';
+import ProductHero from './ProductHero.astro';
 import { softwareJsonLd } from './jsonld';
 import { routePath, type Locale } from '~/i18n/routes';
 import { LINKS } from '~/lib/links';
@@ -140,98 +141,24 @@ const audiences = fr
       ['Farm software vendors', 'who want their tool to be usable by voice, through an API or an MCP server.'],
     ];
 
-const chat = fr
-  ? {
-      voice: 'Message vocal · 0:06',
-      said: '« Traité le blé de la parcelle du Moulin ce matin. »',
-      recap: 'J’ai compris : traitement du blé, parcelle du Moulin, ce matin. Quel produit, et à quelle dose ?',
-      card: 'Intervention à valider',
-      checks: ['Dose contrôlée dans le Lexicon', 'Zone non traitée vérifiée', 'Délai avant récolte vérifié'],
-      actions: ['Valider', 'Corriger', 'Annuler'],
-      note: 'Exemple fictif',
-    }
-  : {
-      voice: 'Voice message · 0:06',
-      said: '“Sprayed the wheat on Mill field this morning.”',
-      recap: 'Got it: wheat treatment, Mill field, this morning. Which product, and at what rate?',
-      card: 'Intervention to approve',
-      checks: ['Rate checked against Lexicon', 'Buffer zone checked', 'Pre-harvest interval checked'],
-      actions: ['Approve', 'Correct', 'Cancel'],
-      note: 'Fictional example',
-    };
-
 const jsonLd = softwareJsonLd({ name: 'Aiffel', description, url: LINKS.aiffel });
 ---
 
 <Base lang={lang} routeKey="aiffel" title={title} description={description}>
   <script type="application/ld+json" slot="head" set:html={jsonLd} />
-  <section class="section-dark">
-    <div class="container-site grid gap-12 pt-16 pb-20 lg:grid-cols-[1.4fr_1fr] lg:items-center">
-      <div>
-        <p class="eyebrow text-eky-green-light">
-          {fr ? 'Aiffel · parler à ses logiciels' : 'Aiffel · talk to your software'}
-        </p>
-        <h1 class="mt-4 max-w-3xl text-h1">
-          {fr
-            ? 'Dites-le une fois. Aiffel le range au bon endroit.'
-            : 'Say it once. Aiffel files it in the right place.'}
-        </h1>
-        <p class="mt-5 max-w-2xl text-lead text-straw-50/85">
-          {fr
-            ? 'Aiffel est un assistant pour l’exploitation agricole. Vous lui dites, à la voix ou par écrit, ce que vous avez fait ; il prépare l’enregistrement, le vérifie et l’écrit dans votre logiciel de gestion, une fois que vous l’avez validé.'
-            : 'Aiffel is an assistant for the farm. You tell it what you did, by voice or text; it prepares the record, checks it and writes it to your farm management software once you have approved it.'}
-        </p>
-        <p class="mt-5 inline-flex items-center gap-2 rounded-full bg-night-700 px-4 py-1.5 text-sm ring-1 ring-white/10">
-          <span class="size-2 rounded-full bg-wheat-400" aria-hidden="true"></span>
-          {fr ? 'En cours de lancement' : 'Launching now'}
-        </p>
-        <div class="mt-8 flex flex-wrap gap-4">
-          <a href={LINKS.aiffel} rel="noopener" target="_blank" class="btn btn-primary">
-            {fr ? 'Découvrir Aiffel' : 'Discover Aiffel'}
-          </a>
-          <a href={routePath('services', lang)} class="btn btn-secondary">
-            {fr ? 'Parler de votre projet' : 'Discuss your project'}
-          </a>
-        </div>
-      </div>
-
-      <figure class="mx-auto w-full max-w-sm">
-        <div class="space-y-3 rounded-[1.5rem] bg-night-800 p-5 ring-1 ring-white/10" aria-hidden="true">
-          <div class="ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-sm bg-eky-green-deep/40 px-4 py-2.5 text-sm">
-            <p class="flex items-center gap-2 font-mono text-xs text-straw-50/70">
-              <Icon name="microphone" />
-              {chat.voice}
-            </p>
-            <p class="mt-1">{chat.said}</p>
-          </div>
-          <div class="w-fit max-w-[85%] rounded-2xl rounded-bl-sm bg-night-600 px-4 py-2.5 text-sm">{chat.recap}</div>
-          <div class="max-w-[90%] rounded-2xl rounded-bl-sm bg-night-600 px-4 py-3 text-sm">
-            <p class="font-display font-semibold">{chat.card}</p>
-            <ul class="mt-2 space-y-1">
-              {chat.checks.map((c) => (
-                <li class="flex items-center gap-2 text-straw-50/85">
-                  <Icon name="check" class="text-eky-green-light" /> {c}
-                </li>
-              ))}
-            </ul>
-            <div class="mt-3 flex gap-2">
-              {chat.actions.map((a, i) => (
-                <span
-                  class:list={[
-                    'rounded-full px-3 py-1 text-xs font-semibold',
-                    i === 0 ? 'bg-eky-green text-night-900' : 'ring-1 ring-white/25',
-                  ]}
-                >
-                  {a}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-        <figcaption class="mt-3 text-center font-mono text-xs text-straw-50/55">{chat.note}</figcaption>
-      </figure>
-    </div>
-  </section>
+  <ProductHero lang={lang} product="aiffel" title={fr ? 'Dites-le une fois. Aiffel le range au bon endroit.' : 'Say it once. Aiffel files it in the right place.'}>
+    {fr
+      ? 'Aiffel est un assistant pour l’exploitation agricole. Vous lui dites, à la voix ou par écrit, ce que vous avez fait ; il prépare l’enregistrement, le vérifie et l’écrit dans votre logiciel de gestion, une fois que vous l’avez validé.'
+      : 'Aiffel is an assistant for the farm. You tell it what you did, by voice or text; it prepares the record, checks it and writes it to your farm management software once you have approved it.'}
+    <Fragment slot="actions">
+      <a href={LINKS.aiffel} rel="noopener" target="_blank" class="btn btn-primary">
+        {fr ? 'Découvrir Aiffel' : 'Discover Aiffel'}
+      </a>
+      <a href={routePath('services', lang)} class="btn btn-secondary">
+        {fr ? 'Parler de votre projet' : 'Discuss your project'}
+      </a>
+    </Fragment>
+  </ProductHero>
 
   <section class="section-light py-20">
     <div class="container-site grid gap-6 lg:grid-cols-[1fr_2fr]">

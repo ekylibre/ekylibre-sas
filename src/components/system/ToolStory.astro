@@ -1,0 +1,154 @@
+---
+// F3 — Récit des logiciels à onglets (docs/design/03-outils-lyvre.md §4.3), motif oskale.com :
+// onglets numérotés en bas avec barre de progression, logo, accroche, état et maquette animée.
+// Sans JavaScript, les quatre panneaux s'affichent les uns sous les autres.
+import ProductLogo from '~/components/products/ProductLogo.astro';
+import StatusBadge from '~/components/products/StatusBadge.astro';
+import Icon from '~/components/Icon.astro';
+import EkylibreMockup from '~/components/mockups/EkylibreMockup.astro';
+import LexiconMockup from '~/components/mockups/LexiconMockup.astro';
+import AiffelMockup from '~/components/mockups/AiffelMockup.astro';
+import LyvreMockup from '~/components/mockups/LyvreMockup.astro';
+import { getProducts } from '~/lib/products';
+import { routePath, type Locale } from '~/i18n/routes';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const products = getProducts(lang);
+const total = String(products.length).padStart(2, '0');
+const MOCKUPS = { ekylibre: EkylibreMockup, lexicon: LexiconMockup, aiffel: AiffelMockup, lyvre: LyvreMockup };
+const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
+---
+
+<div class="tool-story" data-tool-story data-autoplay="off">
+  {
+    products.map((p, i) => {
+      const Mockup = MOCKUPS[p.key];
+      const n = String(i + 1).padStart(2, '0');
+      return (
+        <div
+          id={`tool-${p.key}`}
+          role="tabpanel"
+          aria-labelledby={`tool-tab-${p.key}`}
+          class="tool-panel grid items-center gap-10 py-10 lg:grid-cols-[1fr_1.15fr] lg:gap-14"
+        >
+          <div>
+            <p class="eyebrow text-straw-50/60">
+              {n} / {total} · {p.role}
+            </p>
+            <div class="mt-5 flex items-center gap-4">
+              <ProductLogo product={p} size="lg" decorative />
+              <h3 class="font-display text-4xl font-bold tracking-tight sm:text-5xl">{p.name}</h3>
+            </div>
+            <p class="mt-5 max-w-xl text-lead text-straw-50/85">{p.tagline}</p>
+            <ul class="mt-6 max-w-xl divide-y divide-white/8 border-y border-white/8">
+              {p.points.map((pt) => (
+                <li class="flex gap-3 py-3 text-straw-50/80">
+                  <span class="text-eky-green-light" aria-hidden="true">
+                    —
+                  </span>
+                  {pt}
+                </li>
+              ))}
+            </ul>
+            <StatusBadge status={p.status} lang={lang} detail={p.subStatus} class="mt-6" />
+            <p class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 font-semibold">
+              <a href={routePath(p.key, lang)} class="inline-flex items-center gap-2">
+                {fr ? `Découvrir ${p.name}` : `Discover ${p.name}`} <Icon name="arrow-right" />
+              </a>
+              <a href={p.links.site} rel="noopener" target="_blank" class="text-straw-50/75">
+                {host(p.links.site)} ↗
+              </a>
+              {p.links.code && (
+                <a href={p.links.code} rel="noopener" target="_blank" class="text-straw-50/75">
+                  {fr ? 'code' : 'code'} ↗
+                </a>
+              )}
+            </p>
+          </div>
+          <Mockup lang={lang} />
+        </div>
+      );
+    })
+  }
+
+  <div role="tablist" aria-label={fr ? 'Nos logiciels' : 'Our software'} class="tool-tabs">
+    {
+      products.map((p, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`tool-tab-${p.key}`}
+          aria-controls={`tool-${p.key}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+          class="tool-tab"
+        >
+          <span class="font-mono text-xs tracking-[0.16em] uppercase">
+            {String(i + 1).padStart(2, '0')} {p.name}
+          </span>
+          <span class="tool-track" aria-hidden="true">
+            <span class="tab-progress" />
+          </span>
+        </button>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  import { initToolStories } from '~/scripts/tools';
+  initToolStories();
+</script>
+
+<style>
+  @reference "../../styles/global.css";
+
+  /* Sans JS : onglets masqués, panneaux empilés. Avec JS : un panneau à la fois. */
+  .tool-tabs {
+    @apply hidden;
+  }
+  .tool-story:not(.is-enhanced) .tool-panel + .tool-panel {
+    @apply border-t border-white/8;
+  }
+  .is-enhanced .tool-tabs {
+    @apply mt-4 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-4;
+  }
+  .tool-tab {
+    @apply flex cursor-pointer flex-col gap-3 py-3 text-left text-straw-50/55 transition-colors hover:text-straw-50;
+  }
+  .tool-tab[aria-selected='true'] {
+    @apply text-straw-50;
+  }
+  .tool-tab:focus-visible {
+    @apply rounded outline-2 outline-offset-4 outline-eky-green;
+  }
+  .tool-track {
+    @apply block h-0.5 overflow-hidden rounded-full bg-white/12;
+  }
+  .tab-progress {
+    @apply block h-full w-full origin-left scale-x-0 bg-eky-green-light;
+  }
+  .tool-tab[aria-selected='true'] .tab-progress {
+    @apply scale-x-100;
+  }
+  /* Avance automatique : la barre se remplit en 9 s, en pause hors de l'écran, au survol et au focus. */
+  [data-autoplay='on'] .tool-tab[aria-selected='true'] .tab-progress {
+    animation: tab-progress 9s linear both;
+    animation-play-state: paused;
+  }
+  [data-autoplay='on'][data-visible]:not([data-paused]) .tool-tab[aria-selected='true'] .tab-progress {
+    animation-play-state: running;
+  }
+  @keyframes tab-progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+</style>

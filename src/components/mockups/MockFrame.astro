@@ -1,0 +1,33 @@
+---
+// Cadre commun des maquettes d'interface (docs/design/03-outils-lyvre.md §4.4) : barre de fenêtre,
+// titre, mention « données de démonstration ». Données fictives, inspirées de FarmLab La Vauzelle.
+import '~/styles/mockups.css';
+import type { Locale } from '~/i18n/routes';
+
+interface Props {
+  lang: Locale;
+  title: string;
+  /** Joue l'animation à l'entrée dans l'écran (hors récit à onglets, qui la pilote lui-même). */
+  autoplay?: boolean;
+  label: string;
+  class?: string | undefined;
+}
+const { lang, title, autoplay = false, label, class: className } = Astro.props;
+---
+
+<div
+  class:list={['mockup', className]}
+  data-mockup
+  data-autoplay-visible={autoplay ? '' : undefined}
+  role="img"
+  aria-label={label}
+>
+  <div class="mockup-bar" aria-hidden="true">
+    <span class="mockup-dots"><span></span><span></span><span></span></span>
+    <span class="grow truncate">{title}</span>
+    <span class="hidden text-straw-50/70 sm:inline">{lang === 'fr' ? 'données de démonstration' : 'demo data'}</span>
+  </div>
+  <div class="mockup-body" aria-hidden="true">
+    <slot />
+  </div>
+</div>

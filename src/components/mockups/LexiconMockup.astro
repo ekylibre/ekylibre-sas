@@ -1,0 +1,45 @@
+---
+// Maquette Lexicon : une requête, quatre jeux de données reliés, chacun avec sa source.
+import MockFrame from './MockFrame.astro';
+import type { Locale } from '~/i18n/routes';
+
+interface Props {
+  lang: Locale;
+  autoplay?: boolean;
+  class?: string;
+}
+const { lang, autoplay = false, class: className } = Astro.props;
+const fr = lang === 'fr';
+const label = fr
+  ? 'Exemple dans le Lexicon : la recherche d’une parcelle à Saint-Porchaire renvoie le cadastre, le produit phytosanitaire autorisé, la météo et la coopérative, chacun avec sa source.'
+  : 'Example in Lexicon: searching for a plot in Saint-Porchaire returns the land registry, the authorised plant protection product, the weather and the co-op, each with its source.';
+const rows = [
+  { fam: 'fam-territoire', set: fr ? 'Cadastre' : 'Land registry', value: fr ? 'section ZK n° 17 · 9,86 ha' : 'section ZK no. 17 · 9.86 ha', src: 'IGN · 2026-10', d: 'mk-d4' },
+  { fam: 'fam-intrants', set: fr ? 'Phytosanitaires' : 'Plant protection', value: fr ? 'bouillie bordelaise · 4 kg/ha max' : 'Bordeaux mixture · 4 kg/ha max', src: 'Anses · 2026-10', d: 'mk-d5' },
+  { fam: 'fam-climat', set: fr ? 'Météo' : 'Weather', value: fr ? '12 mm prévus jeudi' : '12 mm forecast Thursday', src: 'Météo-France', d: 'mk-d6' },
+  { fam: 'fam-entreprises', set: fr ? 'Entreprises' : 'Companies', value: fr ? 'coopérative · Saintes' : 'co-op · Saintes', src: 'Sirene · INSEE', d: 'mk-d7' },
+];
+---
+
+<MockFrame lang={lang} title="lexicon · catalog" autoplay={autoplay} label={label} class={className}>
+  <div class="mk-card mk-in flex items-center gap-3 font-mono">
+    <span class="text-eky-green-light" aria-hidden="true">›</span>
+    <span class="mk-type mk-d1">{fr ? 'parcelle 17250 · Les Quarante' : 'plot 17250 · Les Quarante'}</span>
+  </div>
+  <ul class="relative mt-3 grid gap-2">
+    {
+      rows.map((r) => (
+        <li class:list={['mk-card mk-in flex items-center gap-3', r.d, r.fam]}>
+          <span class="fam-bg size-2.5 shrink-0 rounded-full" />
+          <span class="w-[8.5rem] shrink-0 mk-eyebrow">{r.set}</span>
+          <span class="grow">{r.value}</span>
+          <span class="hidden font-mono text-[0.68rem] text-straw-50/70 sm:inline">{r.src}</span>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="mk-in mk-d9 mt-3 flex flex-wrap items-center justify-between gap-2">
+    <span class="mk-chip mk-chip-ok">{fr ? '4 jeux croisés' : '4 datasets joined'}</span>
+    <span class="font-mono text-[0.7rem] text-straw-50/70">{fr ? 'chaque ligne cite sa source' : 'every row cites its source'}</span>
+  </p>
+</MockFrame>

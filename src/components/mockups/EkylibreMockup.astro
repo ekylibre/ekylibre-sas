@@ -1,0 +1,59 @@
+---
+// Maquette Ekylibre (D25) : intervention → trace GPS → stock décompté → capteur à jour.
+import MockFrame from './MockFrame.astro';
+import type { Locale } from '~/i18n/routes';
+
+interface Props {
+  lang: Locale;
+  autoplay?: boolean;
+  class?: string;
+}
+const { lang, autoplay = false, class: className } = Astro.props;
+const fr = lang === 'fr';
+const label = fr
+  ? 'Exemple dans Ekylibre : une pulvérisation sur la parcelle Les Quarante, sa trace GPS, le stock de bouillie bordelaise qui passe de 25 à 21,5 kg et la sonde d’humidité du sol mise à jour.'
+  : 'Example in Ekylibre: a spraying job on the Les Quarante plot, its GPS track, the Bordeaux mixture stock going from 25 to 21.5 kg and the soil moisture probe updated.';
+// Trace GPS en aller-retour sur la parcelle (coordonnées du SVG 220 × 120).
+const track = 'M38 92 L176 30 L184 42 L46 104 L56 112 L192 52 L198 64 L66 120';
+---
+
+<MockFrame lang={lang} title={fr ? 'ekylibre · intervention' : 'ekylibre · intervention'} autoplay={autoplay} label={label} class={className}>
+  <div class="grid gap-3 sm:grid-cols-[1.05fr_1fr]">
+    <div class="mk-card mk-in">
+      <p class="mk-eyebrow">{fr ? 'Pulvérisation' : 'Spraying'}</p>
+      <p class="mt-1 font-display text-base font-semibold">Les Quarante · 9,86 ha</p>
+      <dl class="mt-3">
+        <div class="mk-row"><dt>Date</dt><dd>04/11 · 07:42</dd></div>
+        <div class="mk-row"><dt>{fr ? 'Matériel' : 'Machinery'}</dt><dd>{fr ? 'Tracteur + pulvé 24 m' : 'Tractor + 24 m sprayer'}</dd></div>
+        <div class="mk-row"><dt>{fr ? 'Produit' : 'Product'}</dt><dd>{fr ? 'Bouillie bordelaise · 3 kg/ha' : 'Bordeaux mixture · 3 kg/ha'}</dd></div>
+      </dl>
+      <p class="mk-in mk-d6 mt-3">
+        <span class="mk-chip mk-chip-ok">✓ {fr ? 'Dose vérifiée · Lexicon' : 'Rate checked · Lexicon'}</span>
+      </p>
+    </div>
+    <div class="grid gap-3">
+      <div class="mk-card mk-in mk-d1">
+        <p class="mk-eyebrow flex justify-between"><span>{fr ? 'Trace GPS' : 'GPS track'}</span><span>1,9 km</span></p>
+        <svg viewBox="0 0 220 130" class="mt-2 h-auto w-full">
+          <path d="M20 96 L172 20 L206 64 L54 128 Z" class="fill-eky-green/10 stroke-straw-50/30" />
+          <path d={track} pathLength="1" class="mk-svg-line mk-draw mk-d2 stroke-eky-green-light" stroke-width="2.5" />
+          <circle cx="66" cy="120" r="5" class="mk-pop mk-d7 fill-wheat-400" />
+        </svg>
+      </div>
+      <div class="mk-card mk-in mk-d3">
+        <p class="text-straw-50/70">{fr ? 'Stock · bouillie bordelaise' : 'Stock · Bordeaux mixture'}</p>
+        <div class="mt-1 flex items-baseline justify-end gap-2">
+          <span class="font-mono whitespace-nowrap">
+            <span class="mk-strike mk-d8">25,0 kg</span>
+            <span class="mk-in mk-d8 ml-1 font-semibold text-eky-green-light">21,5 kg</span>
+          </span>
+        </div>
+        <div class="mt-3 flex items-baseline justify-between gap-2">
+          <span class="text-straw-50/70">{fr ? 'Humidité du sol · sonde 2' : 'Soil moisture · probe 2'}</span>
+          <span class="mk-in mk-d9 font-mono font-semibold">28 %</span>
+        </div>
+        <div class="mk-bar mt-2"><span class="mk-grow mk-d9 w-[62%]"></span></div>
+      </div>
+    </div>
+  </div>
+</MockFrame>

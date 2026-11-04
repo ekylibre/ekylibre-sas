@@ -1,0 +1,48 @@
+---
+// En-tête des pages produit (D22, docs/design/03-outils-lyvre.md §4.6) : logo officiel, rôle, titre,
+// état, boutons ; à droite, la maquette animée du logiciel, jouée à son entrée dans l'écran.
+// Slots : par défaut (paragraphe d'introduction), « actions » (boutons), « after » (rangée sous l'en-tête).
+import ProductLogo from './ProductLogo.astro';
+import StatusBadge from './StatusBadge.astro';
+import EkylibreMockup from '~/components/mockups/EkylibreMockup.astro';
+import LexiconMockup from '~/components/mockups/LexiconMockup.astro';
+import AiffelMockup from '~/components/mockups/AiffelMockup.astro';
+import LyvreMockup from '~/components/mockups/LyvreMockup.astro';
+import { getProduct, type ProductKey } from '~/lib/products';
+import type { Locale } from '~/i18n/routes';
+
+interface Props {
+  lang: Locale;
+  product: ProductKey;
+  title: string;
+}
+const { lang, product: key, title } = Astro.props;
+const product = getProduct(key, lang);
+const Mockup = { ekylibre: EkylibreMockup, lexicon: LexiconMockup, aiffel: AiffelMockup, lyvre: LyvreMockup }[key];
+---
+
+<section class="section-dark">
+  <div class="container-site grid gap-12 pt-16 pb-20 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-14">
+    <div>
+      <div class="flex items-center gap-4">
+        <ProductLogo product={product} size="md" decorative />
+        <p class="eyebrow text-eky-green-light">{product.name} · {product.role}</p>
+      </div>
+      <h1 class="mt-6 max-w-3xl text-h1">{title}</h1>
+      <div class="mt-5 max-w-2xl text-lead text-straw-50/85">
+        <slot />
+      </div>
+      <StatusBadge status={product.status} lang={lang} detail={product.subStatus} class="mt-6" />
+      <div class="mt-8 flex flex-wrap gap-4">
+        <slot name="actions" />
+      </div>
+    </div>
+    <Mockup lang={lang} autoplay />
+  </div>
+  <slot name="after" />
+</section>
+
+<script>
+  import { initMockups } from '~/scripts/tools';
+  initMockups();
+</script>

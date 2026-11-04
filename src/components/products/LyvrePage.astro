@@ -1,0 +1,320 @@
+---
+// Page produit Lyvre (D20, D21, D24, D27). Sources : README et page /about de Lyvre (dépôt compta-asso),
+// audit de la comptabilité agricole (compta-asso/claudedocs/compta_agricole). Le schéma du système et la
+// maquette animée sont partagés avec l'accueil (ProductHero, SystemDiagram).
+import { Image } from 'astro:assets';
+import Base from '~/layouts/Base.astro';
+import Icon from '~/components/Icon.astro';
+import ProductCta from './ProductCta.astro';
+import ProductHero from './ProductHero.astro';
+import StatusBadge from './StatusBadge.astro';
+import SystemDiagram from '~/components/system/SystemDiagram.astro';
+import { softwareJsonLd } from './jsonld';
+import illusComptable from '~/assets/illustrations/cabinet-comptable.webp';
+import { routePath, type Locale } from '~/i18n/routes';
+import { getProduct } from '~/lib/products';
+import type { IconName } from '~/lib/icon-names';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const lyvre = getProduct('lyvre', lang);
+
+const title = fr ? 'Lyvre, la comptabilité libre et souveraine' : 'Lyvre, free and self-hosted accounting';
+const description = fr
+  ? 'Lyvre tient la comptabilité des associations et des SCI, de la saisie au bilan, et bientôt celle des exploitations agricoles. Logiciel libre (AGPL), hébergé chez vous, relié à Ekylibre, Aiffel et au Lexicon.'
+  : 'Lyvre keeps the books of associations and property companies, from data entry to the balance sheet, and soon of farms too. Free software (AGPL), self-hosted, connected to Ekylibre, Aiffel and Lexicon.';
+
+const features: Array<{ icon: IconName; title: string; text: string }> = fr
+  ? [
+      {
+        icon: 'book-open',
+        title: 'Comptabilité',
+        text: 'Partie double au clavier ou comptabilité simplifiée ; plans associatif, SCI ou société ; lettrage, immobilisations, TVA et CA3.',
+      },
+      {
+        icon: 'exchange',
+        title: 'Banque et caisse',
+        text: 'Synchronisation Qonto ou import OFX, rapprochement avec suggestions, règles de catégorisation, prévisionnel de trésorerie.',
+      },
+      {
+        icon: 'shopping-basket',
+        title: 'Achats',
+        text: 'Factures fournisseurs lues automatiquement (Factur-X, PDF ou photo), fournisseurs trouvés dans Sirene, abonnements suivis.',
+      },
+      {
+        icon: 'store',
+        title: 'Ventes et baux',
+        text: 'Devis, factures et avoirs Factur-X ; baux avec carte IGN, signature électronique, quittances et révision des loyers.',
+      },
+      {
+        icon: 'users',
+        title: 'Adhérents et dons',
+        text: 'Adhésions HelloAsso et caisse, relances, bénévolat valorisé ; reçus fiscaux Cerfa numérotés.',
+      },
+      {
+        icon: 'lock',
+        title: 'Clôture et FEC',
+        text: 'Assistant de clôture en 8 étapes, écritures validées intangibles, fichier des écritures comptables conforme.',
+      },
+      {
+        icon: 'chart-donut',
+        title: 'Budget et projets',
+        text: 'Budget prévu / réalisé, comptabilité par projet, compte de résultat pour un financeur, rapport d’assemblée générale.',
+      },
+      {
+        icon: 'scale-balanced',
+        title: 'Expert-comptable',
+        text: 'Accès en lecture seule, validation par lots, verrouillage de période, archive de l’exercice.',
+      },
+    ]
+  : [
+      {
+        icon: 'book-open',
+        title: 'Accounting',
+        text: 'Keyboard-driven double entry or simplified bookkeeping; charts of accounts for associations, property companies or businesses; matching, fixed assets, VAT returns.',
+      },
+      {
+        icon: 'exchange',
+        title: 'Bank and cash',
+        text: 'Qonto sync or OFX import, reconciliation with suggestions, categorisation rules, cash-flow forecast.',
+      },
+      {
+        icon: 'shopping-basket',
+        title: 'Purchases',
+        text: 'Supplier invoices read automatically (Factur-X, PDF or photo), suppliers found in the Sirene register, subscriptions tracked.',
+      },
+      {
+        icon: 'store',
+        title: 'Sales and leases',
+        text: 'Factur-X quotes, invoices and credit notes; leases with an IGN map, e-signature, rent receipts and rent reviews.',
+      },
+      {
+        icon: 'users',
+        title: 'Members and donations',
+        text: 'HelloAsso and cash memberships, reminders, volunteer time valued; numbered tax receipts.',
+      },
+      {
+        icon: 'lock',
+        title: 'Closing and FEC',
+        text: 'An 8-step year-end closing assistant, locked validated entries, a compliant FEC accounting file.',
+      },
+      {
+        icon: 'chart-donut',
+        title: 'Budgets and projects',
+        text: 'Budget vs actual, project accounting, income statement for a funder, annual general meeting report.',
+      },
+      {
+        icon: 'scale-balanced',
+        title: 'Accountants',
+        text: 'Read-only access, batch validation, period locking, a year-end archive.',
+      },
+    ];
+
+const farm = fr
+  ? [
+      'Plan comptable général agricole (PCGA 2023) et régime des bénéfices agricoles.',
+      'Stocks agricoles et avances aux cultures, animaux, parts de coopératives et de CUMA.',
+      'Fermages et indice national des fermages, baux ruraux.',
+      'Calendrier des échéances : TVA, MSA, impôts, aides PAC.',
+      'Reprise d’une comptabilité tenue dans Ekylibre (écritures, tiers, lettrage, pièces).',
+    ]
+  : [
+      'The French farm chart of accounts (PCGA 2023) and the agricultural profits tax regime.',
+      'Farm stock and crop advances, animals, cooperative and machinery-sharing (CUMA) shares.',
+      'Land rents and the national land rent index, rural leases.',
+      'A calendar of deadlines: VAT, farmers’ social security (MSA), taxes, CAP payments.',
+      'Import of accounts kept in Ekylibre (entries, third parties, matching, documents).',
+    ];
+
+const integrations = ['Qonto', 'Sirene (INSEE)', 'Factur-X', 'Documenso', 'HelloAsso', 'Brevo', 'Stancer', 'Odoo', 'SMTP'];
+
+const sovereignty = fr
+  ? [
+      'Logiciel libre sous licence AGPL-3.0 : le code est à tous.',
+      'Hébergé chez vous ou chez nous, en une image Docker ; une base de données par structure.',
+      'Sauvegardes complètes, pièces jointes comprises.',
+      'Aucune donnée envoyée à un service tiers tant que l’intégration n’est pas activée.',
+    ]
+  : [
+      'Free software under the AGPL-3.0 licence: the code belongs to everyone.',
+      'Hosted on your servers or ours, as a single Docker image; one database per organisation.',
+      'Full backups, attachments included.',
+      'No data sent to a third-party service until you switch the integration on.',
+    ];
+
+const audiences: Array<[string, string]> = fr
+  ? [
+      ['Les associations', 'qui veulent une comptabilité juste sans logiciel propriétaire : adhésions, dons, fonds dédiés, rapport d’AG.'],
+      ['Les SCI', 'qui gèrent associés, baux, loyers et quittances, y compris pour des terres agricoles.'],
+      ['Les exploitations agricoles', 'dès la sortie de la partie agricole, en lien avec Ekylibre et Aiffel.'],
+      ['Les experts-comptables', 'qui reçoivent un accès en lecture seule et un FEC prêt à intégrer.'],
+    ]
+  : [
+      ['Associations', 'that want sound accounting without proprietary software: memberships, donations, restricted funds, AGM report.'],
+      ['Property companies (SCI)', 'managing partners, leases, rents and receipts, including for farmland.'],
+      ['Farms', 'as soon as the farm accounting release is out, working with Ekylibre and Aiffel.'],
+      ['Accountants', 'who get read-only access and a FEC file ready to import.'],
+    ];
+
+const jsonLd = softwareJsonLd({
+  name: 'Lyvre',
+  description,
+  url: lyvre.links.site,
+  license: 'https://www.gnu.org/licenses/agpl-3.0.html',
+  category: 'FinanceApplication',
+});
+---
+
+<Base lang={lang} routeKey="lyvre" title={title} description={description}>
+  <script type="application/ld+json" slot="head" set:html={jsonLd} />
+  <ProductHero lang={lang} product="lyvre" title={fr ? 'La comptabilité libre, sobre et souveraine' : 'Free, frugal, self-hosted accounting'}>
+    {fr
+      ? 'Lyvre tient la comptabilité d’une association ou d’une SCI, de la saisie au bilan : banque et caisse, achats et ventes, adhésions et reçus fiscaux, baux, budget, clôture et FEC pour l’expert-comptable. Sa partie agricole est en cours : elle en fera la brique comptable d’Ekylibre, d’Aiffel et du Lexicon.'
+      : 'Lyvre keeps the books of an association or a property company, from data entry to the balance sheet: bank and cash, purchases and sales, memberships and tax receipts, leases, budgets, year-end closing and the FEC file for the accountant. Its farm accounting is in progress: it will make Lyvre the accounting building block of Ekylibre, Aiffel and Lexicon.'}
+    <Fragment slot="actions">
+      <a href={routePath('contact', lang)} class="btn btn-primary">
+        {fr ? 'Demander une démo' : 'Request a demo'}
+      </a>
+      <a href={lyvre.links.site} rel="noopener" target="_blank" class="btn btn-secondary">
+        {fr ? 'Découvrir Lyvre' : 'Discover Lyvre'}
+      </a>
+    </Fragment>
+  </ProductHero>
+
+  <section class="section-light py-20">
+    <div class="container-site grid items-center gap-6 lg:grid-cols-[1fr_2fr_auto] lg:gap-10">
+      <h2 class="text-h2">{fr ? 'Qui fait quoi' : 'Who does what'}</h2>
+      <p class="text-lead text-muted">
+        {fr
+          ? 'Ekylibre SAS édite et développe Lyvre, et publie son code sous licence libre. L’association Seconde Nature et la SCI des Chênes Verts sont les premières structures à tenir leur comptabilité avec Lyvre, au quotidien.'
+          : 'Ekylibre SAS publishes and develops Lyvre, and releases its code under a free licence. The Seconde Nature association and the SCI des Chênes Verts property company are the first organisations to keep their books with Lyvre, every day.'}
+      </p>
+      <Image
+        src={illusComptable}
+        alt=""
+        widths={[240, 332]}
+        sizes="(min-width: 1024px) 14rem, 60vw"
+        class="mx-auto w-full max-w-[14rem] rounded-2xl"
+      />
+    </div>
+  </section>
+
+  <section class="section-cream py-24">
+    <div class="container-site">
+      <h2 class="max-w-2xl text-h2">{fr ? 'Ce que fait Lyvre' : 'What Lyvre does'}</h2>
+      <p class="mt-4 max-w-2xl text-lead text-muted">
+        {fr
+          ? 'De la saisie au bilan, sans ressaisie : la banque, les factures et les adhésions alimentent directement les écritures.'
+          : 'From data entry to the balance sheet, with no re-keying: bank lines, invoices and memberships feed the entries directly.'}
+      </p>
+      <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {features.map((f) => (
+          <li class="card">
+            <span class="medallion size-12 text-xl">
+              <Icon name={f.icon} />
+            </span>
+            <h3 class="mt-5 font-display text-lg font-semibold">{f.title}</h3>
+            <p class="mt-2 text-sm text-muted">{f.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section-dark py-24">
+    <div class="container-site">
+      <p class="eyebrow text-eky-green-light">{fr ? 'Interopérabilité' : 'Interoperability'}</p>
+      <h2 class="mt-3 max-w-3xl text-h2">
+        {fr ? 'La brique comptable de l’écosystème' : 'The accounting building block of the ecosystem'}
+      </h2>
+      <p class="mt-4 max-w-3xl text-lead text-straw-50/80">
+        {fr
+          ? 'Ekylibre gère l’exploitation, Aiffel recueille ce que dit l’agriculteur, le Lexicon fournit les référentiels. Lyvre en tire la comptabilité, sans ressaisie.'
+          : 'Ekylibre runs the farm, Aiffel captures what the farmer says, Lexicon provides the reference data. Lyvre turns it all into accounts, with no re-keying.'}
+      </p>
+      <SystemDiagram lang={lang} tone="dark" focus="lyvre" caption={false} class="mt-10" />
+    </div>
+  </section>
+
+  <section class="section-light py-24">
+    <div class="container-site grid gap-12 lg:grid-cols-[1fr_1.3fr]">
+      <div>
+        <StatusBadge status="en-cours" lang={lang} />
+        <h2 class="mt-4 text-h2">{fr ? 'La comptabilité agricole' : 'Farm accounting'}</h2>
+        <p class="mt-4 text-lead text-muted">
+          {fr
+            ? 'Nous ajoutons à Lyvre ce qu’exige la comptabilité d’une exploitation agricole, en reprenant ce qu’Ekylibre et le Lexicon savent déjà faire.'
+            : 'We are adding to Lyvre what farm accounting requires, building on what Ekylibre and Lexicon already do.'}
+        </p>
+      </div>
+      <ul class="space-y-4">
+        {farm.map((item) => (
+          <li class="flex gap-3 border-t border-soil-800/10 pt-4">
+            <Icon name="wheat" class="mt-1 text-eky-green-deep" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section-cream py-24">
+    <div class="container-site grid gap-14 lg:grid-cols-2">
+      <div>
+        <h2 class="text-h2">{fr ? 'Intégrations' : 'Integrations'}</h2>
+        <p class="mt-4 text-muted">
+          {fr
+            ? 'Désactivées par défaut, activées structure par structure et testées depuis l’écran.'
+            : 'Off by default, switched on per organisation and tested from the screen.'}
+        </p>
+        <ul class="mt-8 flex flex-wrap gap-3">
+          {integrations.map((i) => (
+            <li class="rounded-full bg-white/80 px-4 py-2 font-mono text-sm ring-1 ring-soil-800/10">{i}</li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h2 class="text-h2">{fr ? 'Libre et chez vous' : 'Free and on your servers'}</h2>
+        <ul class="mt-8 space-y-4">
+          {sovereignty.map((s) => (
+            <li class="flex gap-3">
+              <Icon name="check" class="mt-1.5 text-eky-green-deep" />
+              <span>{s}</span>
+            </li>
+          ))}
+        </ul>
+        <a href={lyvre.links.code} rel="noopener" target="_blank" class="mt-6 inline-flex items-center gap-2 font-semibold">
+          <Icon name="code-fork" />
+          {fr ? 'Voir le code' : 'View the code'}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-light py-24">
+    <div class="container-site">
+      <h2 class="text-h2">{fr ? 'Pour qui' : 'Who it is for'}</h2>
+      <ul class="mt-8 grid gap-x-12 md:grid-cols-2">
+        {audiences.map(([who, why]) => (
+          <li class="border-t border-soil-800/10 py-5">
+            <strong class="font-display">{who}</strong> {why}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <ProductCta
+    lang={lang}
+    title={fr ? 'Voyez Lyvre avec vos propres comptes' : 'See Lyvre with your own accounts'}
+    text={
+      fr
+        ? 'Nous partons de votre structure, de votre banque et de votre historique pour vous montrer Lyvre en situation.'
+        : 'We start from your organisation, your bank and your history to show you Lyvre in action.'
+    }
+    site={{ href: lyvre.links.site, label: fr ? 'Découvrir Lyvre' : 'Discover Lyvre' }}
+  />
+</Base>

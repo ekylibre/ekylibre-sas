@@ -1,8 +1,9 @@
 // C5 — FlowLayer : flux de données en arc de chaque zone vers le cœur (Ekylibre).
 // Ligne épaisse en tirets dont le décalage défile (« paquets » de données), doublée d'un halo
 // additif large et transparent qui tient lieu de lueur sans post-traitement.
-// Deux verts comme dans le schéma de flux de la doc : vert Ekylibre pour l'entrant, vert clair pour le sortant.
-import { AdditiveBlending, CatmullRomCurve3, Group, Vector2, Vector3 } from 'three';
+// Deux verts comme dans le schéma de flux de la doc : vert Ekylibre pour l'entrant, vert clair pour le sortant ;
+// ocre immobile pour les liaisons en cours de développement (Lyvre).
+import { AdditiveBlending, CatmullRomCurve3, Color, Group, Vector2, Vector3 } from 'three';
 import { Line2 } from 'three/examples/jsm/lines/Line2.js';
 import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry.js';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
@@ -11,12 +12,15 @@ import { GREEN, GREEN_LIGHT } from './connectors';
 import type { Stage } from './stage';
 import type { SceneConnector } from './types';
 
+/** Ocre « en cours » (--color-wheat-400). */
+const WIP = new Color('#e2b76c');
+
 export interface Flow {
   zone: string;
   line: Line2;
   halo: Line2;
   material: LineMaterial;
-  direction: 1 | -1;
+  direction: 1 | 0 | -1;
 }
 
 export interface FlowLayer {
@@ -84,6 +88,39 @@ export function createFlowLayer(
       );
       group.add(halo, line);
       flows.push({ zone: zoneId, line, halo, material, direction: outgoing ? 1 : -1 });
+    }
+  }
+  // Liaisons en cours de développement (Lyvre ↔ cœur, Lyvre ↔ Aiffel) : arcs ocre, pointillés fins,
+  // immobiles (docs/design/03-outils-lyvre.md §8).
+  for (const list of zones.values()) {
+    for (const c of list) {
+      const start = anchors.get(c.zone);
+      if (!start) continue;
+      for (const target of c.wipLinks ?? []) {
+        const end = anchors.get(target);
+        if (!end) continue;
+        const points = arc(start, end, 12 + start.distanceTo(end) * 0.36);
+        const geometry = new LineGeometry().setPositions(points.flatMap((p) => [p.x, p.y, p.z]));
+        const material = new LineMaterial({
+          color: WIP,
+          linewidth: 2,
+          dashed: true,
+          dashSize: 2,
+          gapSize: 4,
+          transparent: true,
+          opacity: 0.9,
+          toneMapped: false,
+        });
+        const line = new Line2(geometry, material);
+        line.computeLineDistances();
+        const halo = new Line2(
+          geometry,
+          new LineMaterial({ color: WIP, linewidth: 7, transparent: true, opacity: 0.12, blending: AdditiveBlending, depthWrite: false, toneMapped: false }),
+        );
+        group.add(halo, line);
+        // direction 0 : pas de défilement (flux pas encore en service).
+        flows.push({ zone: c.zone, line, halo, material, direction: 0 });
+      }
     }
   }
   stage.scene.add(group);
