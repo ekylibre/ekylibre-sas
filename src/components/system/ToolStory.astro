@@ -5,7 +5,7 @@
 import ProductLogo from '~/components/products/ProductLogo.astro';
 import StatusBadge from '~/components/products/StatusBadge.astro';
 import Icon from '~/components/Icon.astro';
-import EkylibreMockup from '~/components/mockups/EkylibreMockup.astro';
+import FourmyMockup from '~/components/mockups/FourmyMockup.astro';
 import LexiconMockup from '~/components/mockups/LexiconMockup.astro';
 import AiffelMockup from '~/components/mockups/AiffelMockup.astro';
 import LyvreMockup from '~/components/mockups/LyvreMockup.astro';
@@ -19,7 +19,7 @@ const { lang } = Astro.props;
 const fr = lang === 'fr';
 const products = getProducts(lang);
 const total = String(products.length).padStart(2, '0');
-const MOCKUPS = { ekylibre: EkylibreMockup, lexicon: LexiconMockup, aiffel: AiffelMockup, lyvre: LyvreMockup };
+const MOCKUPS = { fourmy: FourmyMockup, lexicon: LexiconMockup, aiffel: AiffelMockup, lyvre: LyvreMockup };
 const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
 ---
 

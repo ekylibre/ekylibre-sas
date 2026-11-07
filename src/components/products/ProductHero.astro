@@ -4,7 +4,7 @@
 // Slots : par défaut (paragraphe d'introduction), « actions » (boutons), « after » (rangée sous l'en-tête).
 import ProductLogo from './ProductLogo.astro';
 import StatusBadge from './StatusBadge.astro';
-import EkylibreMockup from '~/components/mockups/EkylibreMockup.astro';
+import FourmyMockup from '~/components/mockups/FourmyMockup.astro';
 import LexiconMockup from '~/components/mockups/LexiconMockup.astro';
 import AiffelMockup from '~/components/mockups/AiffelMockup.astro';
 import LyvreMockup from '~/components/mockups/LyvreMockup.astro';
@@ -18,7 +18,7 @@ interface Props {
 }
 const { lang, product: key, title } = Astro.props;
 const product = getProduct(key, lang);
-const Mockup = { ekylibre: EkylibreMockup, lexicon: LexiconMockup, aiffel: AiffelMockup, lyvre: LyvreMockup }[key];
+const Mockup = { fourmy: FourmyMockup, lexicon: LexiconMockup, aiffel: AiffelMockup, lyvre: LyvreMockup }[key];
 ---
 
 <section class="section-dark">

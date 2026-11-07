@@ -1,0 +1,199 @@
+---
+// Page produit Fourmy (remplace la page Ekylibre, novembre 2026). Textes :
+// docs/contenus/fr/fourmy.md. Fourmy est la nouvelle génération d'Ekylibre ;
+// la présentation détaillée, la roadmap et les nouveautés vivent sur fourmy.org.
+import { Image } from 'astro:assets';
+import Base from '~/layouts/Base.astro';
+import Icon from '~/components/Icon.astro';
+import ProductCta from './ProductCta.astro';
+import { softwareJsonLd } from './jsonld';
+import illusBureau from '~/assets/illustrations/bureau.webp';
+import illusRegistres from '~/assets/illustrations/tracabilite-registres.webp';
+import { routePath, type Locale } from '~/i18n/routes';
+import { LINKS } from '~/lib/links';
+import { getProduct } from '~/lib/products';
+import ProductLogo from './ProductLogo.astro';
+import ProductHero from './ProductHero.astro';
+import type { IconName } from '~/lib/icon-names';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+
+const title = fr ? 'Fourmy, nouvelle génération d’Ekylibre' : 'Fourmy, the next generation of Ekylibre';
+const description = fr
+  ? 'Fourmy, le jumeau numérique de la ferme : parcelles, interventions, stocks, cuverie et traces GPS, à n’importe quelle date. La nouvelle génération du logiciel libre Ekylibre, en test avec des fermes pilotes.'
+  : 'Fourmy, the farm’s digital twin: plots, interventions, stock, cellar and GPS tracks, at any date. The next generation of the free software Ekylibre, being tested with pilot farms.';
+const lyvre = getProduct('lyvre', lang);
+
+type Status = 'test' | 'next';
+const upcoming: Array<{ icon: IconName; title: string; text: string; status: Status }> = fr
+  ? [
+      { icon: 'calendar-check', title: 'La ferme à n’importe quelle date', text: 'Une frise pour remonter le temps : parcelles, cuves, stocks et interventions reviennent à la date choisie.', status: 'test' },
+      { icon: 'map', title: 'Carte et plan 3D', text: 'Parcellaire versionné sur la photo IGN, relief, bâtiments et cuves en 3D.', status: 'test' },
+      { icon: 'spraying', title: 'Toutes les interventions, un seul formulaire', text: 'Le formulaire s’adapte au travail réalisé : doses à l’hectare ou au total, plusieurs périodes, habitudes de la ferme proposées.', status: 'test' },
+      { icon: 'barn', title: 'Stocks et cuverie', text: 'Les interventions décomptent les stocks ; les récoltes entrent en cuve ou au bâtiment.', status: 'test' },
+      { icon: 'shield-check', title: 'Registre phytosanitaire calculé', text: 'Déduit des traitements, jamais ressaisi.', status: 'test' },
+      { icon: 'tractor', title: 'Traces GPS des tracteurs', text: 'Boîtiers Traccar reliés par ferme, surface réellement travaillée.', status: 'test' },
+      { icon: 'mobile', title: 'Application mobile hors ligne', text: 'Saisie au champ sans réseau, envoi au retour de la connexion.', status: 'test' },
+      { icon: 'satellite', title: 'Météo et capteurs', text: 'Stations, sondes et pièges reliés comme les traceurs GPS.', status: 'next' },
+    ]
+  : [
+      { icon: 'calendar-check', title: 'The farm at any date', text: 'A timeline to go back in time: plots, tanks, stock and interventions return to the chosen date.', status: 'test' },
+      { icon: 'map', title: 'Map and 3D plan', text: 'Versioned plots on IGN aerial imagery, terrain, buildings and tanks in 3D.', status: 'test' },
+      { icon: 'spraying', title: 'Every intervention, one form', text: 'The form adapts to the job done: per-hectare or total doses, several work periods, the farm’s usual choices first.', status: 'test' },
+      { icon: 'barn', title: 'Stock and cellar', text: 'Interventions draw down stock; harvests go into a tank or a building.', status: 'test' },
+      { icon: 'shield-check', title: 'Computed spray register', text: 'Derived from treatments, never typed twice.', status: 'test' },
+      { icon: 'tractor', title: 'Tractor GPS tracks', text: 'Traccar boxes linked per farm, area actually worked.', status: 'test' },
+      { icon: 'mobile', title: 'Offline mobile app', text: 'Record in the field without signal, sent when the connection is back.', status: 'test' },
+      { icon: 'satellite', title: 'Weather and sensors', text: 'Stations, probes and traps linked like the GPS trackers.', status: 'next' },
+    ];
+const statusLabel: Record<Status, string> = fr
+  ? { test: 'En test', next: 'À venir' }
+  : { test: 'In testing', next: 'Coming next' };
+
+const changes = fr
+  ? [
+      'Un modèle d’intervention simplifié : six formes au lieu des centaines de variantes d’Ekylibre.',
+      'Tout est daté : la ferme se consulte telle qu’elle était, sans rien écraser.',
+      'Hors ligne d’abord sur mobile, chaque ferme cloisonnée, accès chiffrés aux services reliés.',
+      'Vos données Ekylibre sont reprises : le registre phytosanitaire reste identique à l’original.',
+    ]
+  : [
+      'A simpler intervention model: six shapes instead of Ekylibre’s hundreds of variants.',
+      'Everything is dated: the farm can be viewed as it was, nothing is overwritten.',
+      'Offline-first on mobile, every farm kept separate, encrypted access to linked services.',
+      'Your Ekylibre data is brought over: the spray register stays identical to the original.',
+    ];
+
+const jsonLd = softwareJsonLd({
+  name: 'Fourmy',
+  description,
+  url: LINKS.fourmy,
+  license: 'https://www.gnu.org/licenses/agpl-3.0.html',
+});
+---
+
+<Base lang={lang} routeKey="fourmy" title={title} description={description}>
+  <script type="application/ld+json" slot="head" set:html={jsonLd} />
+  <ProductHero lang={lang} product="fourmy" title={fr ? 'Le jumeau numérique de la ferme' : 'The farm’s digital twin'}>
+    {fr
+      ? 'Fourmy est la nouvelle génération d’Ekylibre, notre logiciel libre de gestion de l’exploitation. Parcelles, interventions, stocks, cuves et tracteurs y sont tenus à jour, au champ comme au bureau, et la ferme se consulte à n’importe quelle date. Fourmy est en test avec des fermes pilotes.'
+      : 'Fourmy is the next generation of Ekylibre, our free farm management software. Plots, interventions, stock, tanks and tractors are kept up to date, in the field and in the office, and the farm can be viewed at any date. Fourmy is being tested with pilot farms.'}
+    <Fragment slot="actions">
+      <a href={LINKS.fourmy} rel="noopener" target="_blank" class="btn btn-primary">
+        {fr ? 'Découvrir fourmy.org' : 'Visit fourmy.org'}
+      </a>
+      <a href={routePath('contact', lang)} class="btn btn-secondary">
+        {fr ? 'Devenir ferme pilote' : 'Become a pilot farm'}
+      </a>
+    </Fragment>
+  </ProductHero>
+
+  <section class="section-light py-20">
+    <div class="container-site grid items-center gap-6 lg:grid-cols-[1fr_2fr_auto] lg:gap-10">
+      <h2 class="text-h2">{fr ? 'Ce qui change' : 'What changes'}</h2>
+      <ul class="space-y-3 text-lead text-muted">
+        {changes.map((c) => (
+          <li class="flex gap-3">
+            <Icon name="check" class="mt-1.5 shrink-0 text-eky-green-deep" />
+            <span>{c}</span>
+          </li>
+        ))}
+      </ul>
+      <Image
+        src={illusBureau}
+        alt=""
+        widths={[240, 332]}
+        sizes="(min-width: 1024px) 14rem, 60vw"
+        class="mx-auto w-full max-w-[14rem] rounded-2xl"
+      />
+    </div>
+  </section>
+
+  <section class="section-cream py-24">
+    <div class="container-site">
+      <h2 class="max-w-2xl text-h2">{fr ? 'Les fonctionnalités à venir' : 'Upcoming features'}</h2>
+      <p class="mt-4 max-w-2xl text-lead text-muted">
+        {fr
+          ? 'Déjà en test avec les fermes pilotes, ou en préparation. La feuille de route complète et les nouveautés sont sur fourmy.org.'
+          : 'Already being tested with pilot farms, or in preparation. The full roadmap and release notes are on fourmy.org.'}
+      </p>
+      <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {upcoming.map((f) => (
+          <li class="card">
+            <span class="medallion size-12 text-xl">
+              <Icon name={f.icon} />
+            </span>
+            <p class="mt-5 text-xs font-semibold tracking-wide text-muted uppercase">{statusLabel[f.status]}</p>
+            <h3 class="mt-1 font-display text-lg font-semibold">{f.title}</h3>
+            <p class="mt-2 text-sm text-muted">{f.text}</p>
+          </li>
+        ))}
+      </ul>
+      <p class="mt-8">
+        <a href={LINKS.fourmyRoadmap} rel="noopener" target="_blank" class="font-semibold">
+          {fr ? 'La feuille de route sur fourmy.org' : 'The roadmap on fourmy.org'}
+        </a>
+      </p>
+      <a
+        href={routePath('lyvre', lang)}
+        class="card mt-10 flex flex-col gap-5 no-underline transition hover:ring-eky-green/40 sm:flex-row sm:items-center"
+      >
+        <ProductLogo product={lyvre} size="md" decorative />
+        <span class="grow">
+          <span class="block font-display text-lg font-semibold text-night-900">
+            {fr ? 'Comptabilité, ventes et achats : avec Lyvre' : 'Accounting, sales and purchasing: with Lyvre'}
+          </span>
+          <span class="mt-1 block text-sm text-muted">
+            {fr
+              ? 'Fourmy se concentre sur la gestion de l’exploitation. Lyvre, la brique comptable de l’écosystème, tient les comptes.'
+              : 'Fourmy focuses on running the farm. Lyvre, the accounting building block of the ecosystem, keeps the books.'}
+          </span>
+        </span>
+        <span class="inline-flex shrink-0 items-center gap-2 font-semibold text-eky-green-text">
+          {fr ? 'Découvrir Lyvre' : 'Discover Lyvre'} <Icon name="arrow-right" />
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section-light py-24">
+    <div class="container-site grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:items-center">
+      <Image
+        src={illusRegistres}
+        alt=""
+        widths={[320, 500]}
+        sizes="(min-width: 1024px) 26rem, 80vw"
+        class="mx-auto w-full max-w-[26rem] rounded-2xl shadow-[var(--shadow-card)]"
+      />
+      <div>
+        <h2 class="text-h2">{fr ? 'Vous utilisez Ekylibre aujourd’hui ?' : 'Using Ekylibre today?'}</h2>
+        <p class="mt-5 text-lead text-muted">
+          {fr
+            ? 'Fourmy reprend vos parcelles, interventions, stocks et cuves depuis Ekylibre, et nous accompagnons le passage ferme par ferme. Pour savoir quand et comment, écrivez-nous.'
+            : 'Fourmy brings over your plots, interventions, stock and tanks from Ekylibre, and we support the move farm by farm. To find out when and how, get in touch.'}
+        </p>
+        <p class="mt-8 flex flex-wrap gap-4">
+          <a href={routePath('contact', lang)} class="btn btn-primary">{fr ? 'Nous contacter' : 'Contact us'}</a>
+          <a href={LINKS.ekylibreOrg} rel="noopener" target="_blank" class="btn btn-secondary">
+            {fr ? 'Documentation d’Ekylibre' : 'Ekylibre documentation'}
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <ProductCta
+    lang={lang}
+    title={fr ? 'Devenez ferme pilote' : 'Become a pilot farm'}
+    text={
+      fr
+        ? 'Nous cherchons des exploitations, en grandes cultures comme en vigne, pour essayer Fourmy sur leurs propres données.'
+        : 'We are looking for farms, arable and vineyard alike, to try Fourmy on their own data.'
+    }
+    site={{ href: LINKS.fourmy, label: fr ? 'Découvrir fourmy.org' : 'Visit fourmy.org' }}
+  />
+</Base>

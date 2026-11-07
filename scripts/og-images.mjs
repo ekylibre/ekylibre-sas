@@ -22,9 +22,9 @@ const PAGES = {
     fr: ['Interopérabilité', 'La ferme connectée à tout son écosystème'],
     en: ['Interoperability', 'The farm connected to its whole ecosystem'],
   },
-  ekylibre: {
-    fr: ['Ekylibre', 'Gérer l’exploitation : matériels, stocks, GPS, capteurs'],
-    en: ['Ekylibre', 'Run the farm: machinery, stock, GPS, sensors'],
+  fourmy: {
+    fr: ['Fourmy', 'Le jumeau numérique de la ferme, nouvelle génération d’Ekylibre'],
+    en: ['Fourmy', 'The farm’s digital twin, the next generation of Ekylibre'],
   },
   lexicon: {
     fr: ['Lexicon', 'Les données publiques agricoles françaises, reliées'],

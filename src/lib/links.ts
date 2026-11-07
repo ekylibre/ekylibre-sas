@@ -1,6 +1,9 @@
 // Liens externes de référence (un seul endroit à mettre à jour).
 export const LINKS = {
   ekylibreOrg: 'https://ekylibre.org/',
+  fourmy: 'https://fourmy.org/',
+  fourmyRoadmap: 'https://fourmy.org/roadmap/',
+  fourmyContact: 'https://fourmy.org/contact/',
   demo: 'https://demo.ekylibre-dev.com/',
   docs: 'https://ekylibre.org/fr/user-doc/demarrage/',
   techdoc: 'https://ekylibre.org/techdoc/',

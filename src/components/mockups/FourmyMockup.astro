@@ -1,5 +1,5 @@
 ---
-// Maquette Ekylibre (D25) : intervention → trace GPS → stock décompté → capteur à jour.
+// Maquette Fourmy (D25, reprise de la maquette Ekylibre) : intervention → trace GPS → stock décompté → capteur à jour.
 import MockFrame from './MockFrame.astro';
 import type { Locale } from '~/i18n/routes';
 
@@ -11,13 +11,13 @@ interface Props {
 const { lang, autoplay = false, class: className } = Astro.props;
 const fr = lang === 'fr';
 const label = fr
-  ? 'Exemple dans Ekylibre : une pulvérisation sur la parcelle Les Quarante, sa trace GPS, le stock de bouillie bordelaise qui passe de 25 à 21,5 kg et la sonde d’humidité du sol mise à jour.'
-  : 'Example in Ekylibre: a spraying job on the Les Quarante plot, its GPS track, the Bordeaux mixture stock going from 25 to 21.5 kg and the soil moisture probe updated.';
+  ? 'Exemple dans Fourmy : une pulvérisation sur la parcelle Les Quarante, sa trace GPS, le stock de bouillie bordelaise qui passe de 25 à 21,5 kg et la sonde d’humidité du sol mise à jour.'
+  : 'Example in Fourmy: a spraying job on the Les Quarante plot, its GPS track, the Bordeaux mixture stock going from 25 to 21.5 kg and the soil moisture probe updated.';
 // Trace GPS en aller-retour sur la parcelle (coordonnées du SVG 220 × 120).
 const track = 'M38 92 L176 30 L184 42 L46 104 L56 112 L192 52 L198 64 L66 120';
 ---
 
-<MockFrame lang={lang} title={fr ? 'ekylibre · intervention' : 'ekylibre · intervention'} autoplay={autoplay} label={label} class={className}>
+<MockFrame lang={lang} title={fr ? 'fourmy · intervention' : 'fourmy · intervention'} autoplay={autoplay} label={label} class={className}>
   <div class="grid gap-3 sm:grid-cols-[1.05fr_1fr]">
     <div class="mk-card mk-in">
       <p class="mk-eyebrow">{fr ? 'Pulvérisation' : 'Spraying'}</p>

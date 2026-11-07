@@ -27,7 +27,7 @@ const farmerLabel = fr ? 'Agriculteur' : 'Farmer';
 const nameOf = (k: ProductKey | 'farmer') => (k === 'farmer' ? farmerLabel : byKey[k].name);
 const initial: ProductKey = focus ?? 'aiffel';
 // Ordre de tabulation : Aiffel au centre d'abord, puis les autres dans le sens de lecture.
-const ORDER: ProductKey[] = ['aiffel', 'ekylibre', 'lexicon', 'lyvre'];
+const ORDER: ProductKey[] = ['aiffel', 'fourmy', 'lexicon', 'lyvre'];
 
 // --- Géométrie (unités monde ; voir src/lib/iso.ts) ---------------------------------------
 const P: Projection = { ox: 600, oy: 360, scale: 1.1 };
@@ -37,7 +37,7 @@ const H = 680;
 // Ancres écran des flux (les traits partent du cœur de chaque élément ; les volumes les recouvrent).
 const anchor: Record<ProductKey | 'farmer', Point2> = {
   aiffel: project([0, 0, 20], P),
-  ekylibre: project([-185, 185, 30], P),
+  fourmy: project([-185, 185, 30], P),
   lexicon: project([-205, -205, 30], P),
   lyvre: project([185, -185, 10], P),
   farmer: project([215, 215, 20], P),
@@ -59,7 +59,7 @@ const flowShapes = flows.map((f) => {
   // Position de l'étiquette le long de la courbe (évite les volumes et l'agriculteur).
   const T: Record<string, number> = { 'lexicon>aiffel': 0.3, 'ekylibre>lyvre': 0.25, 'aiffel>ekylibre': 0.55 };
   // Ekylibre → Lyvre : étiquette alignée à droite, entre le bouton d'Ekylibre et celui d'Aiffel.
-  const anchorText = f.from === 'ekylibre' && f.to === 'lyvre' ? 'end' : 'middle';
+  const anchorText = f.from === 'fourmy' && f.to === 'lyvre' ? 'end' : 'middle';
   const [lx, ly] = curvePoint(a, b, bend, T[`${f.from}>${f.to}`] ?? 0.5);
   return { ...f, d: curve(a, b, bend), lx, ly, anchorText };
 });
@@ -144,7 +144,7 @@ const [labelX, labelY] = project([215, 215, 0], P);
         }
       </g>
 
-      <g class="node" data-node="ekylibre">
+      <g class="node" data-node="fourmy">
         <path class="face top" d={hangar.back} />
         <path class="face left" d={hangar.wall} />
         <path class="face right" d={hangar.gable} />
@@ -391,29 +391,29 @@ const [labelX, labelY] = project([215, 215, 0], P);
     opacity: 0.45;
   }
   [data-active='aiffel'] .node[data-node='aiffel'],
-  [data-active='ekylibre'] .node[data-node='ekylibre'],
+  [data-active='fourmy'] .node[data-node='fourmy'],
   [data-active='lexicon'] .node[data-node='lexicon'],
   [data-active='lyvre'] .node[data-node='lyvre'],
   [data-active='aiffel'] .flow:is([data-from='aiffel'], [data-to='aiffel']),
-  [data-active='ekylibre'] .flow:is([data-from='ekylibre'], [data-to='ekylibre']),
+  [data-active='fourmy'] .flow:is([data-from='fourmy'], [data-to='fourmy']),
   [data-active='lexicon'] .flow:is([data-from='lexicon'], [data-to='lexicon']),
   [data-active='lyvre'] .flow:is([data-from='lyvre'], [data-to='lyvre']) {
     opacity: 1;
   }
   [data-active='aiffel'] .node[data-node='aiffel'] .face,
-  [data-active='ekylibre'] .node[data-node='ekylibre'] .face,
+  [data-active='fourmy'] .node[data-node='fourmy'] .face,
   [data-active='lexicon'] .node[data-node='lexicon'] .face,
   [data-active='lyvre'] .node[data-node='lyvre'] .face {
     stroke: var(--hi-stroke);
   }
   [data-active='aiffel'] .node[data-node='aiffel'] .face.top,
-  [data-active='ekylibre'] .node[data-node='ekylibre'] .face.top,
+  [data-active='fourmy'] .node[data-node='fourmy'] .face.top,
   [data-active='lexicon'] .node[data-node='lexicon'] .face.top,
   [data-active='lyvre'] .node[data-node='lyvre'] .face.top {
     fill: color-mix(in srgb, var(--color-eky-green) 9%, var(--top));
   }
   [data-active='aiffel'] .flow-label:is([data-from='aiffel'], [data-to='aiffel']),
-  [data-active='ekylibre'] .flow-label:is([data-from='ekylibre'], [data-to='ekylibre']),
+  [data-active='fourmy'] .flow-label:is([data-from='fourmy'], [data-to='fourmy']),
   [data-active='lexicon'] .flow-label:is([data-from='lexicon'], [data-to='lexicon']),
   [data-active='lyvre'] .flow-label:is([data-from='lyvre'], [data-to='lyvre']) {
     opacity: 1;
@@ -422,7 +422,7 @@ const [labelX, labelY] = project([215, 215, 0], P);
     stroke-width: 1.6;
   }
   [data-active='aiffel'] .flow:is([data-from='aiffel'], [data-to='aiffel']) .flow-line,
-  [data-active='ekylibre'] .flow:is([data-from='ekylibre'], [data-to='ekylibre']) .flow-line,
+  [data-active='fourmy'] .flow:is([data-from='fourmy'], [data-to='fourmy']) .flow-line,
   [data-active='lexicon'] .flow:is([data-from='lexicon'], [data-to='lexicon']) .flow-line,
   [data-active='lyvre'] .flow:is([data-from='lyvre'], [data-to='lyvre']) .flow-line {
     stroke-width: 2.4;
@@ -457,7 +457,7 @@ const [labelX, labelY] = project([215, 215, 0], P);
       left: 50%;
       top: 70%;
     }
-    .system-node[data-key='ekylibre'] {
+    .system-node[data-key='fourmy'] {
       left: 19%;
       top: 76%;
     }

@@ -6,7 +6,7 @@ import type { ImageMetadata } from 'astro';
 import raw from '~/data/products.yaml?raw';
 import type { Locale } from '~/i18n/routes';
 
-export const PRODUCT_KEYS = ['ekylibre', 'lexicon', 'aiffel', 'lyvre'] as const;
+export const PRODUCT_KEYS = ['fourmy', 'lexicon', 'aiffel', 'lyvre'] as const;
 export type ProductKey = (typeof PRODUCT_KEYS)[number];
 export const STATUSES = ['service', 'en-cours', 'beta'] as const;
 export type Status = (typeof STATUSES)[number];

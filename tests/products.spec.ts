@@ -3,11 +3,11 @@
 import { test, expect } from '@playwright/test';
 import { url } from './helpers';
 
-const NAMES = ['Ekylibre', 'Lexicon', 'Aiffel', 'Lyvre'];
+const NAMES = ['Fourmy', 'Lexicon', 'Aiffel', 'Lyvre'];
 
 test('les quatre logos officiels sont servis', async ({ page }) => {
   await page.goto(url('/'));
-  for (const key of ['ekylibre', 'lexicon', 'aiffel', 'lyvre']) {
+  for (const key of ['fourmy', 'lexicon', 'aiffel', 'lyvre']) {
     const img = page.locator(`[data-system] .product-logo[data-product="${key}"] img`);
     await expect(img).toHaveCount(1);
     const src = await img.getAttribute('src');
@@ -38,7 +38,7 @@ test('récit : les flèches changent d’onglet et de panneau', async ({ page })
   await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
   await expect(tabs.nth(1)).toBeFocused();
   await expect(page.locator('#tool-lexicon')).toBeVisible();
-  await expect(page.locator('#tool-ekylibre')).toBeHidden();
+  await expect(page.locator('#tool-fourmy')).toBeHidden();
   await page.keyboard.press('End');
   await expect(page.locator('#tool-lyvre')).toBeVisible();
   await expect(page.locator('#tool-lyvre')).toContainText('Partie agricole en cours');
@@ -60,7 +60,7 @@ test.describe('mouvement réduit', () => {
         .map((a) => (a as CSSAnimation).animationName ?? ''),
     );
     expect(running).toEqual([]);
-    await expect(page.locator('#tool-ekylibre').getByText('21,5 kg')).toBeVisible();
+    await expect(page.locator('#tool-fourmy').getByText('21,5 kg')).toBeVisible();
     // Le schéma ne change pas seul.
     await page.waitForTimeout(5500);
     await expect(page.locator('[data-system]')).toHaveAttribute('data-active', 'aiffel');
@@ -68,7 +68,7 @@ test.describe('mouvement réduit', () => {
 });
 
 for (const [key, path] of [
-  ['ekylibre', '/ekylibre/'],
+  ['fourmy', '/fourmy/'],
   ['lexicon', '/en/lexicon/'],
   ['aiffel', '/aiffel/'],
   ['lyvre', '/en/lyvre/'],

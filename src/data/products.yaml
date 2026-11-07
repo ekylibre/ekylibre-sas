@@ -4,31 +4,33 @@
 # Statuts : service | en-cours | beta.
 
 products:
-  - key: ekylibre
-    name: Ekylibre
-    logo: ekylibre.svg
-    status: service
+  - key: fourmy
+    name: Fourmy
+    logo: fourmy.svg
+    status: en-cours
+    subStatus:
+      fr: En test avec des fermes pilotes
+      en: Being tested with pilot farms
     role:
       fr: Gérer l’exploitation
       en: Run the farm
     tagline:
-      fr: Matériels, stocks, suivi GPS, capteurs et agronomie, au même endroit.
-      en: Machinery, stock, GPS tracking, sensors and agronomy, all in one place.
+      fr: Le jumeau numérique de la ferme, à n’importe quelle date.
+      en: The farm’s digital twin, at any date.
     summary:
-      fr: "Le logiciel libre de gestion de l’exploitation : parcelles et agronomie, matériels suivis au GPS, stocks, capteurs, élevage et vigne. Développé depuis 2008, sous licence AGPL."
-      en: "Free software to run the farm: fields and agronomy, GPS-tracked machinery, stock, sensors, livestock and vineyard. Developed since 2008, under the AGPL licence."
+      fr: "La nouvelle génération d’Ekylibre : parcelles, interventions, stocks, cuverie et traces GPS dans un modèle simplifié, consultable à n’importe quelle date. Logiciel libre sous licence AGPL, en test avec des fermes pilotes."
+      en: "The next generation of Ekylibre: plots, interventions, stock, cellar and GPS tracks in a simpler model that can be viewed at any date. Free software under the AGPL licence, being tested with pilot farms."
     points:
       fr:
-        - Une intervention saisie au champ met à jour le stock, la parcelle et le temps du matériel.
-        - Traces GPS des tracteurs et relevés des capteurs, repris par les connecteurs.
-        - Doses et délais vérifiés dans le Lexicon.
+        - Une intervention saisie au champ, même hors ligne, met à jour le stock, la cuve et le registre.
+        - Traces GPS des tracteurs et services reliés par ferme, avec des accès chiffrés.
+        - Vos données Ekylibre reprises, registre phytosanitaire identique.
       en:
-        - An intervention recorded in the field updates the stock, the plot and the machine’s hours.
-        - Tractor GPS tracks and sensor readings, brought in by connectors.
-        - Doses and intervals checked against Lexicon.
+        - An intervention recorded in the field, even offline, updates the stock, the tank and the register.
+        - Tractor GPS tracks and linked services per farm, with encrypted access.
+        - Your Ekylibre data brought over, identical spray register.
     links:
-      site: https://ekylibre.org/
-      code: https://github.com/ekylibre/ekylibre
+      site: https://fourmy.org/
 
   - key: lexicon
     name: Lexicon
@@ -120,7 +122,7 @@ flows:
     status: service
     label: { fr: 'dicte', en: 'dictates' }
   - from: aiffel
-    to: ekylibre
+    to: fourmy
     status: service
     label: { fr: 'interventions, récoltes, stocks', en: 'interventions, harvests, stock' }
   - from: lexicon
@@ -128,10 +130,10 @@ flows:
     status: service
     label: { fr: 'vérifie et cite', en: 'checks and cites' }
   - from: lexicon
-    to: ekylibre
+    to: fourmy
     status: service
     label: { fr: 'produits phyto, parcelles, météo', en: 'plant protection, plots, weather' }
-  - from: ekylibre
+  - from: fourmy
     to: lyvre
     status: en-cours
     label: { fr: 'achats, ventes, stocks valorisés', en: 'purchases, sales, stock valuation' }

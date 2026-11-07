@@ -7,7 +7,7 @@ export const DEFAULT_LOCALE: Locale = 'fr';
 export const ROUTES = {
   home: { fr: '/', en: '/en/' },
   interop: { fr: '/interoperabilite/', en: '/en/interoperability/' },
-  ekylibre: { fr: '/ekylibre/', en: '/en/ekylibre/' },
+  fourmy: { fr: '/fourmy/', en: '/en/fourmy/' },
   aiffel: { fr: '/aiffel/', en: '/en/aiffel/' },
   lexicon: { fr: '/lexicon/', en: '/en/lexicon/' },
   lyvre: { fr: '/lyvre/', en: '/en/lyvre/' },

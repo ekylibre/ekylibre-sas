@@ -12,8 +12,8 @@ interface Props {
   class?: string | undefined;
 }
 const { product, size = 'md', decorative = false, class: className } = Astro.props;
-// Ekylibre : logotype horizontal, la pastille s'élargit (même hauteur que les autres).
-const wide = product.key === 'ekylibre';
+// Logotype horizontal : la pastille s'élargit (aucun aujourd'hui : Fourmy a un symbole carré).
+const wide = false as boolean;
 const box = {
   sm: ['h-10 p-1.5 rounded-lg', wide ? 'w-[4.5rem]' : 'w-10'],
   md: ['h-14 p-2 rounded-xl', wide ? 'w-24' : 'w-14'],

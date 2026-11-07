@@ -11,19 +11,19 @@
 # cible est une route existante.
 
 # --- Produits : Ekylibre (ex-Ekyagri, Ekyviti, Clic & Farm, offres et abonnements)
-/ekyagri/: /ekylibre/
-/ekyagri-plus/: /ekylibre/
-/ekyagri-premium/: /ekylibre/
-/ekyviti/: /ekylibre/
-/ekyviti/creer-mon-domaine/: /ekylibre/
-/clicnfarm/: /ekylibre/
-/features/: /ekylibre/
-/nos-offres/: /ekylibre/
-/subscription-ekyagri/: /ekylibre/
-/subscription-ekyviti/: /ekylibre/
-/type_slider/ekylibre/: /ekylibre/
-/type_slider/ekyviti/: /ekylibre/
-/type_testimonials/ekyviti/: /ekylibre/
+/ekyagri/: /fourmy/
+/ekyagri-plus/: /fourmy/
+/ekyagri-premium/: /fourmy/
+/ekyviti/: /fourmy/
+/ekyviti/creer-mon-domaine/: /fourmy/
+/clicnfarm/: /fourmy/
+/features/: /fourmy/
+/nos-offres/: /fourmy/
+/subscription-ekyagri/: /fourmy/
+/subscription-ekyviti/: /fourmy/
+/type_slider/ekylibre/: /fourmy/
+/type_slider/ekyviti/: /fourmy/
+/type_testimonials/ekyviti/: /fourmy/
 
 # --- Services : intégration, formation, support
 /ekyagri-integration/: /services/
@@ -82,7 +82,7 @@
 /stand-lfd-sia2023/: /actualites/
 
 # --- Liens des anciens articles vers des pages absentes de l'inventaire
-/pmi/: /ekylibre/ # ancien calculateur « Indice de masse administrative » (les-chiffres-en-ekylibre)
+/pmi/: /fourmy/ # ancien calculateur « Indice de masse administrative » (les-chiffres-en-ekylibre)
 
 # --- Pages légales
 /terms/: /terms-of-use/
@@ -100,18 +100,18 @@
 /eng/: /en/
 /eng/home/: /en/
 /eng/sitemap/: /en/
-/eng/ekyagri/: /en/ekylibre/
-/eng/ekyagri-2/: /en/ekylibre/
-/eng/ekyagri-premium/: /en/ekylibre/
-/eng/ekyviti/: /en/ekylibre/
-/eng/ekyviti/book-my-vineyard/: /en/ekylibre/
-/eng/book-my-vineyard/: /en/ekylibre/
-/eng/clicnfarm/: /en/ekylibre/
-/eng/features/: /en/ekylibre/
-/eng/our-offers/: /en/ekylibre/
-/eng/our-offers-3/: /en/ekylibre/
-/eng/subscription-ekyagri/: /en/ekylibre/
-/eng/subscription-ekyviti/: /en/ekylibre/
+/eng/ekyagri/: /en/fourmy/
+/eng/ekyagri-2/: /en/fourmy/
+/eng/ekyagri-premium/: /en/fourmy/
+/eng/ekyviti/: /en/fourmy/
+/eng/ekyviti/book-my-vineyard/: /en/fourmy/
+/eng/book-my-vineyard/: /en/fourmy/
+/eng/clicnfarm/: /en/fourmy/
+/eng/features/: /en/fourmy/
+/eng/our-offers/: /en/fourmy/
+/eng/our-offers-3/: /en/fourmy/
+/eng/subscription-ekyagri/: /en/fourmy/
+/eng/subscription-ekyviti/: /en/fourmy/
 /eng/ekyagri-integration/: /en/services/
 /eng/custom-services/: /en/services/
 /eng/training/: /en/services/
@@ -135,3 +135,7 @@
 /eng/terms/: /en/terms-of-use/
 /eng/terms-of-use/: /en/terms-of-use/
 /eng/conditions-of-sale/: /en/terms-of-use/
+
+# --- Ekylibre → Fourmy (nouvelle génération, novembre 2026)
+/ekylibre/: /fourmy/
+/en/ekylibre/: /en/fourmy/
