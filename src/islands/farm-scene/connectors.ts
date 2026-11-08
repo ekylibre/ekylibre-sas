@@ -77,13 +77,18 @@ export function createConnectorLayer(stage: Stage, anchors: AnchorRegistry, prop
 
     const button = document.createElement('button');
     button.type = 'button';
-    button.className = `scene-medallion${isHub ? ' is-hub' : ''}`;
+    const hubLogo = isHub ? props.hubLogo : undefined;
+    button.className = `scene-medallion${isHub ? ' is-hub' : ''}${hubLogo ? ' has-logo' : ''}`;
     button.dataset.zone = zoneId;
     const partners = [...new Set(list.map((c) => c.partner ?? c.title))].slice(0, 2).join(' · ');
     const subtitle = isHub ? props.strings['hub.subtitle'] : partners;
+    const title = isHub ? (props.strings['hub.title'] ?? meta.title) : meta.title;
+    const disc = hubLogo
+      ? `<img src="${escapeHtml(hubLogo)}" alt="" width="40" height="40" />`
+      : iconSvg(props.iconSprite, meta.icon);
     button.innerHTML =
-      `<span class="scene-medallion__disc">${iconSvg(props.iconSprite, meta.icon)}</span>` +
-      `<span class="scene-medallion__label"><strong>${escapeHtml(isHub ? 'Ekylibre' : meta.title)}</strong>` +
+      `<span class="scene-medallion__disc">${disc}</span>` +
+      `<span class="scene-medallion__label"><strong>${escapeHtml(title)}</strong>` +
       (subtitle ? ` <span>${escapeHtml(subtitle)}</span>` : '') +
       `</span>`;
     // Le nom accessible commence par le texte visible, à l'identique (WCAG 2.5.3 « Label in Name »),
@@ -91,7 +96,7 @@ export function createConnectorLayer(stage: Stage, anchors: AnchorRegistry, prop
     const connectorsList = list.map((c) => c.title).join(', ');
     button.setAttribute(
       'aria-label',
-      `${[isHub ? 'Ekylibre' : meta.title, subtitle].filter(Boolean).join(', ')}${connectorsList ? ` — ${connectorsList}` : ''}`,
+      `${[title, subtitle].filter(Boolean).join(', ')}${connectorsList ? ` — ${connectorsList}` : ''}`,
     );
     button.addEventListener('click', () => {
       document.dispatchEvent(new CustomEvent('eky:select', { detail: { kind: 'zone', id: zoneId, origin: button } }));

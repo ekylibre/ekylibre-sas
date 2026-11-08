@@ -51,7 +51,8 @@ const STATUS_ORDER: ConnectorStatus[] = ['stable', 'en-cours'];
 /** Connecteurs de Fourmy et de Lyvre (docs/design/04-accueil-kit-connecteurs.md §4). */
 export async function connectors(lang: Locale, filter: { product?: ConnectorProduct } = {}): Promise<ConnectorView[]> {
   return (await getCollection('connectors'))
-    .map(({ data: c }): ConnectorView => ({
+    .map(({ data: c }): ConnectorView & { order: number } => ({
+      order: c.order,
       slug: c.slug,
       product: c.product,
       productName: PRODUCT_NAME[c.product],
@@ -72,8 +73,8 @@ export async function connectors(lang: Locale, filter: { product?: ConnectorProd
       (a, b) =>
         PRODUCT_ORDER.indexOf(a.product) - PRODUCT_ORDER.indexOf(b.product) ||
         STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status) ||
-        a.category.localeCompare(b.category) ||
-        a.title.localeCompare(b.title, lang),
+        // puis l'ordre du fichier : il fixe l'ordre des partenaires sur les médaillons.
+        a.order - b.order,
     );
 }
 

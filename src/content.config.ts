@@ -24,11 +24,14 @@ const connectors = defineCollection({
   // Intégrations de Fourmy et de Lyvre (docs/design/04-accueil-kit-connecteurs.md §4.1).
   // Les règles croisées (zone, source) sont dans scripts/lib/connectors.mjs.
   loader: file('src/data/connectors.yaml', {
-    parser: (text) => (parse(text) as Array<{ slug: string }>).map((entry) => ({ id: entry.slug, ...entry })),
+    // `order` : rang dans le fichier (getCollection trie par identifiant ; l'ordre éditorial compte).
+    parser: (text) =>
+      (parse(text) as Array<{ slug: string }>).map((entry, order) => ({ id: entry.slug, ...entry, order })),
   }),
   schema: z
     .object({
       slug: z.string(),
+      order: z.number().int(),
       product: z.enum(CONNECTOR_PRODUCTS),
       status: z.enum(CONNECTOR_STATUSES),
       category: z.enum(CATEGORIES),

@@ -56,8 +56,8 @@ ecosystem.push({
   title: 'Aiffel',
   summary:
     lang === 'fr'
-      ? 'L’assistant à qui l’on parle, à la voix ou par écrit : il prépare, vérifie dans le Lexicon et écrit dans Ekylibre après validation.'
-      : 'The assistant you talk to, by voice or text: it prepares, checks against Lexicon and writes to Ekylibre once approved.',
+      ? 'L’assistant à qui l’on parle, à la voix ou par écrit : il prépare, vérifie dans le Lexicon et écrit dans Fourmy après validation.'
+      : 'The assistant you talk to, by voice or text: it prepares, checks against Lexicon and writes to Fourmy once approved.',
   partner: 'aiffel.org',
   partnerUrl: 'https://aiffel.org/',
   version: '',
@@ -74,8 +74,8 @@ ecosystem.push({
   dataFlow: 'out',
   title: 'Lyvre',
   summary: fr
-    ? 'La brique comptable de l’écosystème : Lyvre recevra les achats, ventes et stocks valorisés d’Ekylibre, et les pièces dictées à Aiffel, pour en tirer la comptabilité.'
-    : 'The accounting building block of the ecosystem: Lyvre will receive purchases, sales and stock valuation from Ekylibre, and documents dictated to Aiffel, and turn them into accounts.',
+    ? 'La brique comptable de l’écosystème : Lyvre recevra les achats, ventes et stocks valorisés de Fourmy, et les pièces dictées à Aiffel, pour en tirer la comptabilité.'
+    : 'The accounting building block of the ecosystem: Lyvre will receive purchases, sales and stock valuation from Fourmy, and documents dictated to Aiffel, and turn them into accounts.',
   partner: undefined,
   partnerUrl: undefined,
   version: '',
@@ -90,13 +90,21 @@ const families = (await lexiconFamilies(lang)).map((f) => ({ ...f, color: FAMILY
 const zones = Object.fromEntries(
   Object.entries(ZONE_META).map(([id, z]) => [id, { title: z.title[lang], icon: z.icon }]),
 );
+// Moyeu : « Le système d'information agricole », logo et nom de Fourmy (docs/design/04 §3.2).
+const fourmy = getProduct('fourmy', lang);
 const strings = {
   fr: {
-    'hub.subtitle': 'Le système d’information',
+    'hub.title': 'Le système d’information agricole',
+    'hub.subtitle': 'Fourmy',
     'family.datasets': 'jeux de données',
     'family.dataset': 'jeu de données',
   },
-  en: { 'hub.subtitle': 'The information system', 'family.datasets': 'datasets', 'family.dataset': 'dataset' },
+  en: {
+    'hub.title': 'The farm information system',
+    'hub.subtitle': 'Fourmy',
+    'family.datasets': 'datasets',
+    'family.dataset': 'dataset',
+  },
 }[lang];
 
 const props: FarmSceneProps = {
@@ -110,6 +118,7 @@ const props: FarmSceneProps = {
   families,
   zones,
   strings,
+  hubLogo: fourmy.logo.src,
   ...(focusX === undefined ? {} : { focusX }),
   ...(chapters ? { chapters } : {}),
 };

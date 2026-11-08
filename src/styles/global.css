@@ -227,6 +227,16 @@
   .scene-medallion.is-hub .scene-medallion__disc {
     @apply size-14 border-[3px] bg-eky-green text-2xl text-night-900;
   }
+  /* Moyeu avec le logo de Fourmy (traits vert sombre) : fond clair pour le contraste. */
+  .scene-medallion.has-logo .scene-medallion__disc {
+    @apply bg-straw-50 p-1.5;
+  }
+  .scene-medallion.has-logo .scene-medallion__disc img {
+    @apply size-full;
+  }
+  .scene-medallion.is-hub .scene-medallion__label strong {
+    @apply max-w-[10rem] whitespace-normal;
+  }
   .scene-medallion.is-family .scene-medallion__disc {
     @apply size-9 text-base;
     border-color: var(--family);

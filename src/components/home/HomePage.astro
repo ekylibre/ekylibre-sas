@@ -27,12 +27,14 @@ const t = useTranslations(lang);
 const fr = lang === 'fr';
 const rows = formatCompact(stats.lexicon.totalRows, lang);
 const datasets = formatInt(stats.lexicon.datasets, lang);
-const connectors = formatInt(stats.stablePlugins, lang);
 
 // Chapitres : vue caméra (public/3d/scene.json) et zones révélées, de façon cumulative.
+// Récit en 7 chapitres : docs/design/04-accueil-kit-connecteurs.md §3.3.
+// Les grandes cultures (IGN) n'apparaissent qu'à la synthèse : hors champ dans la vue « champs ».
 const FIELD = ['hub', 'hangars', 'meteo', 'maraichage'];
-const FARM = [...FIELD, 'elevage', 'vigne'];
-const OFFICE = [...FARM, 'bureau'];
+const LIVESTOCK = [...FIELD, 'elevage'];
+const VINEYARD = [...LIVESTOCK, 'vigne'];
+const OFFICE = [...VINEYARD, 'bureau'];
 const chapters: Array<Chapter & { eyebrow: string; title: string; text: string }> = [
   {
     id: 'ouverture',
@@ -48,64 +50,75 @@ const chapters: Array<Chapter & { eyebrow: string; title: string; text: string }
     view: 'champs',
     zones: FIELD,
     sky: false,
-    eyebrow: fr ? '1 · Les champs parlent' : '1 · The fields talk',
-    title: fr ? 'Machines, météo et pièges, une seule saisie' : 'Machinery, weather and traps, one single entry',
+    eyebrow: fr ? '1 · Grande culture' : '1 · Arable farming',
+    title: fr ? 'Machines, météo et sonde, une seule saisie' : 'Machinery, weather and probes, one single entry',
     text: fr
-      ? 'Les boîtiers Samsys enregistrent le travail des tracteurs, les stations Weenat et les objets Previmeteo relèvent la météo, les pièges CapTrap comptent les ravageurs. Tout arrive dans Ekylibre sous forme d’interventions et de relevés rattachés aux parcelles, sans ressaisie.'
-      : 'Samsys boxes record tractor work, Weenat stations and Previmeteo devices measure the weather, CapTrap traps count pests. Everything lands in Ekylibre as interventions and readings linked to each field, with nothing typed twice.',
+      ? 'Traccar enregistre le travail des tracteurs, les stations Weenat relèvent la météo, les pièges CapTrap comptent les ravageurs. Tout arrive dans Fourmy sous forme d’interventions et de relevés rattachés aux parcelles, sans ressaisie.'
+      : 'Traccar records tractor work, Weenat stations measure the weather, CapTrap traps count pests. Everything lands in Fourmy as interventions and readings linked to each field, with nothing typed twice.',
   },
   {
-    id: 'elevage-vigne',
-    view: 'elevage-vigne',
-    zones: FARM,
+    id: 'elevage',
+    view: 'elevage',
+    zones: LIVESTOCK,
     sky: false,
-    eyebrow: fr ? '2 · Élevage et vigne' : '2 · Livestock and vineyard',
+    eyebrow: fr ? '2 · Élevage' : '2 · Livestock',
     title: fr ? 'Chaque filière, ses règles et ses référentiels' : 'Every sector, its own rules and references',
     text: fr
-      ? 'Les données animales s’échangent avec l’EDE grâce à EDNotif. Pour la vigne, l’extension Ekyviti suit la parcelle, la vendange et le chai jusqu’à la bouteille, et Baqio y fait remonter les ventes et les expéditions de vin.'
-      : 'Livestock data is exchanged with the official registries through EDNotif. For the vineyard, the Ekyviti extension follows the plot, the harvest and the cellar down to the bottle, while Baqio feeds back wine sales and shipments.',
+      ? 'Les données animales s’échangent avec l’EDE, Baoba ou le logiciel que vous avez.'
+      : 'Livestock data is exchanged with the official registries (EDE), Baoba or whatever software you already use.',
+  },
+  {
+    id: 'vigne',
+    view: 'vigne',
+    zones: VINEYARD,
+    sky: false,
+    eyebrow: fr ? '3 · La vigne' : '3 · The vineyard',
+    title: fr ? 'De la parcelle à la bouteille' : 'From the plot to the bottle',
+    text: fr
+      ? 'Les rangs de vigne sont suivis dans Fourmy comme toute autre parcelle ; Baqio fait remonter les ventes et les expéditions de vin.'
+      : 'Vine rows are tracked in Fourmy like any other plot; Baqio feeds back wine sales and shipments.',
   },
   {
     id: 'bureau',
     view: 'hub',
     zones: OFFICE,
     sky: false,
-    eyebrow: fr ? '3 · Le bureau' : '3 · The farm office',
+    eyebrow: fr ? '4 · Le bureau' : '4 · The farm office',
     title: fr ? 'Saisi une fois, retrouvé partout' : 'Entered once, found everywhere',
     text: fr
-      ? 'Au bureau, tout converge : les relevés bancaires arrivent seuls pour le rapprochement, le planning compare le prévu et le réalisé, et l’assistant Hajimari reprend vos données existantes au démarrage. Lyvre en tire la comptabilité, sans ressaisie.'
-      : 'In the office, everything comes together: bank statements arrive on their own for reconciliation, planning compares what was planned with what was done, and the Hajimari assistant imports your existing data at start-up. Lyvre turns it into the accounts, with no re-keying.',
+      ? 'Au bureau, tout converge : les relevés bancaires et les factures arrivent pour le rapprochement, le planning compare le prévu et le réalisé. Votre comptable, votre logiciel ou Lyvre génère la comptabilité, sans ressaisie.'
+      : 'In the office, everything comes together: bank statements and invoices arrive for reconciliation, and planning compares what was planned with what was done. Your accountant, your software or Lyvre produces the accounts, with no re-keying.',
   },
   {
     id: 'ciel',
     view: 'ciel',
     zones: OFFICE,
     sky: true,
-    eyebrow: fr ? '4 · Le ciel de données' : '4 · The data sky',
+    eyebrow: fr ? '5 · Le ciel de données' : '5 · The data sky',
     title: fr ? `${rows} de données publiques, reliées` : `${rows} public records, all linked`,
     text: fr
-      ? `Au-dessus de la ferme, le Lexicon : ${datasets} jeux de données publics, dont le cadastre, les parcelles déclarées à la PAC, les produits phytosanitaires autorisés et la météo. Ekylibre s’y réfère pour vérifier une dose, identifier une parcelle ou valoriser une récolte.`
-      : `Above the farm, Lexicon: ${datasets} public datasets, including the land registry, CAP-declared plots, authorised plant protection products and weather. Ekylibre relies on it to check a dose, identify a plot or value a harvest.`,
+      ? `Au-dessus de la ferme, le Lexicon : ${datasets} jeux de données publics, dont le cadastre, les parcelles déclarées à la PAC, les produits phytosanitaires autorisés et la météo. Fourmy s’y réfère pour vérifier une dose, identifier une parcelle ou valoriser une récolte.`
+      : `Above the farm, Lexicon: ${datasets} public datasets, including the land registry, CAP-declared plots, authorised plant protection products and weather. Fourmy relies on it to check a dose, identify a plot or value a harvest.`,
   },
   {
     id: 'voix',
     view: 'cour',
     zones: [...OFFICE, 'cour'],
     sky: true,
-    eyebrow: fr ? '5 · La voix' : '5 · The voice',
+    eyebrow: fr ? '6 · La voix' : '6 · The voice',
     title: fr
       ? 'Dites-le une fois. Aiffel le range au bon endroit.'
       : 'Say it once. Aiffel files it in the right place.',
     text: fr
-      ? 'Depuis la cour, l’agriculteur dicte son traitement ou sa récolte. Aiffel reformule, vérifie dans le Lexicon et n’écrit dans Ekylibre qu’après validation, en citant ses sources.'
-      : 'From the farmyard, the farmer dictates a treatment or a harvest. Aiffel rephrases it, checks it against Lexicon and only writes to Ekylibre once approved, citing its sources.',
+      ? 'Depuis la cour, l’agriculteur dicte son traitement ou sa récolte. Aiffel reformule, vérifie et n’écrit dans vos outils qu’après validation, en citant ses sources.'
+      : 'From the farmyard, the farmer dictates a treatment or a harvest. Aiffel rephrases it, checks it and only writes to your tools once approved, citing its sources.',
   },
   {
     id: 'synthese',
     view: 'synthese',
     zones: 'all',
     sky: true,
-    eyebrow: fr ? '6 · Synthèse' : '6 · In short',
+    eyebrow: fr ? '7 · Synthèse' : '7 · In short',
     title: fr ? 'Une ferme ouverte sur tout son écosystème' : 'A farm open to its whole ecosystem',
     text: fr
       ? 'Des connecteurs vers les outils de la ferme, des données publiques reliées, un assistant qui écrit à votre place : tout est ouvert, documenté et réversible.'
@@ -150,8 +163,8 @@ const proofs: Array<{ icon: IconName; title: string; text: string }> = [
     icon: 'plug',
     title: fr ? 'Connecteurs' : 'Connectors',
     text: fr
-      ? `${connectors} connecteurs publiés en version stable.`
-      : `${connectors} connectors released as stable versions.`,
+      ? 'Des connecteurs en logiciel libre, stables ou en cours.'
+      : 'Free-software connectors, stable or in progress.',
   },
   {
     icon: 'shield-check',

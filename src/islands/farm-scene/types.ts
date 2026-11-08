@@ -95,6 +95,8 @@ export interface FarmSceneProps {
   families: SceneFamily[];
   zones: Record<string, SceneZoneMeta>;
   iconSprite: string;
+  /** Logo affiché dans le disque du moyeu (Fourmy). */
+  hubLogo?: string;
   strings: Record<string, string>;
   chapters?: Chapter[];
 }

@@ -47,7 +47,7 @@ test.describe('avec WebGL (?force3d)', () => {
     await expect(card).toBeHidden();
     await open();
     await expect(card).toBeVisible();
-    await expect(card.locator('#scene-info-title')).toHaveText('Ekylibre');
+    await expect(card.locator('#scene-info-title')).toHaveText('Fourmy, le cœur');
     await expect(card.locator('#scene-info-title')).toBeFocused();
     await expect(hub).toHaveAttribute('aria-expanded', 'true');
     await page.keyboard.press('Escape');
@@ -56,11 +56,18 @@ test.describe('avec WebGL (?force3d)', () => {
     await expect(hub).toHaveAttribute('aria-expanded', 'false');
   }
 
-  test('interopérabilité : clic sur le médaillon Ekylibre, fiche, Échap', async ({ page }) => {
+  test('interopérabilité : clic sur le médaillon Fourmy, fiche, Échap', async ({ page }) => {
     await page.goto(url('/interoperabilite/?force3d'));
     await waitReady(page);
     const hub = page.locator('.scene-medallion[data-zone="hub"]');
     await expect(hub).toBeVisible();
+    // Moyeu : « Le système d'information agricole », logo et nom de Fourmy (docs/design/04 §3.2).
+    await expect(hub).toContainText('Le système d’information agricole');
+    await expect(hub).toContainText('Fourmy');
+    await expect(hub.locator('img')).toHaveCount(1);
+    await expect(page.locator('.scene-medallion[data-zone="vigne"]')).toContainText('La vigne');
+    await expect(page.locator('.scene-medallion[data-zone="maraichage"]')).toContainText('CapTrap · Open Sprinkler');
+    await expect(page.locator('.scene-medallion[data-zone="bureau"]')).toContainText('Lyvre');
     await checkInfoCard(page, () => hub.click(), hub);
     // Le bouton de fermeture fonctionne aussi.
     await hub.click();
@@ -69,7 +76,7 @@ test.describe('avec WebGL (?force3d)', () => {
     await expect(hub).toBeFocused();
   });
 
-  test('accueil : médaillon Ekylibre au clavier (la caméra tourne : pas de clic souris)', async ({ page }) => {
+  test('accueil : médaillon Fourmy au clavier (la caméra tourne : pas de clic souris)', async ({ page }) => {
     await page.goto(url('/?force3d'));
     await waitReady(page);
     const hub = page.locator('.scene-medallion[data-zone="hub"]');

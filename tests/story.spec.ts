@@ -18,7 +18,7 @@ for (const [lang, path] of [
     const ids = await page
       .locator('[data-story] [data-chapter]')
       .evaluateAll((els) => els.map((el) => (el as HTMLElement).dataset.chapter!));
-    expect(ids).toEqual(['ouverture', 'champs', 'elevage-vigne', 'bureau', 'ciel', 'voix', 'synthese']);
+    expect(ids).toEqual(['ouverture', 'champs', 'elevage', 'vigne', 'bureau', 'ciel', 'voix', 'synthese']);
 
     // Le premier chapitre est actif dès le chargement (ScrollTrigger initialisé à l'inactivité).
     await expect
@@ -46,5 +46,22 @@ for (const [lang, path] of [
     await expect
       .poll(() => page.evaluate(() => (window as unknown as { __chapters: string[] }).__chapters.at(-1)))
       .toBe('ouverture');
+  });
+}
+
+// Accueil aligné sur Fourmy (docs/brainstorm/04, critères d'acceptation §5) : plus aucun ancien nom,
+// ni dans le récit ni dans les données de la scène (médaillons construits côté client).
+for (const [lang, path] of [
+  ['fr', '/'],
+  ['en', '/en/'],
+] as const) {
+  test(`accueil ${lang} : récit en 7 chapitres, sans les anciens noms`, async ({ page }) => {
+    await page.goto(url(path));
+    const eyebrows = await page.locator('[data-story] [data-chapter] .eyebrow').allTextContents();
+    expect(eyebrows.filter((t) => /^\d · /.test(t.trim()))).toHaveLength(7);
+    const html = await page.content();
+    for (const name of ['Ekyviti', 'Nordigen', 'Samsys', 'La vigne et le chai', 'Vineyard and cellar', 'EDNotif', 'Hajimari']) {
+      expect(html, name).not.toContain(name);
+    }
   });
 }
