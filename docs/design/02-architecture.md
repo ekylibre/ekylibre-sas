@@ -125,6 +125,10 @@ ekylibre-sas/
 
 ### 4.1 Données générées (contrats)
 
+> **Remplacé en novembre 2026** par docs/design/04-accueil-kit-connecteurs.md (D32–D34) : `plugins.json` et
+> `stablePlugins` sont supprimés ; `scripts/fetch-plugins.mjs` devient `fetch-github.mjs` (statistiques du
+> dépôt cœur seulement) ; les connecteurs (Fourmy, Lyvre) sont décrits dans `src/data/connectors.yaml`.
+
 ```ts
 // src/data/generated/plugins.json
 type Plugin = {
@@ -401,6 +405,11 @@ type FarmSceneProps = {
 
 Zones déclarées dans `scene.json` (clé `zones`). Chacune est ancrée sur un objet glTF (`extras.label`) ou sur une coordonnée explicite :
 
+> **Remplacé en novembre 2026** par docs/design/04-accueil-kit-connecteurs.md §3 : zone `vigne-chai` renommée
+> `vigne` et déplacée dans le champ à l'ouest du long bâtiment ; les médaillons portent les intégrations de
+> Fourmy (hangar : Traccar ; météo : Weenat, Sencrop ; maraîchage : CapTrap, Open Sprinkler ; élevage : EDE,
+> Baoba ; vigne : Baqio ; bureau : Lyvre) et le moyeu « Le système d'information agricole · Fourmy ».
+
 | `ZoneId` | Emplacement dans La Vauzelle | Connecteurs stables au lancement |
 |---|---|---|
 | `hub` | Maison principale (toit de tuiles orange) : **le siège Ekylibre** | Ekylibre (cœur), Hajimari |
@@ -436,6 +445,10 @@ Garde-fous : chargement déclenché par `IntersectionObserver` (et `requestIdleC
 ### 8.6 Narration de l'accueil (`scroll-story`)
 
 La scène est fixée (`position: sticky`) pendant que les blocs de texte défilent ; chaque chapitre déclenche `eky:chapter`.
+
+> **Remplacé en novembre 2026** par docs/design/04-accueil-kit-connecteurs.md §3.3 : 7 chapitres (Grande
+> culture, Élevage, La vigne, Le bureau, Le ciel de données, La voix, Synthèse), vues `elevage` et `vigne` à
+> la place de `elevage-vigne`. Textes à jour : docs/contenus/fr/accueil.md.
 
 | # | Chapitre | Vue caméra (nouvelle dans `scene.json`) | Ce qui s'allume | Texte (FR, à affiner) |
 |---|---|---|---|---|

@@ -1,6 +1,6 @@
 # Conception 04 — Accueil Fourmy, kit isométrique, connecteurs Fourmy et Lyvre
 
-Date : 2026-11-08. Entrée : `docs/brainstorm/04-accueil-kit-isometrique-connecteurs.md` (FR-3D, FR-REC,
+Date : 2026-11-08 · **Réalisé** (commits `a4d3629`…`03b8251`, bilan : `claudedocs/workflow_accueil_kit_connecteurs.md`). Entrée : `docs/brainstorm/04-accueil-kit-isometrique-connecteurs.md` (FR-3D, FR-REC,
 FR-KIT, FR-SYS, FR-CON, NFR-1 à 5). Complète `docs/design/02-architecture.md` et `03-outils-lyvre.md`
 sans en changer les principes : Astro statique, îlots paresseux, CSP par empreintes, FR/EN par table de routes.
 

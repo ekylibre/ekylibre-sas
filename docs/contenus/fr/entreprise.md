@@ -66,7 +66,7 @@ description: "Ekylibre SAS édite et opère Ekylibre, Lexicon et Aiffel, des log
 | {firstCommit année} (2008) | premier commit d’Ekylibre |
 | {commits} (23 192) | commits dans le dépôt principal |
 | {contributors} (39) | contributeurs au code |
-| {stablePlugins} (10) | connecteurs stables |
+| {produits} (4) | logiciels libres, un seul système |
 | {totalRows} (623 M) | données reliées dans le Lexicon |
 | {byEkylibre} (16) | jeux du Lexicon produits par Ekylibre SAS |
 

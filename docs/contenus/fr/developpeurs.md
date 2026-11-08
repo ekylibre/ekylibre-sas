@@ -53,28 +53,35 @@ curl https://lexicon.osfarm.org/phytosanitary/products.json
 
 - **Note** : déclarez ce serveur sous le nom de votre choix (par exemple `lexicon`) dans la configuration de votre client MCP ; l’emplacement du fichier dépend du client utilisé.
 
-## plugins — Architecture des plugins
+## plugins — Connecteurs et plugins de Fourmy
 
-- **H2** : Un connecteur, c’est un plugin
-- **Lead** : Les connecteurs d’Ekylibre sont des extensions indépendantes : des moteurs Rails (*Rails engines*) packagés en gem Ruby, chacun dans son dépôt `ekylibre-<nom>`.
+> Réécrit en novembre 2026 (docs/design/04 §4.3) : les plugins Rails d’Ekylibre ne sont plus présentés.
+> Source : `docs/architecture.md` du dépôt Fourmy (§7, plugins « préparé, non construit »). Les plugins
+> privés et l’exception de licence ne sont pas annoncés (validation juridique requise).
+
+- **Eyebrow** : Fourmy
+- **H2** : Connecteurs et plugins de Fourmy
+- **Lead** : Un connecteur fait entrer dans Fourmy les données d’un outil de la ferme, ou les en fait sortir. Le cœur reste petit : les intégrations vivent à côté, et deviendront des plugins indépendants. Le modèle de plugins est en préparation.
 - **Points** :
-  - **Un dépôt, une gem** : le plugin déclare un `Rails::Engine` et s’ajoute au `Gemfile` d’Ekylibre.
-  - **Une intégration** : il décrit la connexion au service tiers (identifiants, vérification) et les synchronisations à lancer, par exemple chaque jour.
-  - **Des tâches de fond** : les données sont récupérées par des jobs, puis transformées en objets Ekylibre (interventions, relevés, écritures).
-  - **Des points d’extension dans l’interface** : le plugin ajoute ses vues, ses traductions et ses boutons aux écrans existants.
-  - **Une version publiée** : dès qu’un tag est publié sur GitHub, le connecteur apparaît sur ce site.
+  - **Aujourd’hui : un module du dépôt** : les connecteurs stables vivent dans le dépôt de Fourmy (`packages/connector-traccar`, `packages/geo-ign`…). Les accès au service tiers sont chiffrés, propres à chaque ferme et testés avant d’être enregistrés.
+  - **Demain : un service à part** : un plugin Fourmy est un service indépendant qui utilise l’API publique, avec un jeton limité aux permissions accordées et à une ferme.
+  - **Des événements** : Fourmy prévient le plugin par webhook des événements auxquels il s’est abonné.
+  - **Des points d’extension** : le plugin peut ajouter une couche de carte, un panneau ou un type d’intervention, affichés dans une iframe isolée.
+  - **Un manifeste** : identité, version, permissions, événements et points d’extension sont déclarés dans `fourmy-plugin.json` ; l’exploitant accepte les permissions à l’installation.
+- **Exemple** : esquisse de `fourmy-plugin.json`, signalée comme format en préparation.
+- **Tableau** : Les connecteurs de Fourmy (Connecteur · Partenaire · État · Code).
 
 ## construire — Construire un connecteur, étape par étape
 
 - **H2** : Construire votre connecteur
 - **Étapes** :
-  1. Partez d’un plugin existant proche de votre cas (Samsys pour des machines, Weenat pour des capteurs, Baqio pour un logiciel de vente).
-  2. Décrivez l’intégration : authentification auprès de votre service et test de connexion.
-  3. Écrivez la récupération des données dans un job, et leur correspondance avec les modèles d’Ekylibre, en vous appuyant sur les nomenclatures Onoma et Lexicon.
+  1. Partez du connecteur Traccar (`packages/connector-traccar`) : un client du service tiers et la correspondance de ses données avec le modèle de Fourmy.
+  2. Décrivez l’accès à votre service : identifiants, test de connexion, fréquence de synchronisation.
+  3. Écrivez la correspondance avec les contrats de Fourmy (`@fourmy/contracts`) : interventions, relevés, traces, en vous appuyant sur les référentiels du Lexicon.
   4. Ajoutez des tests, la documentation et les traductions (au moins français et anglais).
-  5. Publiez une première version (tag), puis annoncez-la sur le Discord.
-- **Encadré** : Vous préférez qu’on le fasse pour vous ? → Développement de connecteurs (page Services)
-- **Lien** : Documentation technique → https://ekylibre.org/techdoc/
+  5. Proposez votre contribution sur le dépôt de Fourmy, puis annoncez-la sur le Discord.
+- **Encadré** : Vous préférez qu’on le fasse pour vous ? → Développement de connecteurs (page Services)
+- **Lien** : Architecture de Fourmy → https://github.com/ekylibre/fourmy/blob/main/docs/architecture.md
 
 ## licences — Licences
 

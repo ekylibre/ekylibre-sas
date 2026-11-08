@@ -7,7 +7,7 @@ description: "Notes internes de la première passe de rédaction (B10)."
 
 ## conventions — Conventions de ces fichiers
 
-- `{clé}` = valeur calculée au build (`src/data/generated/*.json`) ; la valeur du 2026-11-03 est donnée entre parenthèses. Clés utilisées : `totalRows` (623 191 518), `datasets` (54), `providers` (33), `byEkylibre` (16), `open` (46), `members` (8), `stablePlugins` (10), `commits` (23 192), `contributors` (39), `firstCommit` (2008-09-08).
+- `{clé}` = valeur calculée au build (`src/data/generated/*.json`) ; la valeur du 2026-11-03 est donnée entre parenthèses. Clés utilisées : `totalRows` (623 191 518), `datasets` (54), `providers` (33), `byEkylibre` (16), `open` (46), `members` (8), `stablePlugins` (10, supprimée en novembre 2026 : plus de compteur de connecteurs, docs/design/04 D35), `commits` (23 192), `contributors` (39), `firstCommit` (2008-09-08).
 - `open` et `members` n’existent pas encore dans `datasets.json` : à calculer depuis `scope` (open / members).
 - `[À CONFIRMER : …]` = fait manquant ; ne pas publier tant que le crochet est présent.
 - Typographie : espaces insécables avant « : » (U+00A0), fines insécables avant « ; ! ? » (U+202F), guillemets « », apostrophe ’. Les blocs de code n’ont pas été modifiés.

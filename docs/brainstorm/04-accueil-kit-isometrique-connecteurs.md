@@ -1,7 +1,7 @@
 # Exigences — accueil, kit isométrique, connecteurs (novembre 2026)
 
 > Source : `claudedocs/amelioration_07112026.md` (note du 2026-11-07).
-> Brainstorm du 2026-11-08. Étape suivante : `/sc:design` (scène 3D, schéma du système), puis `/sc:workflow`.
+> Brainstorm du 2026-11-08 · **réalisé** le 2026-11-08 (voir `claudedocs/workflow_accueil_kit_connecteurs.md`).
 
 ## 1. Objectifs
 

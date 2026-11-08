@@ -42,7 +42,7 @@ description: "Ekylibre SAS installe, connecte et fait vivre votre système d’i
 ## connecteurs — Service 4 : Développement de connecteurs
 
 - **Titre** : Développement de connecteurs
-- **Texte** : Votre matériel, votre capteur ou votre logiciel n’est pas encore relié à Ekylibre ? Nous développons le connecteur, en logiciel libre, comme les {stablePlugins} (10) déjà publiés. Éditeurs et constructeurs : c’est aussi le moyen de rendre votre outil accessible à Aiffel et aux utilisateurs d’Ekylibre.
+- **Texte** : Votre matériel, votre capteur ou votre logiciel n’est pas encore relié à Fourmy ou à Lyvre ? Nous développons le connecteur, en logiciel libre, comme ceux déjà publiés. Éditeurs et constructeurs : c’est aussi le moyen de rendre votre outil accessible à Aiffel et aux utilisateurs de Fourmy.
 - **Livrables** :
   - Un connecteur (extension Ekylibre) publié et versionné sur GitHub
   - Sa documentation et ses tests

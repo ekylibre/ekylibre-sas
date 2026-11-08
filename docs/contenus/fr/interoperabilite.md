@@ -46,11 +46,11 @@ description: "Connecteurs, données publiques ouvertes, API et formats libres :
 ## connecteurs — Introduction du tableau des connecteurs (ConnectorGrid)
 
 - **Eyebrow** : Connecteurs
-- **H2** : {stablePlugins} (10) connecteurs stables, en logiciel libre
-- **Lead** : Chaque connecteur est un dépôt public sur GitHub. Nous n’affichons que ceux qui ont au moins une version publiée ; les autres apparaîtront ici dès leur première version.
-- **Filtres de catégorie** : Machines · Météo · Terrain · Élevage · Vigne · Finance · Gestion · Durabilité
-- **En-têtes du tableau** : Connecteur · Fonction · Partenaire · Sens des données · Version · Dépôt
-- **Libellés du sens des données** : Vers Ekylibre · Depuis Ekylibre · Dans les deux sens
+- **H2** : Des connecteurs en logiciel libre, stables ou en cours
+- **Lead** : Les connecteurs de Fourmy et de Lyvre. Un connecteur stable est publié dans le dépôt de son logiciel ; les autres sont en cours de développement.
+- **Source** : `src/data/connectors.yaml` (état éditorial `stable` / `en-cours`, docs/design/04 §4)
+- **En-têtes du tableau** : Intégration · Fonction · Logiciel · Partenaire · Sens des données · État · Code
+- **Libellés du sens des données** : Vers le logiciel · Depuis le logiciel · Dans les deux sens
 - **Note sous le tableau** : Il manque l’outil que vous utilisez ? Un connecteur se développe en quelques étapes, et nous pouvons le faire avec vous. → Développement de connecteurs
 
 ## jeux-de-donnees — Introduction du tableau des jeux Lexicon (DatasetTable)

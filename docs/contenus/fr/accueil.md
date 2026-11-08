@@ -26,7 +26,7 @@ Contenus FR, première passe (B10). Chiffres entre {accolades} = valeurs calcul�
 |---|---|
 | {totalRows} (623 M) | données agricoles françaises reliées dans le Lexicon |
 | {datasets} (54) | jeux de données, issus de {providers} (33) producteurs |
-| {stablePlugins} (10) | connecteurs stables vers les outils de la ferme |
+| {produits} (4) | logiciels libres, un seul système (lu dans `products.yaml` ; plus de compteur de connecteurs depuis novembre 2026) |
 | {firstCommit année} (2008) | première ligne de code d’Ekylibre · {commits} (23 192) commits depuis |
 
 Variante courte du 4ᵉ libellé, si la place manque : « premier commit · {commits} commits depuis ».
@@ -40,42 +40,51 @@ Libellé optionnel (5ᵉ chiffre, page Entreprise surtout) : {contributors} (39
 - **Titre** : Une vraie ferme, toutes ses données reliées
 - **Texte** : Voici le FarmLab La Vauzelle, vu du ciel. Chaque outil de la ferme y dépose ses données au même endroit : Ekylibre, le système d’information de l’exploitation.
 
-## chapitre-1 — Les champs parlent (vue `parcelles` : Samsys, CapTrap, Weenat, Previmeteo)
+> Récit refait en novembre 2026 (docs/design/04-accueil-kit-connecteurs.md §3.3) : 7 chapitres,
+> Fourmy à la place d'Ekylibre, intégrations de Fourmy et de Lyvre. Textes anglais dans `HomePage.astro`.
 
-- **Eyebrow** : 1 · Les champs parlent
-- **Titre** : Machines, météo et pièges, une seule saisie
-- **Texte** : Les boîtiers Samsys enregistrent le travail des tracteurs, les stations Weenat et les objets Previmeteo relèvent la météo, les pièges CapTrap comptent les ravageurs. Tout arrive dans Ekylibre sous forme d’interventions et de relevés rattachés aux parcelles, sans ressaisie.
+## chapitre-1 — Grande culture (vue `champs` : Traccar, Weenat, CapTrap)
 
-## chapitre-2 — Élevage et vigne (vue `elevage-vigne` : EDNotif, Ekyviti, Baqio)
+- **Eyebrow** : 1 · Grande culture
+- **Titre** : Machines, météo et sonde, une seule saisie
+- **Texte** : Traccar enregistre le travail des tracteurs, les stations Weenat relèvent la météo, les pièges CapTrap comptent les ravageurs. Tout arrive dans Fourmy sous forme d’interventions et de relevés rattachés aux parcelles, sans ressaisie.
 
-- **Eyebrow** : 2 · Élevage et vigne
-- **Titre** : Chaque filière, ses règles et ses référentiels
-- **Texte** : Les données animales s’échangent avec l’EDE grâce à EDNotif. Pour la vigne, l’extension Ekyviti suit la parcelle, la vendange et le chai jusqu’à la bouteille, et Baqio y fait remonter les ventes et les expéditions de vin.
+## chapitre-2 — Élevage (vue `elevage` : EDE, Baoba)
 
-## chapitre-3 — Le bureau (vue `hub` : Banking, Planning, Hajimari ; tous les flux convergent)
+- **Eyebrow** : 2 · Élevage
+- **Titre** : Chaque filière, ses règles et ses référentiels
+- **Texte** : Les données animales s’échangent avec l’EDE, Baoba ou le logiciel que vous avez.
 
-- **Eyebrow** : 3 · Le bureau
-- **Titre** : Saisi une fois, retrouvé partout
-- **Texte** : Au bureau, tout converge : les relevés bancaires arrivent seuls pour le rapprochement (Nordigen, GoCardless), le planning compare le prévu et le réalisé, et l’assistant Hajimari reprend vos données existantes au démarrage. La comptabilité se nourrit de ce qui s’est passé au champ.
+## chapitre-3 — La vigne (vue `vigne` : Baqio ; vignoble dans le champ à l’ouest du long bâtiment)
 
-## chapitre-4 — Le ciel de données (vue `ciel` : constellation Lexicon)
+- **Eyebrow** : 3 · La vigne
+- **Titre** : De la parcelle à la bouteille
+- **Texte** : Les rangs de vigne sont suivis dans Fourmy comme toute autre parcelle ; Baqio fait remonter les ventes et les expéditions de vin.
 
-- **Eyebrow** : 4 · Le ciel de données
+## chapitre-4 — Le bureau (vue `hub` : Lyvre ; tous les flux convergent)
+
+- **Eyebrow** : 4 · Le bureau
+- **Titre** : Saisi une fois, retrouvé partout
+- **Texte** : Au bureau, tout converge : les relevés bancaires et les factures arrivent pour le rapprochement, le planning compare le prévu et le réalisé. Votre comptable, votre logiciel ou Lyvre génère la comptabilité, sans ressaisie.
+
+## chapitre-5 — Le ciel de données (vue `ciel` : constellation Lexicon)
+
+- **Eyebrow** : 5 · Le ciel de données
 - **Titre** : {totalRows} données publiques, reliées entre elles
 - **Titre (valeur du 2026-11-03)** : 623 millions de données publiques, reliées
-- **Texte** : Au-dessus de la ferme, le Lexicon : {datasets} (54) jeux de données de {providers} (33) producteurs, dont le cadastre, les parcelles PAC, les produits phytosanitaires autorisés et la météo. Ekylibre s’y réfère pour vérifier une dose, identifier une parcelle ou valoriser une récolte.
+- **Texte** : Au-dessus de la ferme, le Lexicon : {datasets} (54) jeux de données de {providers} (33) producteurs, dont le cadastre, les parcelles PAC, les produits phytosanitaires autorisés et la météo. Fourmy s’y réfère pour vérifier une dose, identifier une parcelle ou valoriser une récolte.
 - **Libellé au survol d’une famille** (modèle) : {famille} · {n} jeux · {lignes} lignes
 
-## chapitre-5 — La voix (vue `cour` : smartphone, Aiffel)
+## chapitre-6 — La voix (vue `cour` : smartphone, Aiffel)
 
-- **Eyebrow** : 5 · La voix
+- **Eyebrow** : 6 · La voix
 - **Titre** : Dites-le une fois. Aiffel le range au bon endroit.
-- **Texte** : Depuis la cour, l’agriculteur dicte son traitement ou sa récolte. Aiffel reformule, vérifie dans le Lexicon et n’écrit dans Ekylibre qu’après votre validation, en citant ses sources.
+- **Texte** : Depuis la cour, l’agriculteur dicte son traitement ou sa récolte. Aiffel reformule, vérifie et n’écrit dans vos outils qu’après validation, en citant ses sources.
 - **Clin d’œil Duke** (infobulle facultative sur le hibou) : Duke, l’ancien assistant d’Ekylibre, a passé le relais à Aiffel.
 
-## chapitre-6 — Synthèse (vue `site` dézoomée, tout allumé, compteurs)
+## chapitre-7 — Synthèse (vue `site` dézoomée, tout allumé, compteurs)
 
-- **Eyebrow** : 6 · Synthèse
+- **Eyebrow** : 7 · Synthèse
 - **Titre** : Une ferme ouverte sur tout son écosystème
 - **Texte** : Des connecteurs vers les outils de la ferme, des données publiques reliées, un assistant qui écrit à votre place : tout est ouvert, documenté et réversible.
 - **CTA 1** : Demander une démo
@@ -125,7 +134,7 @@ Libellé optionnel (5ᵉ chiffre, page Entreprise surtout) : {contributors} (39
 - **Points** :
   - **Open source** : premier commit en septembre 2008, code sous licence AGPL sur GitHub.
   - **Données ouvertes** : {totalRows} (623 M) de données publiques reliées dans le Lexicon.
-  - **Connecteurs** : {stablePlugins} (10) connecteurs publiés en version stable.
+  - **Connecteurs** : Des connecteurs en logiciel libre, stables ou en cours.
   - **Charte Data-Agri** : 1ʳᵉ entreprise labellisée par la FNSEA et Jeunes Agriculteurs, en mars 2019.
 
 ## cta-final — Appel à l’action de fin de page
