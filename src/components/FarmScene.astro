@@ -5,7 +5,14 @@
 // La fiche de détail (InfoCard) est un frère du conteneur, pour échapper à son contexte d'empilement.
 import { routePath, withBase } from '~/i18n/routes';
 import { getProduct, STATUS_LABEL } from '~/lib/products';
-import { stableConnectors, lexiconFamilies, CATEGORY_META, ZONE_META, FAMILY_COLORS } from '~/lib/interop';
+import {
+  connectors as allConnectors,
+  lexiconFamilies,
+  CATEGORY_META,
+  CONNECTOR_STATUS_LABEL,
+  ZONE_META,
+  FAMILY_COLORS,
+} from '~/lib/interop';
 import type { FarmSceneProps, SceneConnector } from '~/islands/farm-scene/types';
 import InfoCard from './InfoCard.astro';
 
@@ -19,18 +26,20 @@ interface Props {
 }
 const { mode = 'hero', lang, view = 'site', focusX, chapters, class: className } = Astro.props;
 
-const connectors: SceneConnector[] = (await stableConnectors(lang)).map((c) => ({
+// Scène : intégrations de Fourmy seulement ; celles de Lyvre sont dans le tableau (D34).
+const connectors: SceneConnector[] = (await allConnectors(lang, { product: 'fourmy' })).map((c) => ({
   slug: c.slug,
   category: c.category,
   icon: CATEGORY_META[c.category].icon,
-  zone: c.zone,
+  zone: c.zone ?? 'hub',
   dataFlow: c.dataFlow,
   title: c.title,
   summary: c.summary,
   partner: c.partner?.name,
   partnerUrl: c.partner?.url,
-  version: c.version,
-  repoUrl: c.repoUrl,
+  version: '',
+  repoUrl: c.hasCode ? c.codeUrl : '',
+  statusLabel: c.status === 'en-cours' ? CONNECTOR_STATUS_LABEL[c.status][lang] : undefined,
 }));
 // Aiffel et Lyvre ne sont pas des plugins d'Ekylibre : Aiffel dialogue avec l'agriculteur dans la cour,
 // Lyvre tient la comptabilité au bureau (docs/design/03-outils-lyvre.md §8). Logos officiels, état réel.

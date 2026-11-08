@@ -1,196 +1,236 @@
-# Curation éditoriale des connecteurs (plugins Ekylibre) — docs/design/02-architecture.md §4.2.
+# Connecteurs de Fourmy et de Lyvre — docs/design/04-accueil-kit-connecteurs.md §4 (D32–D34).
 #
-# Un connecteur n'est AFFICHÉ que si son plugin est « stable » dans src/data/generated/plugins.json
-# (dépôt ekylibre-<slug>, au moins un tag publié — décision D9). Les entrées préparées pour des
-# plugins sans version publiée apparaîtront automatiquement dès qu'un tag sera publié.
+# Seule source des connecteurs affichés (scène 3D, tableau, repli 2D). L'état est éditorial :
+#   stable   : code publié ; `source` (chemin dans github.com/ekylibre/<product>) est obligatoire.
+#   en-cours : intégration en développement ou prévue ; ni version ni lien de code.
 #
-# zone     : ancre dans la scène 3D (clé de public/3d/scene.json → zones)
+# product  : fourmy | lyvre
+# zone     : ancre dans la scène 3D (clé de public/3d/scene.json → zones) ; Fourmy seulement.
+#            Les intégrations de Lyvre ne sont que dans le tableau (D34).
 # category : machines | meteo | elevage | vigne | finance | gestion | durabilite | terrain
-# dataFlow : in (vers Ekylibre) | out (depuis Ekylibre) | both
+# dataFlow : in (vers le logiciel) | out (depuis le logiciel) | both
+#
+# Sources de Fourmy vérifiées le 2026-11-08 (gh api repos/ekylibre/fourmy/contents/packages).
 
-# ── Plugins stables au 2026-11-03 ────────────────────────────────────────────
-- slug: samsys
+# ── Fourmy · stables ─────────────────────────────────────────────────────────
+- slug: traccar
+  product: fourmy
+  status: stable
   category: machines
   zone: hangars
   dataFlow: in
-  partner: { name: Samsys, url: 'https://www.samsys.io/' }
-  title: { fr: Machines connectées, en: Connected machinery }
+  partner: { name: Traccar, url: 'https://www.traccar.org/' }
+  title: { fr: Positions GPS des tracteurs, en: Tractor GPS tracking }
   summary:
-    fr: Les boîtiers Samsys enregistrent l’activité des tracteurs et des outils ; Ekylibre en déduit les interventions, les temps et les surfaces travaillées.
-    en: Samsys boxes record tractor and implement activity; Ekylibre turns it into interventions, working times and worked areas.
+    fr: Les positions enregistrées par Traccar (boîtiers, téléphones, AgOpenGPS) arrivent dans Fourmy chaque minute et deviennent des traces rattachées aux interventions.
+    en: Positions recorded by Traccar (trackers, phones, AgOpenGPS) reach Fourmy every minute and become tracks linked to interventions.
+  source: packages/connector-traccar
 
+- slug: ign
+  product: fourmy
+  status: stable
+  category: terrain
+  zone: parcelles
+  dataFlow: in
+  partner: { name: IGN, url: 'https://www.ign.fr/' }
+  title: { fr: Relief, photo et bâtiments, en: Terrain, aerial imagery and buildings }
+  summary:
+    fr: Le relief, la photographie aérienne et les bâtiments de l’IGN dessinent la ferme en 2D et en 3D dans Fourmy.
+    en: IGN terrain, aerial imagery and building data draw the farm in 2D and 3D in Fourmy.
+  source: packages/geo-ign
+
+- slug: migration-ekylibre
+  product: fourmy
+  status: stable
+  category: gestion
+  zone: hub
+  dataFlow: in
+  title: { fr: Reprise d’une ferme Ekylibre, en: Ekylibre farm migration }
+  summary:
+    fr: Parcelles, interventions, stocks et registre phytosanitaire d’une ferme Ekylibre sont repris dans Fourmy, sans ressaisie.
+    en: Plots, interventions, stocks and the plant protection register of an Ekylibre farm are carried over into Fourmy, with no re-keying.
+  source: packages/migrator-ekylibre
+
+# ── Fourmy · en cours ────────────────────────────────────────────────────────
 - slug: weenat
+  product: fourmy
+  status: en-cours
   category: meteo
   zone: meteo
   dataFlow: in
   partner: { name: Weenat, url: 'https://weenat.com/' }
-  title: { fr: Stations météo et capteurs, en: Weather stations and sensors }
+  title: { fr: Stations météo et sondes, en: Weather stations and probes }
   summary:
-    fr: Pluie, température, humidité et sondes de sol des stations Weenat alimentent les analyses de chaque parcelle.
-    en: Rainfall, temperature, humidity and soil probes from Weenat stations feed the analysis of each plot.
-
-- slug: previmeteo
-  category: meteo
-  zone: meteo
-  dataFlow: in
-  partner: { name: Previmeteo }
-  title: { fr: Objets connectés météo, en: Connected weather devices }
-  summary:
-    fr: Les relevés des objets connectés météo sont rattachés aux zones cultivées de l’exploitation.
-    en: Readings from connected weather devices are linked to the farm’s cultivated zones.
-
-- slug: cap2020
-  category: terrain
-  zone: maraichage
-  dataFlow: in
-  partner: { name: CapTrap }
-  title: { fr: Pièges connectés, en: Connected traps }
-  summary:
-    fr: Les captures des pièges connectés CapTrap remontent dans Ekylibre pour suivre la pression des ravageurs.
-    en: Catches from CapTrap connected traps flow into Ekylibre to monitor pest pressure.
-
-- slug: ednotif
-  category: elevage
-  zone: elevage
-  dataFlow: both
-  partner: { name: EDE }
-  title: { fr: Identification animale, en: Livestock identification }
-  summary:
-    fr: Les données animales des Établissements départementaux de l’élevage (EDE) sont échangées automatiquement avec Ekylibre.
-    en: Livestock data from the French departmental livestock registries (EDE) is exchanged automatically with Ekylibre.
-
-- slug: viti
-  category: vigne
-  zone: vigne-chai
-  dataFlow: both
-  title: { fr: Ekyviti, la vigne et le chai, en: Ekyviti, vineyard and cellar }
-  summary:
-    fr: L’extension viticole d’Ekylibre suit la vigne, la vendange, le chai et la traçabilité jusqu’à la bouteille.
-    en: Ekylibre’s wine extension tracks the vineyard, harvest, cellar and traceability down to the bottle.
-
-- slug: baqio
-  category: vigne
-  zone: vigne-chai
-  dataFlow: in
-  partner: { name: Baqio, url: 'https://baqio.com/' }
-  title: { fr: Ventes et logistique du vin, en: Wine sales and logistics }
-  summary:
-    fr: Les commandes, ventes et expéditions gérées dans Baqio sont reprises dans la gestion commerciale et la comptabilité d’Ekylibre.
-    en: Orders, sales and shipments managed in Baqio are brought into Ekylibre’s sales management and accounting.
-
-- slug: banking
-  category: finance
-  zone: bureau
-  dataFlow: in
-  partner: { name: 'Nordigen (GoCardless)', url: 'https://gocardless.com/bank-account-data/' }
-  title: { fr: Relevés bancaires, en: Bank statements }
-  summary:
-    fr: Les relevés et paiements bancaires sont récupérés automatiquement pour le rapprochement comptable.
-    en: Bank statements and payments are retrieved automatically for accounting reconciliation.
-
-- slug: planning
-  category: gestion
-  zone: bureau
-  dataFlow: both
-  title: { fr: Planification, en: Planning }
-  summary:
-    fr: Planifier les interventions, les équipes et le matériel, puis comparer le prévu et le réalisé.
-    en: Plan interventions, teams and equipment, then compare what was planned with what was done.
-
-- slug: hajimari
-  category: gestion
-  zone: hub
-  dataFlow: in
-  title: { fr: Assistant de démarrage, en: Onboarding assistant }
-  summary:
-    fr: Un assistant guide la configuration initiale de l’exploitation et la reprise des données existantes.
-    en: An assistant guides the farm’s initial setup and the import of existing data.
-
-# ── Prêts à apparaître dès qu’une version sera publiée ───────────────────────
-- slug: agro-monitoring
-  category: terrain
-  zone: parcelles
-  dataFlow: in
-  partner: { name: Agromonitoring, url: 'https://agromonitoring.com/' }
-  title: { fr: Images satellites, en: Satellite imagery }
-  summary:
-    fr: Indices de végétation (NDVI) et données de sol par satellite, pour chaque zone cultivable.
-    en: Satellite vegetation indices (NDVI) and soil data for each cultivable zone.
-
-- slug: traccar
-  category: machines
-  zone: parcelles
-  dataFlow: in
-  partner: { name: Traccar, url: 'https://www.traccar.org/' }
-  title: { fr: Positions GPS, en: GPS tracking }
-  summary:
-    fr: Les positions des tracteurs (AgOpenGPS édition OSFarm, boîtiers, téléphones) sont rattachées aux interventions.
-    en: Tractor positions (AgOpenGPS OSFarm edition, trackers, phones) are linked to interventions.
+    fr: Pluie, température, humidité et sondes de sol des stations Weenat rattachées aux parcelles de Fourmy.
+    en: Rainfall, temperature, humidity and soil probes from Weenat stations, linked to Fourmy plots.
 
 - slug: sencrop
+  product: fourmy
+  status: en-cours
   category: meteo
   zone: meteo
   dataFlow: in
   partner: { name: Sencrop, url: 'https://sencrop.com/' }
   title: { fr: Stations météo Sencrop, en: Sencrop weather stations }
   summary:
-    fr: Les stations connectées Sencrop enrichissent les analyses météo de l’exploitation.
-    en: Sencrop connected stations enrich the farm’s weather analysis.
+    fr: Les relevés des stations connectées Sencrop complètent la météo de chaque parcelle.
+    en: Readings from Sencrop connected stations complete the weather of each plot.
 
-- slug: natuition
-  category: machines
+- slug: captrap
+  product: fourmy
+  status: en-cours
+  category: terrain
   zone: maraichage
   dataFlow: in
-  partner: { name: Natuition, url: 'https://natuition.com/' }
-  title: { fr: Robot de désherbage, en: Weeding robot }
+  partner: { name: CapTrap }
+  title: { fr: Pièges connectés, en: Connected traps }
   summary:
-    fr: Le travail du robot de désherbage Natuition est enregistré comme intervention dans Ekylibre.
-    en: Work done by the Natuition weeding robot is recorded as an intervention in Ekylibre.
+    fr: Les captures des pièges connectés CapTrap remontent dans Fourmy pour suivre la pression des ravageurs.
+    en: Catches from CapTrap connected traps flow into Fourmy to monitor pest pressure.
 
+- slug: open-sprinkler
+  product: fourmy
+  status: en-cours
+  category: terrain
+  zone: maraichage
+  dataFlow: both
+  partner: { name: Open Sprinkler, url: 'https://opensprinkler.com/' }
+  title: { fr: Irrigation, en: Irrigation }
+  summary:
+    fr: Les programmes et les arrosages du contrôleur libre Open Sprinkler sont suivis dans Fourmy comme des interventions.
+    en: Schedules and watering runs from the open-source Open Sprinkler controller are tracked in Fourmy as interventions.
+
+- slug: ede
+  product: fourmy
+  status: en-cours
+  category: elevage
+  zone: elevage
+  dataFlow: both
+  partner: { name: EDE }
+  title: { fr: Identification animale, en: Livestock identification }
+  summary:
+    fr: Les données animales sont échangées avec les Établissements départementaux de l’élevage (EDE).
+    en: Livestock data is exchanged with the French departmental livestock registries (EDE).
+
+- slug: baoba
+  product: fourmy
+  status: en-cours
+  category: elevage
+  zone: elevage
+  dataFlow: both
+  partner: { name: Baoba }
+  title: { fr: Logiciel d’élevage, en: Livestock software }
+  summary:
+    fr: Les données du troupeau s’échangent avec Baoba ou le logiciel d’élevage que vous utilisez déjà.
+    en: Herd data is exchanged with Baoba or the livestock software you already use.
+
+- slug: baqio
+  product: fourmy
+  status: en-cours
+  category: vigne
+  zone: vigne
+  dataFlow: in
+  partner: { name: Baqio, url: 'https://baqio.com/' }
+  title: { fr: Ventes et logistique du vin, en: Wine sales and logistics }
+  summary:
+    fr: Les commandes, ventes et expéditions de vin gérées dans Baqio remontent dans Fourmy.
+    en: Wine orders, sales and shipments managed in Baqio flow into Fourmy.
+
+# ── Lyvre · en cours (tableau seulement) ─────────────────────────────────────
 - slug: qonto
+  product: lyvre
+  status: en-cours
   category: finance
-  zone: bureau
-  dataFlow: both
+  dataFlow: in
   partner: { name: Qonto, url: 'https://qonto.com/' }
-  title: { fr: Banque et facture électronique, en: Banking and e-invoicing }
+  title: { fr: Banque, en: Banking }
   summary:
-    fr: Transactions Qonto et, progressivement, facturation électronique, directement dans la comptabilité.
-    en: Qonto transactions and, progressively, e-invoicing, straight into the accounts.
+    fr: Les transactions et justificatifs Qonto arrivent dans Lyvre pour le rapprochement bancaire.
+    en: Qonto transactions and receipts reach Lyvre for bank reconciliation.
 
-- slug: pasteque
+- slug: sirene
+  product: lyvre
+  status: en-cours
   category: gestion
-  zone: bureau
+  dataFlow: in
+  partner: { name: Sirene (Insee), url: 'https://www.sirene.fr/' }
+  title: { fr: Fiches entreprises, en: Company records }
+  summary:
+    fr: Clients et fournisseurs sont complétés depuis le répertoire Sirene à partir de leur numéro SIREN.
+    en: Customers and suppliers are filled in from the Sirene register using their SIREN number.
+
+- slug: factur-x
+  product: lyvre
+  status: en-cours
+  category: finance
   dataFlow: both
-  partner: { name: Pastèque, url: 'https://www.pasteque.coop/' }
-  title: { fr: Caisse de vente directe, en: Farm shop till }
+  partner: { name: Factur-X, url: 'https://fnfe-mpe.org/factur-x/' }
+  title: { fr: Facture électronique, en: E-invoicing }
   summary:
-    fr: Ekylibre sert de serveur au logiciel de caisse libre Pastèque pour la vente directe.
-    en: Ekylibre acts as the server for the Pastèque open-source point-of-sale software for direct sales.
+    fr: Lyvre lit et produit des factures au format Factur-X, en vue de la facturation électronique obligatoire.
+    en: Lyvre reads and produces Factur-X invoices, ahead of mandatory e-invoicing.
 
-- slug: hve
-  category: durabilite
-  zone: hub
-  dataFlow: out
-  title: { fr: Audit HVE, en: HVE certification audit }
-  summary:
-    fr: Calcul de l’audit Haute Valeur Environnementale (niveau 3, référentiel V4.4) à partir des données de l’exploitation.
-    en: Computes the French High Environmental Value audit (level 3, V4.4 standard) from farm data.
-
-- slug: idea
-  category: durabilite
-  zone: hub
-  dataFlow: out
-  partner: { name: Méthode IDEA, url: 'https://methode-idea.org/' }
-  title: { fr: Diagnostic de durabilité IDEA4, en: IDEA4 sustainability assessment }
-  summary:
-    fr: Les 53 indicateurs de durabilité de la méthode IDEA4, calculés depuis Ekylibre.
-    en: The 53 sustainability indicators of the IDEA4 method, computed from Ekylibre.
-
-- slug: economic
+- slug: documenso
+  product: lyvre
+  status: en-cours
   category: gestion
-  zone: bureau
-  dataFlow: out
-  title: { fr: Analyse économique, en: Economic analysis }
+  dataFlow: both
+  partner: { name: Documenso, url: 'https://documenso.com/' }
+  title: { fr: Signature électronique, en: E-signature }
   summary:
-    fr: Marges et coûts de production par atelier et par culture.
-    en: Margins and production costs per enterprise and per crop.
+    fr: Baux, contrats et procès-verbaux sont signés en ligne avec Documenso, logiciel libre.
+    en: Leases, contracts and minutes are signed online with Documenso, an open-source tool.
+
+- slug: helloasso
+  product: lyvre
+  status: en-cours
+  category: finance
+  dataFlow: in
+  partner: { name: HelloAsso, url: 'https://www.helloasso.com/' }
+  title: { fr: Adhésions et dons, en: Memberships and donations }
+  summary:
+    fr: Les adhésions et les dons collectés sur HelloAsso sont comptabilisés dans Lyvre.
+    en: Memberships and donations collected on HelloAsso are recorded in Lyvre’s accounts.
+
+- slug: brevo
+  product: lyvre
+  status: en-cours
+  category: gestion
+  dataFlow: out
+  partner: { name: Brevo, url: 'https://www.brevo.com/' }
+  title: { fr: Envoi de courriels, en: Email sending }
+  summary:
+    fr: Factures, relances et convocations partent par Brevo.
+    en: Invoices, reminders and notices are sent through Brevo.
+
+- slug: stancer
+  product: lyvre
+  status: en-cours
+  category: finance
+  dataFlow: in
+  partner: { name: Stancer, url: 'https://www.stancer.com/' }
+  title: { fr: Paiement en ligne, en: Online payment }
+  summary:
+    fr: Les paiements par carte reçus avec Stancer sont rapprochés des factures dans Lyvre.
+    en: Card payments received through Stancer are matched with invoices in Lyvre.
+
+- slug: odoo
+  product: lyvre
+  status: en-cours
+  category: gestion
+  dataFlow: in
+  partner: { name: Odoo, url: 'https://www.odoo.com/' }
+  title: { fr: Reprise depuis Odoo, en: Odoo import }
+  summary:
+    fr: Les écritures et les tiers d’une comptabilité Odoo sont repris dans Lyvre.
+    en: Entries and third parties from an Odoo accounting are imported into Lyvre.
+
+- slug: smtp
+  product: lyvre
+  status: en-cours
+  category: gestion
+  dataFlow: out
+  title: { fr: Votre messagerie, en: Your own mail server }
+  summary:
+    fr: Lyvre peut envoyer ses courriels par le serveur de messagerie de votre choix (SMTP).
+    en: Lyvre can send its emails through the mail server of your choice (SMTP).

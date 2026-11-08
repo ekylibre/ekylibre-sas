@@ -31,7 +31,7 @@ const connectors = formatInt(stats.stablePlugins, lang);
 
 // Chapitres : vue caméra (public/3d/scene.json) et zones révélées, de façon cumulative.
 const FIELD = ['hub', 'hangars', 'meteo', 'maraichage'];
-const FARM = [...FIELD, 'elevage', 'vigne-chai'];
+const FARM = [...FIELD, 'elevage', 'vigne'];
 const OFFICE = [...FARM, 'bureau'];
 const chapters: Array<Chapter & { eyebrow: string; title: string; text: string }> = [
   {

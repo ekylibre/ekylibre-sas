@@ -128,7 +128,7 @@ const links = {
               <span class="text-eky-green-light">${esc(strings[c.dataFlow] ?? '')}</span>
               ${c.partner ? `<span>${esc(strings.partner!)} : ${c.partnerUrl ? external(c.partnerUrl, c.partner) : esc(c.partner)}</span>` : ''}
               ${c.version ? `<span>${esc(strings.version!)} ${esc(c.version)}</span>` : ''}
-              ${external(c.repoUrl, strings.source!)}
+              ${c.repoUrl ? external(c.repoUrl, strings.source!) : ''}
               ${c.pageUrl ? `<a href="${esc(c.pageUrl)}">${esc(strings.page!)} ${esc(c.title)}</a>` : ''}
             </p>
           </li>`,

@@ -10,8 +10,7 @@ import CodeSample from './CodeSample.astro';
 import illusPoste from '~/assets/illustrations/poste-developpeur.webp';
 import illusServeurs from '~/assets/illustrations/salle-serveurs.webp';
 import { routePath, type Locale } from '~/i18n/routes';
-import { stats, formatCompact, formatInt } from '~/lib/data';
-import { stableConnectors } from '~/lib/interop';
+import { stats, plugins, formatCompact, formatInt } from '~/lib/data';
 import { LINKS } from '~/lib/links';
 import type { IconName } from '~/lib/icon-names';
 
@@ -25,7 +24,15 @@ const firstMonth = new Date(stats.core.firstCommit).toLocaleDateString(fr ? 'fr-
   month: 'long',
   year: 'numeric',
 });
-const connectors = await stableConnectors(lang);
+// Provisoire (L1 → L4 du plan claudedocs/workflow_accueil_kit_connecteurs.md) : la section des plugins
+// Ekylibre lit encore plugins.json ; elle sera remplacée par le modèle de plugins de Fourmy.
+const connectors = plugins.map((p) => ({
+  slug: p.slug,
+  repoUrl: p.url,
+  title: p.readmeSummary,
+  version: p.latestTag,
+  license: p.license,
+}));
 const samsys = connectors.find((c) => c.slug === 'samsys');
 
 const title = fr ? 'Développeurs : API, MCP, plugins et licences' : 'Developers: API, MCP, plugins and licences';

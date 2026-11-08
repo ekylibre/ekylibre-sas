@@ -1,5 +1,5 @@
-// C7 — Petit vignoble procédural posé sur la zone « vigne-chai » (La Vauzelle n'a pas de vigne :
-// le module rend crédible la présence d'Ekyviti et de Baqio). Rangs palissés + piquets, instanciés.
+// C7 — Petit vignoble procédural posé sur la zone « vigne » (La Vauzelle n'a pas de vigne :
+// le module rend crédible la présence de Baqio). Rangs palissés + piquets, instanciés.
 import {
   BoxGeometry,
   CylinderGeometry,
@@ -22,7 +22,7 @@ const HEADING = 0.35; // orientation des rangs (rad), alignée sur le parcellair
 export function createVineyard(stage: Stage, anchors: AnchorRegistry): Group {
   const group = new Group();
   group.name = 'vineyard';
-  const anchor = anchors.get('vigne-chai');
+  const anchor = anchors.get('vigne');
   if (!anchor) return group;
 
   const along = new Vector3(Math.cos(HEADING), 0, Math.sin(HEADING));

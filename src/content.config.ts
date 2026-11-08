@@ -17,20 +17,34 @@ export const CATEGORIES = [
   'terrain',
 ] as const;
 
+export const CONNECTOR_PRODUCTS = ['fourmy', 'lyvre'] as const;
+export const CONNECTOR_STATUSES = ['stable', 'en-cours'] as const;
+
 const connectors = defineCollection({
-  // L'identifiant de chaque entrée est le slug du plugin (dépôt ekylibre-<slug>).
+  // Intégrations de Fourmy et de Lyvre (docs/design/04-accueil-kit-connecteurs.md §4.1).
+  // Les règles croisées (zone, source) sont dans scripts/lib/connectors.mjs.
   loader: file('src/data/connectors.yaml', {
     parser: (text) => (parse(text) as Array<{ slug: string }>).map((entry) => ({ id: entry.slug, ...entry })),
   }),
-  schema: z.object({
-    slug: z.string(),
-    category: z.enum(CATEGORIES),
-    zone: z.string(),
-    dataFlow: z.enum(['in', 'out', 'both']),
-    partner: z.object({ name: z.string(), url: z.url().optional() }).optional(),
-    title: i18n,
-    summary: i18n,
-  }),
+  schema: z
+    .object({
+      slug: z.string(),
+      product: z.enum(CONNECTOR_PRODUCTS),
+      status: z.enum(CONNECTOR_STATUSES),
+      category: z.enum(CATEGORIES),
+      zone: z.string().optional(),
+      dataFlow: z.enum(['in', 'out', 'both']),
+      partner: z.object({ name: z.string(), url: z.url().optional() }).optional(),
+      title: i18n,
+      summary: i18n,
+      source: z.string().optional(),
+    })
+    .refine((c) => (c.product === 'fourmy') === (c.zone !== undefined), {
+      message: 'zone obligatoire pour Fourmy, interdite pour Lyvre',
+    })
+    .refine((c) => c.status !== 'stable' || c.source !== undefined, {
+      message: 'un connecteur stable doit indiquer sa source',
+    }),
 });
 
 const families = defineCollection({

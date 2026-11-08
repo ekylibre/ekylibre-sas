@@ -11,6 +11,7 @@ import { existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { parse } from 'yaml';
 import { warn } from './lib/snapshot.mjs';
+import { connectorErrors } from './lib/connectors.mjs';
 
 const errors = [];
 const warnings = [];
@@ -32,24 +33,13 @@ async function walk(dir, filter) {
 }
 
 async function checkContent() {
-  const { plugins } = await json('src/data/generated/plugins.json');
   const { datasets } = await json('src/data/generated/datasets.json');
   const scene = await json('public/3d/scene.json');
   const connectors = await yaml('src/data/connectors.yaml');
   const families = await yaml('src/data/lexicon-families.yaml');
 
-  // Connecteurs ↔ plugins stables ↔ zones de la scène
-  const zones = new Set(Object.keys(scene.zones ?? {}));
-  const curated = new Map();
-  for (const c of connectors) {
-    if (curated.has(c.slug)) error(`connectors.yaml : slug en double « ${c.slug} »`);
-    curated.set(c.slug, c);
-    if (!zones.has(c.zone)) error(`connectors.yaml : « ${c.slug} » vise la zone inconnue « ${c.zone} »`);
-  }
-  for (const p of plugins) {
-    if (!curated.has(p.slug))
-      warning(`plugin stable « ${p.slug} » sans curation dans connectors.yaml (affiché au bureau avec son README)`);
-  }
+  // Connecteurs Fourmy et Lyvre ↔ zones de la scène ; « stable » = code publié (D33)
+  for (const e of connectorErrors(connectors, new Set(Object.keys(scene.zones ?? {})))) error(e);
 
   // Logiciels (products.yaml) ↔ logos ↔ routes (docs/design/03-outils-lyvre.md §2.2)
   const products = await yaml('src/data/products.yaml');
