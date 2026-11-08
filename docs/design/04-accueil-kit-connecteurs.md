@@ -237,6 +237,11 @@ ordre de tabulation. Les ancres servent toujours au départ des flux.
 | Aiffel | smartphone et micro (`Isometric-full.ai`) |
 | Agriculteur | personnage à la tablette (`Isometric-full.ai`) |
 
+- **Choix validés (C2, 2026-11-08)** : Fourmy → `hangar-photovoltaique` (WebP, 98 Ko gzip en SVG),
+  Lyvre → `maison-bureau` (WebP, 88 Ko gzip), Lexicon → `satellite`, Aiffel → `micro-smartphone`,
+  agriculteur → `agriculteur-tablette`.
+- **WebP dérivées** : Astro refuse de rastériser un SVG sans `image.dangerouslyProcessSVG` ; plutôt que
+  d'activer cette option, `extract.py` produit la WebP (960 px) à côté de chaque SVG (`kit.json` → `raster`).
 - Le texte de `products.yaml` et les flux ne parlent plus d'Ekylibre (déjà fait au commit `011dae8` ; à revérifier).
 
 ## 7. Vérifications

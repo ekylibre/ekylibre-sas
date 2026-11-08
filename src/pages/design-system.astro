@@ -3,6 +3,14 @@
 import Base from '~/layouts/Base.astro';
 import Icon from '~/components/Icon.astro';
 import { ICON_NAMES } from '~/lib/icon-names';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import kit from '~/assets/kit/kit.json';
+
+// Kit isométrique (docs/design/04-accueil-kit-connecteurs.md §5.4) : planche de relecture.
+// Rendu par la WebP dérivée (les SVG détaillés pèsent jusqu'à plusieurs Mo).
+const kitFiles = import.meta.glob<{ default: ImageMetadata }>('~/assets/kit/**/*.webp', { eager: true });
+const kitElements = kit.elements.map((e) => ({ ...e, image: kitFiles[`/src/assets/kit/${e.raster}`]!.default }));
 
 const swatches = [
   ['eky-green', '#00C15D', 'bg-eky-green'],
@@ -127,6 +135,30 @@ const families = ['territoire', 'climat', 'intrants', 'entreprises', 'marches', 
           </span>
         ))}
       </div>
+    </div>
+  </section>
+
+  <section class="section-cream py-16" id="kit">
+    <div class="container-site">
+      <h2 class="text-h3">Kit isométrique ({kitElements.length})</h2>
+      <p class="mt-2 max-w-3xl text-muted">
+        Éléments découpés dans l’archive Graphisme (scripts/kit/extract.py, docs/kit-isometrique/elements.yaml).
+        Poids : SVG compressé (gzip) ; au-delà de 40 Ko, le schéma utilise une WebP.
+      </p>
+      <ul class="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+        {kitElements.map((e) => (
+          <li class="card flex flex-col" data-kit={e.id}>
+            <div class="grid aspect-square place-items-center rounded-xl bg-straw-50 p-3">
+              <Image src={e.image} alt={e.title.fr} widths={[240, 480]} sizes="16rem" class="size-full object-contain" />
+            </div>
+            <p class="mt-3 font-display font-semibold">{e.title.fr}</p>
+            <p class="font-mono text-xs text-muted">
+              {e.id} · {e.category} · {Math.round(e.gzipBytes / 1000)} Ko gz{e.gzipBytes > 40000 ? ' ⚠' : ''}
+            </p>
+            <p class="font-mono text-xs text-muted">{e.source}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   </section>
 </Base>

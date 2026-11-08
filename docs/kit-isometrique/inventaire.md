@@ -120,7 +120,7 @@
 | `Infographies2020/infographie1.ai` | ai | ok | 1.7 | 1.1 | 353 |  |  |
 | `innovation.ai` | ai | ok | 2.1 | 3.2 | 10336 |  |  |
 | `invitation.ai` | ai | ok | 0.58 | 0.24 | 649 |  |  |
-| `Isometric-full.ai` | ai | ok | 73.8 | 95.0 | 166527 |  |  |
+| `Isometric-full.ai` | ai | ok | 73.8 | 95.0 | 166527 | oui |  |
 | `logo-appli.svg` | svg | ok | 0.00 | 0.00 | 18 |  |  |
 | `main-duke.ai` | ai | ok | 0.24 | 0.02 | 39 |  |  |
 | `maintenance.ai` | ai | ok | 0.46 | 0.23 | 833 |  |  |

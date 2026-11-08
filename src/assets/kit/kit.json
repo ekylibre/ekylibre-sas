@@ -1,0 +1,436 @@
+{
+  "elements": [
+    {
+      "id": "satellite",
+      "category": "objets",
+      "title": {
+        "fr": "Satellite",
+        "en": "Satellite"
+      },
+      "source": "Isometric-full.ai",
+      "file": "objets/satellite.svg",
+      "raster": "objets/satellite.webp",
+      "viewBox": [
+        4517,
+        1200,
+        783,
+        773
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 37,
+      "bytes": 24687,
+      "gzipBytes": 4289
+    },
+    {
+      "id": "micro-smartphone",
+      "category": "objets",
+      "title": {
+        "fr": "Micro et smartphone",
+        "en": "Microphone and smartphone"
+      },
+      "source": "Isometric-full.ai",
+      "file": "objets/micro-smartphone.svg",
+      "raster": "objets/micro-smartphone.webp",
+      "viewBox": [
+        7110,
+        2350,
+        753,
+        752
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 373,
+      "bytes": 78450,
+      "gzipBytes": 21387
+    },
+    {
+      "id": "tracteur-bleu",
+      "category": "machines",
+      "title": {
+        "fr": "Tracteur",
+        "en": "Tractor"
+      },
+      "source": "Isometric-full.ai",
+      "file": "machines/tracteur-bleu.svg",
+      "raster": "machines/tracteur-bleu.webp",
+      "viewBox": [
+        1617,
+        2350,
+        753,
+        752
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 245,
+      "bytes": 27247,
+      "gzipBytes": 8169
+    },
+    {
+      "id": "raisin-vin",
+      "category": "cultures",
+      "title": {
+        "fr": "Raisin et vin",
+        "en": "Grapes and wine"
+      },
+      "source": "Isometric-full.ai",
+      "file": "cultures/raisin-vin.svg",
+      "raster": "cultures/raisin-vin.webp",
+      "viewBox": [
+        5864,
+        2350,
+        753,
+        752
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 253,
+      "bytes": 181183,
+      "gzipBytes": 27947
+    },
+    {
+      "id": "balance-calculatrice",
+      "category": "objets",
+      "title": {
+        "fr": "Balance et calculatrice",
+        "en": "Scales and calculator"
+      },
+      "source": "Isometric-full.ai",
+      "file": "objets/balance-calculatrice.svg",
+      "raster": "objets/balance-calculatrice.webp",
+      "viewBox": [
+        6363,
+        7375,
+        752,
+        753
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 250,
+      "bytes": 80608,
+      "gzipBytes": 12677
+    },
+    {
+      "id": "camembert",
+      "category": "objets",
+      "title": {
+        "fr": "Graphique",
+        "en": "Pie chart"
+      },
+      "source": "Isometric-full.ai",
+      "file": "objets/camembert.svg",
+      "raster": "objets/camembert.webp",
+      "viewBox": [
+        6434,
+        1200,
+        768,
+        773
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 14,
+      "bytes": 4196,
+      "gzipBytes": 1739
+    },
+    {
+      "id": "hangar-photovoltaique",
+      "category": "batiments",
+      "title": {
+        "fr": "Hangar à panneaux solaires",
+        "en": "Solar-roofed shed"
+      },
+      "source": "Isometric-full.ai",
+      "file": "batiments/hangar-photovoltaique.svg",
+      "raster": "batiments/hangar-photovoltaique.webp",
+      "viewBox": [
+        2645,
+        3357,
+        1882,
+        1627
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 5472,
+      "bytes": 578163,
+      "gzipBytes": 98132
+    },
+    {
+      "id": "silos",
+      "category": "batiments",
+      "title": {
+        "fr": "Silos",
+        "en": "Silos"
+      },
+      "source": "Isometric-full.ai",
+      "file": "batiments/silos.svg",
+      "raster": "batiments/silos.webp",
+      "viewBox": [
+        1246,
+        4043,
+        814,
+        1374
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 3220,
+      "bytes": 214289,
+      "gzipBytes": 39016
+    },
+    {
+      "id": "chai",
+      "category": "batiments",
+      "title": {
+        "fr": "Chai en coupe",
+        "en": "Winery cutaway"
+      },
+      "source": "Isometric-full.ai",
+      "file": "batiments/chai.svg",
+      "raster": "batiments/chai.webp",
+      "viewBox": [
+        5086,
+        3052,
+        2289,
+        1831
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 15378,
+      "bytes": 6162541,
+      "gzipBytes": 637153
+    },
+    {
+      "id": "maison-bureau",
+      "category": "batiments",
+      "title": {
+        "fr": "Maison et bureau en coupe",
+        "en": "House and office cutaway"
+      },
+      "source": "Isometric-full.ai",
+      "file": "batiments/maison-bureau.svg",
+      "raster": "batiments/maison-bureau.webp",
+      "viewBox": [
+        6459,
+        4552,
+        1399,
+        1297
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 3277,
+      "bytes": 423241,
+      "gzipBytes": 88239
+    },
+    {
+      "id": "serre",
+      "category": "batiments",
+      "title": {
+        "fr": "Serre",
+        "en": "Greenhouse"
+      },
+      "source": "Isometric-full.ai",
+      "file": "batiments/serre.svg",
+      "raster": "batiments/serre.webp",
+      "viewBox": [
+        6993,
+        5798,
+        509,
+        534
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 621,
+      "bytes": 100796,
+      "gzipBytes": 20428
+    },
+    {
+      "id": "eolienne-pompage",
+      "category": "batiments",
+      "title": {
+        "fr": "Éolienne de pompage",
+        "en": "Wind pump"
+      },
+      "source": "Isometric-full.ai",
+      "file": "batiments/eolienne-pompage.svg",
+      "raster": "batiments/eolienne-pompage.webp",
+      "viewBox": [
+        8010,
+        3967,
+        461,
+        1043
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 104,
+      "bytes": 32691,
+      "gzipBytes": 5799
+    },
+    {
+      "id": "agriculteur-tablette",
+      "category": "personnages",
+      "title": {
+        "fr": "Agriculteur à la tablette",
+        "en": "Farmer with a tablet"
+      },
+      "source": "Isometric-full.ai",
+      "file": "personnages/agriculteur-tablette.svg",
+      "raster": "personnages/agriculteur-tablette.webp",
+      "viewBox": [
+        4135,
+        4675,
+        120,
+        320
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 23,
+      "bytes": 3318,
+      "gzipBytes": 1476
+    },
+    {
+      "id": "vache",
+      "category": "animaux",
+      "title": {
+        "fr": "Vache",
+        "en": "Cow"
+      },
+      "source": "Isometric-full.ai",
+      "file": "animaux/vache.svg",
+      "raster": "animaux/vache.webp",
+      "viewBox": [
+        4501,
+        6256,
+        382,
+        330
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 49,
+      "bytes": 8673,
+      "gzipBytes": 3400
+    },
+    {
+      "id": "pickup",
+      "category": "machines",
+      "title": {
+        "fr": "Pick-up",
+        "en": "Pickup truck"
+      },
+      "source": "Isometric-full.ai",
+      "file": "machines/pickup.svg",
+      "raster": "machines/pickup.webp",
+      "viewBox": [
+        5086,
+        4755,
+        483,
+        280
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 234,
+      "bytes": 78178,
+      "gzipBytes": 12076
+    },
+    {
+      "id": "ruches",
+      "category": "animaux",
+      "title": {
+        "fr": "Ruches",
+        "en": "Beehives"
+      },
+      "source": "Isometric-full.ai",
+      "file": "animaux/ruches.svg",
+      "raster": "animaux/ruches.webp",
+      "viewBox": [
+        3942,
+        6612,
+        712,
+        432
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 1758,
+      "bytes": 669185,
+      "gzipBytes": 59670
+    },
+    {
+      "id": "soleil-nuage",
+      "category": "capteurs",
+      "title": {
+        "fr": "Météo",
+        "en": "Weather"
+      },
+      "source": "Isometric-full.ai",
+      "file": "capteurs/soleil-nuage.svg",
+      "raster": "capteurs/soleil-nuage.webp",
+      "viewBox": [
+        2034,
+        3128,
+        611,
+        458
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 52,
+      "bytes": 5879,
+      "gzipBytes": 2445
+    },
+    {
+      "id": "eoliennes",
+      "category": "batiments",
+      "title": {
+        "fr": "Éoliennes",
+        "en": "Wind turbines"
+      },
+      "source": "Isometric-full.ai",
+      "file": "batiments/eoliennes.svg",
+      "raster": "batiments/eoliennes.webp",
+      "viewBox": [
+        2721,
+        2874,
+        788,
+        1042
+      ],
+      "foot": [
+        0.5,
+        1
+      ],
+      "objects": 393,
+      "bytes": 73617,
+      "gzipBytes": 15248
+    }
+  ]
+}

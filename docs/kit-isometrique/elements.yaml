@@ -1,0 +1,104 @@
+# Kit isométrique — éléments à découper (docs/design/04-accueil-kit-connecteurs.md §5.2).
+# rect : [x, y, largeur, hauteur] en unités du SVG converti (grille relevée sur l'aperçu).
+# Un objet est gardé si sa boîte est entièrement dans rect et s'il n'est pas dans exclude.
+# exclude_fill : couleurs de tracés à écarter ; drop_larger : écarte les objets presque aussi grands
+# que le cadre (fond et anneau des médaillons).
+# foot : point de contact au sol, en fraction de la boîte (défaut [0.5, 1]).
+# Régénérer : python3 -I scripts/kit/extract.py [id…]
+
+# ── Médaillons d'Isometric-full (icônes isolées) ────────────────────────────
+- id: satellite
+  source: Isometric-full.ai
+  rect: [4517, 1200, 783, 773]
+  drop_larger: 0.9
+  category: objets
+  title: { fr: Satellite, en: Satellite }
+- id: micro-smartphone
+  source: Isometric-full.ai
+  rect: [7110, 2350, 753, 752]
+  category: objets
+  title: { fr: Micro et smartphone, en: Microphone and smartphone }
+- id: tracteur-bleu
+  source: Isometric-full.ai
+  rect: [1617, 2350, 753, 752]
+  category: machines
+  title: { fr: Tracteur, en: Tractor }
+- id: raisin-vin
+  source: Isometric-full.ai
+  rect: [5864, 2350, 753, 752]
+  category: cultures
+  title: { fr: Raisin et vin, en: Grapes and wine }
+- id: balance-calculatrice
+  source: Isometric-full.ai
+  rect: [6363, 7375, 752, 753]
+  category: objets
+  title: { fr: Balance et calculatrice, en: Scales and calculator }
+- id: camembert
+  source: Isometric-full.ai
+  rect: [6434, 1200, 768, 773]
+  category: objets
+  title: { fr: Graphique, en: Pie chart }
+
+# ── Ferme d'Isometric-full ──────────────────────────────────────────────────
+- id: hangar-photovoltaique
+  source: Isometric-full.ai
+  rect: [2645, 3357, 1882, 1627]
+  category: batiments
+  title: { fr: Hangar à panneaux solaires, en: Solar-roofed shed }
+- id: silos
+  source: Isometric-full.ai
+  rect: [1246, 4043, 814, 1374]
+  category: batiments
+  title: { fr: Silos, en: Silos }
+- id: chai
+  source: Isometric-full.ai
+  rect: [5086, 3052, 2289, 1831]
+  category: batiments
+  title: { fr: Chai en coupe, en: Winery cutaway }
+- id: maison-bureau
+  source: Isometric-full.ai
+  rect: [6459, 4552, 1399, 1297]
+  category: batiments
+  title: { fr: Maison et bureau en coupe, en: House and office cutaway }
+- id: serre
+  source: Isometric-full.ai
+  rect: [6993, 5798, 509, 534]
+  category: batiments
+  title: { fr: Serre, en: Greenhouse }
+- id: eolienne-pompage
+  source: Isometric-full.ai
+  rect: [8010, 3967, 461, 1043]
+  category: batiments
+  title: { fr: Éolienne de pompage, en: Wind pump }
+
+# ── Personnages et éléments de ferme ─────────────────────────────────────────
+- id: agriculteur-tablette
+  source: Isometric-full.ai
+  rect: [4135, 4675, 120, 320]
+  category: personnages
+  title: { fr: Agriculteur à la tablette, en: Farmer with a tablet }
+- id: vache
+  source: Isometric-full.ai
+  rect: [4501, 6256, 382, 330]
+  category: animaux
+  title: { fr: Vache, en: Cow }
+- id: pickup
+  source: Isometric-full.ai
+  rect: [5086, 4755, 483, 280]
+  category: machines
+  title: { fr: Pick-up, en: Pickup truck }
+- id: ruches
+  source: Isometric-full.ai
+  rect: [3942, 6612, 712, 432]
+  category: animaux
+  title: { fr: Ruches, en: Beehives }
+- id: soleil-nuage
+  source: Isometric-full.ai
+  rect: [2034, 3128, 611, 458]
+  category: capteurs
+  title: { fr: Météo, en: Weather }
+- id: eoliennes
+  source: Isometric-full.ai
+  rect: [2721, 2874, 788, 1042]
+  category: batiments
+  title: { fr: Éoliennes, en: Wind turbines }
