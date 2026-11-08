@@ -149,14 +149,14 @@
     },
     "vigne": {
       "position": [
-        -110,
-        154,
-        330
+        -150,
+        150,
+        240
       ],
       "cible": [
-        -85,
-        -6,
-        55
+        -65,
+        -4,
+        -25
       ],
       "fov": 26
     },
@@ -273,11 +273,11 @@
     },
     "vigne": {
       "xz": [
-        -85,
-        60
+        -80,
+        -30
       ],
       "lift": 8,
-      "label": "Vigne"
+      "label": "Vigne (champ à l’ouest du long bâtiment au toit noir)"
     },
     "cour": {
       "xz": [

@@ -13,8 +13,8 @@ import {
 import type { AnchorRegistry } from './anchors';
 import type { Stage } from './stage';
 
-const ROWS = 14;
-const ROW_LENGTH = 34;
+const ROWS = 12;
+const ROW_LENGTH = 28;
 const SPACING = 2.4;
 const POST_EVERY = 5.5;
 const HEADING = 0.35; // orientation des rangs (rad), alignée sur le parcellaire voisin
