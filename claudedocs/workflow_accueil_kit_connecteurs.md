@@ -16,7 +16,7 @@ Exécution : `/sc:implement L1`, …
 | L5 Kit : conversion | ✅ | `c4799c3` | 196/196 ; sources `.svg` suffixées `__svg` (Inkscape retire un `.svg` redoublé) |
 | L6 Kit : découpe (C2) | ✅ | `2978ea6` | 18 éléments (Isometric-full) ; WebP produites par `extract.py` (pas d'option `dangerouslyProcessSVG`) ; chai.svg 6 Mo conservé |
 | L7 Schéma (C3) | ✅ | `03b8251` | Clés de courbure des flux restées sur « ekylibre » corrigées ; ~136 Ko transférés estimés |
-| L8 Recette, mise en ligne (C4) | 🔄 | `main` poussé | « Baoba » vérifié (Open Business Agriculture) ; déploiement GitHub Pages en cours |
+| L8 Recette, mise en ligne (C4) | ✅ | `main` poussé | « Baoba » vérifié (Open Business Agriculture) ; déployé le 2026-11-08 (run 42513805542) ; `verify-production.mjs` : tout passe sauf une ancienne URL en 503 passager (200 au contrôle suivant) |
 
 Environnement : Node système 22.22.1 sans npm ; build fait avec Node 22.23.4 (exigé par Astro 7).
 Reste possible : compléter le kit (autres fichiers de l'archive), nettoyer les débris du hangar et de la
