@@ -1,12 +1,15 @@
 ---
 // F2 — Schéma isométrique du système (docs/design/03-outils-lyvre.md §4.2), inspiré d'oskale.com :
-// Aiffel au centre, Ekylibre, Lexicon et Lyvre autour, l'agriculteur au premier plan.
-// Le dessin est calculé au build (src/lib/iso.ts) ; les logiciels sont de vrais boutons HTML posés
+// Aiffel au centre, Fourmy, Lexicon et Lyvre autour, l'agriculteur au premier plan.
+// Illustrations du kit isométrique (docs/design/04-accueil-kit-connecteurs.md §6, choix C2) posées sur
+// un plateau ; flux calculés au build (src/lib/iso.ts) ; les logiciels sont de vrais boutons HTML posés
 // au-dessus du SVG ; le panneau texte (aria-live) dit l'essentiel, schéma ou pas.
 import ProductLogo from '~/components/products/ProductLogo.astro';
 import StatusBadge from '~/components/products/StatusBadge.astro';
 import Icon from '~/components/Icon.astro';
-import { box, cylinder, curve, curvePoint, path, project, type Point2, type Projection } from '~/lib/iso';
+import { getImage } from 'astro:assets';
+import { curve, curvePoint, project, type Point2, type Projection } from '~/lib/iso';
+import kit from '~/assets/kit/kit.json';
 import { getFlows, getProducts, STATUS_LABEL, type ProductKey } from '~/lib/products';
 import { routePath, type Locale } from '~/i18n/routes';
 
@@ -42,13 +45,13 @@ const anchor: Record<ProductKey | 'farmer', Point2> = {
   lyvre: project([185, -185, 10], P),
   farmer: project([215, 215, 20], P),
 };
-// Courbure de chaque flux : vers l'extérieur du schéma ; Ekylibre → Lyvre passe sous Aiffel.
+// Courbure de chaque flux : vers l'extérieur du schéma ; Fourmy → Lyvre passe sous Aiffel.
 const BEND: Record<string, number> = {
   'farmer>aiffel': 0,
-  'aiffel>ekylibre': -30,
+  'aiffel>fourmy': -30,
   'lexicon>aiffel': 0,
-  'lexicon>ekylibre': 50,
-  'ekylibre>lyvre': 390,
+  'lexicon>fourmy': 50,
+  'fourmy>lyvre': 390,
   'aiffel>lyvre': 30,
   'lexicon>lyvre': -50,
 };
@@ -57,61 +60,41 @@ const flowShapes = flows.map((f) => {
   const a = anchor[f.from];
   const b = anchor[f.to];
   // Position de l'étiquette le long de la courbe (évite les volumes et l'agriculteur).
-  const T: Record<string, number> = { 'lexicon>aiffel': 0.3, 'ekylibre>lyvre': 0.25, 'aiffel>ekylibre': 0.55 };
-  // Ekylibre → Lyvre : étiquette alignée à droite, entre le bouton d'Ekylibre et celui d'Aiffel.
+  const T: Record<string, number> = { 'lexicon>aiffel': 0.3, 'fourmy>lyvre': 0.25, 'aiffel>fourmy': 0.3, 'lexicon>fourmy': 0.35 };
+  // Fourmy → Lyvre : étiquette alignée à droite, entre le bouton de Fourmy et celui d'Aiffel.
   const anchorText = f.from === 'fourmy' && f.to === 'lyvre' ? 'end' : 'middle';
   const [lx, ly] = curvePoint(a, b, bend, T[`${f.from}>${f.to}`] ?? 0.5);
   return { ...f, d: curve(a, b, bend), lx, ly, anchorText };
 });
 
-// Aiffel : socle, anneau, plaque « voix » avec forme d'onde.
-const slab = box(-120, -120, 0, 240, 240, 14, P);
-const ring = cylinder(0, 0, 14, 82, 0, P).top;
-const plate = box(-55, -24, 14, 110, 12, 74, P);
-const wave = [10, 26, 42, 30, 18, 38, 22, 12]
-  .map((h, i) => path([[-44 + i * 12.5, -12, 51 - h / 2], [-44 + i * 12.5, -12, 51 + h / 2]], P, false))
-  .join('');
-
-// Ekylibre : hangar à toit à deux pans, tracteur, capteur sur mât.
-const [hx0, hy0, hx1, hy1, hw, hr] = [-245, 135, -135, 225, 55, 85];
-const hangar = {
-  back: path([[hx0, hy0, hw], [hx1, hy0, hw], [hx1, 180, hr], [hx0, 180, hr]], P),
-  wall: path([[hx0, hy1, 0], [hx1, hy1, 0], [hx1, hy1, hw], [hx0, hy1, hw]], P),
-  gable: path([[hx1, hy0, 0], [hx1, hy1, 0], [hx1, hy1, hw], [hx1, 180, hr], [hx1, hy0, hw]], P),
-  roof: path([[hx0, 180, hr], [hx1, 180, hr], [hx1, hy1, hw], [hx0, hy1, hw]], P),
-  door: path([[hx1, 160, 0], [hx1, 160, 36], [hx1, 200, 36], [hx1, 200, 0]], P, false),
+// Illustrations (kit.json) : SVG si léger, sinon la WebP dérivée (D37), réduite au double de l'affichage.
+// width : largeur affichée (unités du viewBox) ; center : point du dessin posé sur l'ancre, en fraction.
+const ART: Record<ProductKey | 'farmer', { id: string; width: number; center: [number, number]; at: Point2 }> = {
+  fourmy: { id: 'hangar-photovoltaique', width: 300, center: [0.5, 0.56], at: anchor.fourmy },
+  lyvre: { id: 'maison-bureau', width: 250, center: [0.5, 0.56], at: anchor.lyvre },
+  lexicon: { id: 'satellite', width: 230, center: [0.5, 0.5], at: [anchor.lexicon[0], anchor.lexicon[1] + 6] },
+  aiffel: { id: 'micro-smartphone', width: 190, center: [0.5, 0.52], at: anchor.aiffel },
+  farmer: { id: 'agriculteur-tablette', width: 34, center: [0.5, 1], at: project([215, 215, 0], P) },
 };
-const tractor = {
-  rear: box(-122, 232, 0, 18, 8, 18, P),
-  body: box(-122, 212, 8, 44, 20, 16, P),
-  cab: box(-122, 212, 24, 20, 20, 22, P),
-  front: box(-92, 232, 0, 11, 7, 11, P),
-};
-const mastFoot = project([-268, 250, 0], P);
-const mastTop = project([-268, 250, 96], P);
-const sensor = box(-275, 243, 96, 14, 14, 10, P);
-const [sx, sy] = project([-261, 250, 104], P);
-const signal = `M${sx + 12} ${sy - 10}a12 12 0 0 1 0 20M${sx + 20} ${sy - 17}a20 20 0 0 1 0 34`;
+const kitFiles = import.meta.glob<{ default: ImageMetadata }>('~/assets/kit/**/*.{svg,webp}', { eager: true });
+const art = Object.fromEntries(
+  await Promise.all(
+    Object.entries(ART).map(async ([key, a]) => {
+      const e = kit.elements.find((k) => k.id === a.id)!;
+      const heavy = e.gzipBytes > 40_000;
+      const asset = kitFiles[`/src/assets/kit/${heavy ? e.raster : e.file}`]!.default;
+      const href = heavy ? (await getImage({ src: asset, width: a.width * 2, format: 'webp' })).src : asset.src;
+      const [, , vw, vh] = e.viewBox as [number, number, number, number];
+      const height = Math.round((a.width * vh) / vw);
+      const x = Math.round(a.at[0] - a.width * a.center[0]);
+      const y = Math.round(a.at[1] - height * a.center[1]);
+      return [key, { href, x, y, width: a.width, height }];
+    }),
+  ),
+) as Record<ProductKey | 'farmer', { href: string; x: number; y: number; width: number; height: number }>;
 
-// Lexicon : trois disques de données empilés.
-const discs = [0, 30, 60].map((z) => cylinder(-205, -205, z, 58, 21, P));
-
-// Lyvre : registre ouvert sur sa couverture, pile de pièces.
-const cover = box(128, -238, 0, 114, 96, 10, P);
-const pageL = box(134, -232, 10, 102, 41, 6, P);
-const pageR = box(134, -189, 10, 102, 41, 6, P);
-const lines = [0, 1, 2, 3]
-  .flatMap((i) => [
-    path([[146, -224 + i * 9, 16], [222, -224 + i * 9, 16]], P, false),
-    path([[146, -181 + i * 9, 16], [i === 3 ? 190 : 222, -181 + i * 9, 16]], P, false),
-  ])
-  .join('');
-const coins = [0, 6, 12, 18].map((z) => cylinder(262, -120, z, 15, 5, P));
-
-// Agriculteur : silhouette et ondes de voix vers Aiffel.
-const body = cylinder(215, 215, 0, 11, 36, P);
-const [fx, fy] = project([215, 215, 48], P);
-const voice = `M${fx - 14} ${fy - 18}a18 18 0 0 1 28 0M${fx - 22} ${fy - 28}a28 28 0 0 1 44 0`;
+// Plateau commun sous les illustrations (ellipse au sol, centrée sur Aiffel).
+const [gx, gy] = project([0, 0, 0], P);
 const [labelX, labelY] = project([215, 215, 0], P);
 ---
 
@@ -123,6 +106,7 @@ const [labelX, labelY] = project([215, 215, 0], P);
 >
   <div class="relative">
     <svg viewBox={`0 0 ${W} ${H}`} class="block h-auto w-full" aria-hidden="true" focusable="false">
+      <ellipse class="ground" cx={gx} cy={gy + 10} rx="520" ry="270" />
       <g class="flows">
         {
           flowShapes.map((f) => (
@@ -133,64 +117,16 @@ const [labelX, labelY] = project([215, 215, 0], P);
         }
       </g>
 
-      <g class="node" data-node="lexicon">
-        {
-          discs.map((c) => (
-            <>
-              <path class="face side" d={c.side} />
-              <path class="face top" d={c.top} />
-            </>
+      {
+          (['lexicon', 'fourmy', 'lyvre', 'aiffel'] as const).map((key) => (
+            <g class="node" data-node={key}>
+              <image class="node-art" href={art[key].href} x={art[key].x} y={art[key].y} width={art[key].width} height={art[key].height} />
+            </g>
           ))
         }
-      </g>
-
-      <g class="node" data-node="fourmy">
-        <path class="face top" d={hangar.back} />
-        <path class="face left" d={hangar.wall} />
-        <path class="face right" d={hangar.gable} />
-        <path class="face top" d={hangar.roof} />
-        <path class="detail" d={hangar.door} />
-        <line class="detail" x1={mastFoot[0]} y1={mastFoot[1]} x2={mastTop[0]} y2={mastTop[1]} />
-        <path class="face left" d={sensor.left} /><path class="face right" d={sensor.right} /><path class="face top" d={sensor.top} />
-        <path class="detail signal" d={signal} />
-        {
-          [tractor.rear, tractor.body, tractor.cab, tractor.front].map((b) => (
-            <>
-              <path class="face left" d={b.left} />
-              <path class="face right" d={b.right} />
-              <path class="face top" d={b.top} />
-            </>
-          ))
-        }
-      </g>
-
-      <g class="node" data-node="lyvre">
-        <path class="face left" d={cover.left} /><path class="face right" d={cover.right} /><path class="face top" d={cover.top} />
-        <path class="face left" d={pageL.left} /><path class="face right" d={pageL.right} /><path class="face top" d={pageL.top} />
-        <path class="face left" d={pageR.left} /><path class="face right" d={pageR.right} /><path class="face top" d={pageR.top} />
-        <path class="detail" d={lines} />
-        {
-          coins.map((c) => (
-            <>
-              <path class="face side" d={c.side} />
-              <path class="face top" d={c.top} />
-            </>
-          ))
-        }
-      </g>
-
-      <g class="node" data-node="aiffel">
-        <path class="face left" d={slab.left} /><path class="face right" d={slab.right} /><path class="face top" d={slab.top} />
-        <path class="detail" d={ring} />
-        <path class="face right" d={plate.right} /><path class="face top" d={plate.top} /><path class="face left" d={plate.left} />
-        <path class="detail wave" d={wave} />
-      </g>
 
       <g class="farmer">
-        <path class="face side" d={body.side} />
-        <path class="face top" d={body.top} />
-        <circle class="face top" cx={fx} cy={fy} r="10" />
-        <path class="detail signal" d={voice} />
+        <image href={art.farmer.href} x={art.farmer.x} y={art.farmer.y} width={art.farmer.width} height={art.farmer.height} />
         <text class="farmer-label" x={labelX} y={labelY + 46} text-anchor="middle">{farmerLabel}</text>
       </g>
 
@@ -308,35 +244,22 @@ const [labelX, labelY] = project([215, 215, 0], P);
     --bg: var(--color-night-900);
   }
 
-  /* Volumes au trait */
-  .face {
-    stroke: var(--stroke);
-    stroke-width: 1.25;
-    stroke-linejoin: round;
-    vector-effect: non-scaling-stroke;
-    transition:
-      fill 0.3s,
-      stroke 0.3s;
-  }
-  .face.top {
-    fill: var(--top);
-  }
-  .face.left,
-  .face.side {
+  /* Plateau commun sous les illustrations du kit */
+  .ground {
     fill: var(--left);
-  }
-  .face.right {
-    fill: var(--right);
-  }
-  .detail {
-    fill: none;
-    stroke: var(--stroke);
-    stroke-width: 1.25;
-    stroke-linecap: round;
-    vector-effect: non-scaling-stroke;
+    opacity: 0.55;
   }
   .node {
     transition: opacity 0.3s;
+  }
+  .node-art {
+    transition: filter 0.3s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .node,
+    .node-art {
+      transition: none;
+    }
   }
   .farmer-label {
     @apply font-mono text-[15px] tracking-[0.18em] uppercase;
@@ -400,17 +323,11 @@ const [labelX, labelY] = project([215, 215, 0], P);
   [data-active='lyvre'] .flow:is([data-from='lyvre'], [data-to='lyvre']) {
     opacity: 1;
   }
-  [data-active='aiffel'] .node[data-node='aiffel'] .face,
-  [data-active='fourmy'] .node[data-node='fourmy'] .face,
-  [data-active='lexicon'] .node[data-node='lexicon'] .face,
-  [data-active='lyvre'] .node[data-node='lyvre'] .face {
-    stroke: var(--hi-stroke);
-  }
-  [data-active='aiffel'] .node[data-node='aiffel'] .face.top,
-  [data-active='fourmy'] .node[data-node='fourmy'] .face.top,
-  [data-active='lexicon'] .node[data-node='lexicon'] .face.top,
-  [data-active='lyvre'] .node[data-node='lyvre'] .face.top {
-    fill: color-mix(in srgb, var(--color-eky-green) 9%, var(--top));
+  [data-active='aiffel'] .node[data-node='aiffel'] .node-art,
+  [data-active='fourmy'] .node[data-node='fourmy'] .node-art,
+  [data-active='lexicon'] .node[data-node='lexicon'] .node-art,
+  [data-active='lyvre'] .node[data-node='lyvre'] .node-art {
+    filter: drop-shadow(0 0 14px rgb(0 193 93 / 0.55));
   }
   [data-active='aiffel'] .flow-label:is([data-from='aiffel'], [data-to='aiffel']),
   [data-active='fourmy'] .flow-label:is([data-from='fourmy'], [data-to='fourmy']),
