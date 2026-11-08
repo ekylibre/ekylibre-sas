@@ -1,7 +1,7 @@
 ---
 // Page Développeurs (D5). Textes : docs/contenus/fr/developpeurs.md, vérifiés le 2026-11-03 :
 // spec OpenAPI d'Ekylibre (docs/api/openapi-v2.yaml), réponse réelle du Lexicon, documentation
-// lexicon.osfarm.org/documentation, plugin ekylibre-samsys (engine.rb), Gemfile d'Ekylibre.
+// lexicon.osfarm.org/documentation, docs/architecture.md de Fourmy (§7 Plugins, connecteur Traccar).
 // Écartés : URL de production de l'API (non confirmée), licences du code du Lexicon et de la documentation.
 import { Image } from 'astro:assets';
 import Base from '~/layouts/Base.astro';
@@ -10,7 +10,8 @@ import CodeSample from './CodeSample.astro';
 import illusPoste from '~/assets/illustrations/poste-developpeur.webp';
 import illusServeurs from '~/assets/illustrations/salle-serveurs.webp';
 import { routePath, type Locale } from '~/i18n/routes';
-import { stats, plugins, formatCompact, formatInt } from '~/lib/data';
+import { stats, formatCompact, formatInt } from '~/lib/data';
+import { connectors as allConnectors, CONNECTOR_STATUS_LABEL } from '~/lib/interop';
 import { LINKS } from '~/lib/links';
 import type { IconName } from '~/lib/icon-names';
 
@@ -24,21 +25,13 @@ const firstMonth = new Date(stats.core.firstCommit).toLocaleDateString(fr ? 'fr-
   month: 'long',
   year: 'numeric',
 });
-// Provisoire (L1 → L4 du plan claudedocs/workflow_accueil_kit_connecteurs.md) : la section des plugins
-// Ekylibre lit encore plugins.json ; elle sera remplacée par le modèle de plugins de Fourmy.
-const connectors = plugins.map((p) => ({
-  slug: p.slug,
-  repoUrl: p.url,
-  title: p.readmeSummary,
-  version: p.latestTag,
-  license: p.license,
-}));
-const samsys = connectors.find((c) => c.slug === 'samsys');
+// Connecteurs de Fourmy (src/data/connectors.yaml) : le tableau dit ce qui est stable et ce qui est en cours.
+const connectors = await allConnectors(lang, { product: 'fourmy' });
 
 const title = fr ? 'Développeurs : API, MCP, plugins et licences' : 'Developers: API, MCP, plugins and licences';
 const description = fr
-  ? 'API REST v2 d’Ekylibre, API JSON/CSV et serveur MCP du Lexicon, plugins Rails, licences : tout pour connecter votre outil à Ekylibre.'
-  : 'Ekylibre’s REST API v2, Lexicon’s JSON/CSV API and MCP server, Rails plugins, licences: everything you need to connect your tool to Ekylibre.';
+  ? 'API REST v2 d’Ekylibre, API JSON/CSV et serveur MCP du Lexicon, connecteurs et plugins de Fourmy, licences : tout pour connecter votre outil.'
+  : 'Ekylibre’s REST API v2, Lexicon’s JSON/CSV API and MCP server, Fourmy connectors and plugins, licences: everything you need to connect your tool.';
 
 const nav: Array<{ id: string; icon: IconName; label: string }> = [
   { id: 'api-ekylibre', icon: 'code', label: fr ? 'API d’Ekylibre' : 'Ekylibre API' },
@@ -120,79 +113,75 @@ const mcpConfig = `{
   }
 }`;
 
-const gemfile = `# Gemfile.plugins (chargé par le Gemfile d'Ekylibre)
-gem 'ekylibre-samsys',
-    git: 'https://github.com/ekylibre/ekylibre-samsys.git'${samsys ? `,\n    tag: '${samsys.version}'` : ''}`;
-const gemfileEn = gemfile.replace("(chargé par le Gemfile d'Ekylibre)", '(loaded by Ekylibre’s Gemfile)');
-
-// Extrait réel de lib/ekylibre-samsys/engine.rb, abrégé.
-const engine = `module EkylibreSamsys
-  class Engine < ::Rails::Engine
-    initializer :ekylibre_samsys_i18n do |app|
-      app.config.i18n.load_path += Dir[root.join('config', 'locales', '**', '*.yml')]
-    end
-
-    initializer :ekylibre_samsys_integration do
-      Samsys::SamsysIntegration.run every: :day do
-        SamsysFetchUpdateCreateJob.perform_now(…)
-      end
-    end
-
-    initializer :add_samsys_partials do
-      Ekylibre::View::Addon.add(:extensions_content_top,
-        'backend/ride_sets/sync_samsys_toolbar', to: 'backend/ride_sets#index')
-    end
-  end
-end`;
+// Esquisse du manifeste d'un plugin Fourmy (docs/architecture.md de Fourmy, §7) : format en préparation.
+const manifest = `{
+  "id": "weenat",
+  "version": "0.1.0",
+  "permissions": ["plots:read", "readings:write"],
+  "events": ["plot.updated"],
+  "extensions": ["map.layer", "farm.panel"]
+}`;
 
 const pluginPoints = fr
   ? [
-      ['Un dépôt, une gem', 'Le plugin déclare un Rails::Engine et s’ajoute au Gemfile d’Ekylibre.'],
       [
-        'Une intégration',
-        'Il décrit la connexion au service tiers (identifiants, vérification) et les synchronisations à lancer, par exemple chaque jour.',
+        'Aujourd’hui : un module du dépôt',
+        'Les connecteurs stables vivent dans le dépôt de Fourmy (packages/connector-traccar, packages/geo-ign…). Les accès au service tiers sont chiffrés, propres à chaque ferme et testés avant d’être enregistrés.',
       ],
       [
-        'Des tâches de fond',
-        'Les données sont récupérées par des jobs, puis transformées en objets Ekylibre : interventions, relevés, écritures.',
+        'Demain : un service à part',
+        'Un plugin Fourmy est un service indépendant qui utilise l’API publique, avec un jeton limité aux permissions accordées et à une ferme.',
       ],
-      ['Des points d’extension', 'Le plugin ajoute ses vues, ses traductions et ses boutons aux écrans existants.'],
-      ['Une version publiée', 'Dès qu’un tag est publié sur GitHub, le connecteur apparaît sur ce site.'],
+      ['Des événements', 'Fourmy prévient le plugin par webhook des événements auxquels il s’est abonné.'],
+      [
+        'Des points d’extension',
+        'Le plugin peut ajouter une couche de carte, un panneau ou un type d’intervention, affichés dans une iframe isolée.',
+      ],
+      [
+        'Un manifeste',
+        'Identité, version, permissions, événements et points d’extension sont déclarés dans fourmy-plugin.json ; l’exploitant accepte les permissions à l’installation.',
+      ],
     ]
   : [
-      ['One repository, one gem', 'The plugin declares a Rails::Engine and is added to Ekylibre’s Gemfile.'],
       [
-        'An integration',
-        'It describes the connection to the third-party service (credentials, check) and the syncs to run, for example daily.',
+        'Today: a module in the repository',
+        'Stable connectors live in the Fourmy repository (packages/connector-traccar, packages/geo-ign…). Access to the third-party service is encrypted, specific to each farm and tested before it is saved.',
       ],
       [
-        'Background jobs',
-        'Data is fetched by jobs, then turned into Ekylibre objects: interventions, readings, accounting entries.',
+        'Next: a separate service',
+        'A Fourmy plugin is a standalone service that uses the public API, with a token limited to the permissions granted and to one farm.',
       ],
-      ['Extension points', 'The plugin adds its views, translations and buttons to existing screens.'],
-      ['A published release', 'As soon as a tag is published on GitHub, the connector appears on this site.'],
+      ['Events', 'Fourmy notifies the plugin by webhook of the events it subscribed to.'],
+      [
+        'Extension points',
+        'The plugin can add a map layer, a panel or an intervention type, displayed in a sandboxed iframe.',
+      ],
+      [
+        'A manifest',
+        'Identity, version, permissions, events and extension points are declared in fourmy-plugin.json; the farmer accepts the permissions on installation.',
+      ],
     ];
 
 const steps = fr
   ? [
-      'Partez d’un plugin existant proche de votre cas : Samsys pour des machines, Weenat pour des capteurs, Baqio pour un logiciel de vente.',
-      'Décrivez l’intégration : authentification auprès de votre service et test de connexion.',
-      'Écrivez la récupération des données dans un job, et leur correspondance avec les modèles d’Ekylibre, en vous appuyant sur les nomenclatures Onoma et Lexicon.',
+      'Partez du connecteur Traccar (packages/connector-traccar) : un client du service tiers et la correspondance de ses données avec le modèle de Fourmy.',
+      'Décrivez l’accès à votre service : identifiants, test de connexion, fréquence de synchronisation.',
+      'Écrivez la correspondance avec les contrats de Fourmy (@fourmy/contracts) : interventions, relevés, traces, en vous appuyant sur les référentiels du Lexicon.',
       'Ajoutez des tests, la documentation et les traductions (au moins français et anglais).',
-      'Publiez une première version (tag), puis annoncez-la sur le Discord.',
+      'Proposez votre contribution sur le dépôt de Fourmy, puis annoncez-la sur le Discord.',
     ]
   : [
-      'Start from an existing plugin close to your case: Samsys for machinery, Weenat for sensors, Baqio for sales software.',
-      'Describe the integration: authentication with your service and a connection test.',
-      'Write the data fetch in a job, and map it to Ekylibre’s models using the Onoma and Lexicon nomenclatures.',
+      'Start from the Traccar connector (packages/connector-traccar): a client for the third-party service and the mapping of its data to Fourmy’s model.',
+      'Describe access to your service: credentials, connection test, sync frequency.',
+      'Write the mapping to Fourmy’s contracts (@fourmy/contracts): interventions, readings, tracks, using Lexicon reference data.',
       'Add tests, documentation and translations (at least French and English).',
-      'Publish a first release (tag), then announce it on Discord.',
+      'Open a contribution on the Fourmy repository, then announce it on Discord.',
     ];
 
 const licences = fr
   ? [
       ['Ekylibre (cœur)', 'GNU AGPL v3', 'https://github.com/ekylibre/ekylibre'],
-      ['Plugins et connecteurs', 'Indiquée dans chaque dépôt (voir le tableau ci-dessus)', null],
+      ['Fourmy et ses connecteurs', 'GNU AGPL v3', 'https://github.com/ekylibre/fourmy'],
       ['Lexicon (code)', 'Code source ouvert sur GitHub', 'https://github.com/osfarm/lexicon'],
       [
         'Données du Lexicon',
@@ -202,7 +191,7 @@ const licences = fr
     ]
   : [
       ['Ekylibre (core)', 'GNU AGPL v3', 'https://github.com/ekylibre/ekylibre'],
-      ['Plugins and connectors', 'Stated in each repository (see the table above)', null],
+      ['Fourmy and its connectors', 'GNU AGPL v3', 'https://github.com/ekylibre/fourmy'],
       ['Lexicon (code)', 'Source code open on GitHub', 'https://github.com/osfarm/lexicon'],
       [
         'Lexicon data',
@@ -212,7 +201,7 @@ const licences = fr
     ];
 
 const contribLinks = [
-  { href: LINKS.github, label: fr ? 'Ekylibre et ses plugins' : 'Ekylibre and its plugins', icon: 'code-fork' },
+  { href: LINKS.github, label: fr ? 'Ekylibre, Fourmy et leurs connecteurs' : 'Ekylibre, Fourmy and their connectors', icon: 'code-fork' },
   { href: 'https://github.com/osfarm/lexicon', label: 'Lexicon', icon: 'database' },
   {
     href: 'https://lexicon.osfarm.org/contribute',
@@ -367,12 +356,12 @@ const contribLinks = [
 
   <section id="plugins" class="section-light scroll-mt-20 py-24">
     <div class="container-site">
-      <p class="eyebrow text-eky-green-text">Ruby on Rails</p>
-      <h2 class="mt-3 max-w-3xl text-h2">{fr ? 'Un connecteur, c’est un plugin' : 'A connector is a plugin'}</h2>
+      <p class="eyebrow text-eky-green-text">Fourmy</p>
+      <h2 class="mt-3 max-w-3xl text-h2">{fr ? 'Connecteurs et plugins de Fourmy' : 'Fourmy connectors and plugins'}</h2>
       <p class="mt-5 max-w-3xl text-lead text-muted">
         {fr
-          ? 'Les connecteurs d’Ekylibre sont des extensions indépendantes : des moteurs Rails (Rails engines) packagés en gem Ruby, chacun dans son dépôt ekylibre-<nom>.'
-          : 'Ekylibre’s connectors are standalone extensions: Rails engines packaged as Ruby gems, each in its own ekylibre-<name> repository.'}
+          ? 'Un connecteur fait entrer dans Fourmy les données d’un outil de la ferme, ou les en fait sortir. Le cœur reste petit : les intégrations vivent à côté, et deviendront des plugins indépendants. Le modèle de plugins est en préparation.'
+          : 'A connector brings data from a farm tool into Fourmy, or sends it out. The core stays small: integrations live alongside it, and will become standalone plugins. The plugin model is in preparation.'}
       </p>
 
       <div class="mt-12 grid gap-12 lg:grid-cols-[1fr_1.2fr]">
@@ -385,56 +374,56 @@ const contribLinks = [
           ))}
         </ul>
         <div class="flex min-w-0 flex-col gap-4">
-          <CodeSample lang={lang} label="Gemfile.plugins" code={fr ? gemfile : gemfileEn} />
-          <CodeSample lang={lang} label="lib/ekylibre-samsys/engine.rb" code={engine} copy={false} />
+          <CodeSample lang={lang} label="fourmy-plugin.json" code={manifest} copy={false} />
           <p class="text-sm text-muted">
-            {fr ? 'Extrait abrégé du plugin ' : 'Abridged excerpt from the '}
-            <a href="https://github.com/ekylibre/ekylibre-samsys" rel="noopener" target="_blank">
-              ekylibre-samsys
+            {fr
+              ? 'Esquisse du manifeste : le format est en préparation et peut encore changer. '
+              : 'Draft manifest: the format is in preparation and may still change. '}
+            <a href="https://github.com/ekylibre/fourmy" rel="noopener" target="_blank">
+              {fr ? 'Dépôt de Fourmy' : 'Fourmy repository'}
             </a>
-            {fr ? '.' : ' plugin.'}
           </p>
         </div>
       </div>
 
-      <h3 class="mt-20 text-h3">
-        {fr ? `Les ${stats.stablePlugins} plugins stables` : `The ${stats.stablePlugins} stable plugins`}
-      </h3>
+      <h3 class="mt-20 text-h3">{fr ? 'Les connecteurs de Fourmy' : 'Fourmy connectors'}</h3>
       <p class="mt-2 max-w-3xl text-muted">
         {fr
-          ? 'Dépôts actifs ayant au moins une version publiée. Version et licence relevées sur GitHub à la construction du site.'
-          : 'Active repositories with at least one published release. Version and licence read from GitHub when the site is built.'}
+          ? 'Les connecteurs stables sont publiés dans le dépôt de Fourmy ; les autres sont en cours. La liste complète, avec ceux de Lyvre, est sur la page Interopérabilité.'
+          : 'Stable connectors are published in the Fourmy repository; the others are in progress. The full list, including Lyvre’s, is on the Interoperability page.'}
       </p>
       <div class="mt-6 overflow-x-auto rounded-[var(--radius-card)] ring-1 ring-soil-800/10">
         <table class="w-full min-w-[36rem] text-left text-sm">
           <thead class="bg-straw-100 font-display text-xs tracking-wide text-soil-800 uppercase">
             <tr>
               <th scope="col" class="px-4 py-3">
-                {fr ? 'Dépôt' : 'Repository'}
+                {fr ? 'Connecteur' : 'Connector'}
               </th>
               <th scope="col" class="px-4 py-3">
-                {fr ? 'Rôle' : 'Purpose'}
+                {fr ? 'Partenaire' : 'Partner'}
               </th>
               <th scope="col" class="px-4 py-3">
-                Version
+                {fr ? 'État' : 'Status'}
               </th>
               <th scope="col" class="px-4 py-3">
-                {fr ? 'Licence' : 'Licence'}
+                Code
               </th>
             </tr>
           </thead>
           <tbody class="divide-y divide-soil-800/8 bg-white/60">
             {connectors.map((c) => (
               <tr>
-                <td class="px-4 py-3 font-mono whitespace-nowrap">
-                  <a href={c.repoUrl} rel="noopener" target="_blank">
-                    {c.repoUrl.split('/').pop()}
-                  </a>
-                </td>
                 <td class="px-4 py-3">{c.title}</td>
-                <td class="px-4 py-3 font-mono whitespace-nowrap">{c.version}</td>
-                <td class="px-4 py-3 whitespace-nowrap text-muted">
-                  {c.license ?? (fr ? 'non déclarée' : 'not stated')}
+                <td class="px-4 py-3 whitespace-nowrap">{c.partner?.name ?? '—'}</td>
+                <td class="px-4 py-3 whitespace-nowrap">{CONNECTOR_STATUS_LABEL[c.status][lang]}</td>
+                <td class="px-4 py-3 font-mono whitespace-nowrap">
+                  {c.hasCode ? (
+                    <a href={c.codeUrl} rel="noopener" target="_blank">
+                      {c.codeUrl.split('/tree/main/').pop()}
+                    </a>
+                  ) : (
+                    <span class="text-muted">—</span>
+                  )}
                 </td>
               </tr>
             ))}
@@ -457,8 +446,13 @@ const contribLinks = [
           ))}
         </ol>
         <p class="mt-10">
-          <a href={LINKS.techdoc} rel="noopener" target="_blank" class="inline-flex items-center gap-2 font-semibold">
-            {fr ? 'Documentation technique' : 'Technical documentation'} <Icon name="arrow-right" />
+          <a
+            href="https://github.com/ekylibre/fourmy/blob/main/docs/architecture.md"
+            rel="noopener"
+            target="_blank"
+            class="inline-flex items-center gap-2 font-semibold"
+          >
+            {fr ? 'Architecture de Fourmy' : 'Fourmy architecture'} <Icon name="arrow-right" />
           </a>
         </p>
       </div>

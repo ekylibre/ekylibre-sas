@@ -13,7 +13,6 @@ import illusSupport from '~/assets/illustrations/bureau-comptable.webp';
 import stepDiagnostic from '~/assets/illustrations/support-probleme.webp';
 import stepAccompagnement from '~/assets/illustrations/support-accompagnement.webp';
 import stepAutonomie from '~/assets/illustrations/support-reussite.webp';
-import { stats } from '~/lib/data';
 import type { Locale } from '~/i18n/routes';
 
 interface Props {
@@ -85,8 +84,8 @@ const services = [
     img: illusConnecteurs,
     title: fr ? 'Développement de connecteurs' : 'Connector development',
     text: fr
-      ? `Votre matériel, votre capteur ou votre logiciel n’est pas encore relié à Ekylibre ? Nous développons le connecteur, en logiciel libre, comme les ${stats.stablePlugins} déjà publiés. Éditeurs et constructeurs : c’est aussi le moyen de rendre votre outil accessible à Aiffel et aux utilisateurs d’Ekylibre.`
-      : `Your equipment, sensor or software isn’t connected to Ekylibre yet? We build the connector as free software, like the ${stats.stablePlugins} already released. For vendors and manufacturers, it is also how your tool becomes available to Aiffel and to Ekylibre users.`,
+      ? 'Votre matériel, votre capteur ou votre logiciel n’est pas encore relié à Fourmy ou à Lyvre ? Nous développons le connecteur, en logiciel libre, comme ceux déjà publiés. Éditeurs et constructeurs : c’est aussi le moyen de rendre votre outil accessible à Aiffel et aux utilisateurs de Fourmy.'
+      : 'Your equipment, sensor or software isn’t connected to Fourmy or Lyvre yet? We build the connector as free software, like the ones already released. For vendors and manufacturers, it is also how your tool becomes available to Aiffel and to Fourmy users.',
     deliverables: fr
       ? [
           'Un connecteur (extension Ekylibre) publié et versionné sur GitHub',

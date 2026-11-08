@@ -20,7 +20,7 @@ Les chiffres et listes du site viennent de sources vivantes, interrogées à cha
 
 | Script | Source | Sortie |
 | --- | --- | --- |
-| `scripts/fetch-plugins.mjs` | API GitHub, organisation `ekylibre` | `src/data/generated/plugins.json`, `stats.json` |
+| `scripts/fetch-github.mjs` | API GitHub, dépôt `ekylibre/ekylibre` | `src/data/generated/stats.json` |
 | `scripts/fetch-lexicon.mjs` | `https://lexicon.osfarm.org/catalog.json` | `src/data/generated/datasets.json` |
 
 `npm run fetch:data` les relance en local (jeton GitHub lu dans `GITHUB_TOKEN` ou `gh auth token`).

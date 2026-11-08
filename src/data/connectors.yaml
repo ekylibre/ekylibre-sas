@@ -33,7 +33,7 @@
   zone: parcelles
   dataFlow: in
   partner: { name: IGN, url: 'https://www.ign.fr/' }
-  title: { fr: Relief, photo et bâtiments, en: Terrain, aerial imagery and buildings }
+  title: { fr: 'Relief, photo et bâtiments', en: 'Terrain, aerial imagery and buildings' }
   summary:
     fr: Le relief, la photographie aérienne et les bâtiments de l’IGN dessinent la ferme en 2D et en 3D dans Fourmy.
     en: IGN terrain, aerial imagery and building data draw the farm in 2D and 3D in Fourmy.

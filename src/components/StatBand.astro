@@ -2,6 +2,7 @@
 // Bandeau de chiffres : tous calculés au build depuis GitHub et le Lexicon (EF9).
 // Les chiffres fournis par Ekylibre SAS (exploitations, hectares) s'ajouteront via figures.yaml (B9).
 import { stats, formatCompact, formatInt } from '~/lib/data';
+import { getProducts } from '~/lib/products';
 import type { Locale } from '~/i18n/routes';
 
 interface Props {
@@ -24,8 +25,9 @@ const items = [
     }[lang],
   },
   {
-    value: formatInt(stats.stablePlugins, lang),
-    label: { fr: 'connecteurs stables vers les outils de la ferme', en: 'stable connectors to farm tools' }[lang],
+    // Plus de compteur de connecteurs (docs/design/04, D35) : le nombre de logiciels, lu dans products.yaml.
+    value: formatInt(getProducts(lang).length, lang),
+    label: { fr: 'logiciels libres, un seul système', en: 'free software projects, one system' }[lang],
   },
   {
     value: String(since),

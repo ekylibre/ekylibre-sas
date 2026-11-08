@@ -44,8 +44,8 @@ const layers = [
     img: medTracteur,
     title: fr ? 'Les connecteurs relient vos outils' : 'Connectors link your tools',
     text: fr
-      ? 'Chaque connecteur est une extension d’Ekylibre, publiée en logiciel libre. Il récupère les données d’un outil (boîtier de tracteur, station météo, banque, logiciel de vente) et les transforme en interventions, relevés ou opérations dans Ekylibre. Certains fonctionnent dans les deux sens.'
-      : 'Each connector is an Ekylibre extension released as free software. It retrieves data from a tool (tractor box, weather station, bank, sales software) and turns it into interventions, readings or transactions in Ekylibre. Some work both ways.',
+      ? 'Chaque connecteur est publié en logiciel libre. Il récupère les données d’un outil (traceur GPS, station météo, banque, logiciel de vente) et les transforme en interventions et relevés dans Fourmy, ou en opérations dans Lyvre. Certains fonctionnent dans les deux sens.'
+      : 'Every connector is released as free software. It retrieves data from a tool (GPS tracker, weather station, bank, sales software) and turns it into interventions and readings in Fourmy, or transactions in Lyvre. Some work both ways.',
   },
   {
     img: medRegistre,
@@ -58,8 +58,8 @@ const layers = [
     img: medAgriculteur,
     title: fr ? 'Le dialogue remplace la saisie' : 'Talking replaces typing',
     text: fr
-      ? 'Avec Aiffel, l’agriculteur dit ce qu’il a fait, à la voix ou par écrit. L’assistant prépare l’enregistrement, le vérifie dans le Lexicon et l’écrit dans Ekylibre après validation.'
-      : 'With Aiffel, farmers say what they did, by voice or text. The assistant prepares the record, checks it against Lexicon and writes it to Ekylibre once approved.',
+      ? 'Avec Aiffel, l’agriculteur dit ce qu’il a fait, à la voix ou par écrit. L’assistant prépare l’enregistrement, le vérifie dans le Lexicon et l’écrit dans Fourmy après validation.'
+      : 'With Aiffel, farmers say what they did, by voice or text. The assistant prepares the record, checks it against Lexicon and writes it to Fourmy once approved.',
   },
 ];
 
@@ -232,13 +232,13 @@ const points = fr
       <p class="eyebrow text-eky-green-text">{fr ? 'Connecteurs' : 'Connectors'}</p>
       <h2 class="mt-3 text-h2">
         {fr
-          ? `${stats.stablePlugins} connecteurs stables, en logiciel libre`
-          : `${stats.stablePlugins} stable connectors, all free software`}
+          ? 'Des connecteurs en logiciel libre, stables ou en cours'
+          : 'Free-software connectors, stable or in progress'}
       </h2>
       <p class="mt-4 max-w-3xl text-lead text-muted">
         {fr
-          ? 'Chaque connecteur est un dépôt public sur GitHub. Nous n’affichons que ceux qui ont au moins une version publiée ; les autres apparaîtront ici dès leur première version.'
-          : 'Each connector is a public repository on GitHub. We only list those with at least one published release; others will appear here as soon as they are released.'}
+          ? 'Les connecteurs de Fourmy et de Lyvre. Un connecteur stable est publié dans le dépôt de son logiciel ; les autres sont en cours de développement.'
+          : 'Fourmy and Lyvre connectors. A stable connector is published in its software’s repository; the others are being developed.'}
       </p>
       <div class="mt-10">
         <ConnectorTable lang={lang} />

@@ -8,7 +8,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "fetch:data": "node scripts/fetch-plugins.mjs && node scripts/fetch-lexicon.mjs",
+    "fetch:data": "node scripts/fetch-github.mjs && node scripts/fetch-lexicon.mjs",
     "icons": "node scripts/build-icons.mjs",
     "dev": "astro dev",
     "build": "node scripts/check-content.mjs && astro check && astro build && node scripts/check-content.mjs --links",

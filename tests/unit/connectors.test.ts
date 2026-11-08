@@ -45,3 +45,7 @@ test('le fichier réel est cohérent avec scene.json', () => {
   assert.ok(connectors.every((c: { product: string }) => c.product === 'fourmy' || c.product === 'lyvre'));
 });
 
+test('title et summary : exactement fr et en (virgule YAML non protégée)', () => {
+  const broken = { fr: 'Relief', 'photo et bâtiments': null, en: 'Terrain' };
+  assert.match(connectorErrors([{ ...base, title: broken }], zones)[0]!, /exactement fr et en/);
+});

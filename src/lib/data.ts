@@ -1,18 +1,14 @@
 // Accès typé aux instantanés générés par scripts/fetch-*.mjs (src/data/generated/).
-import pluginsFile from '~/data/generated/plugins.json';
 import statsFile from '~/data/generated/stats.json';
 import datasetsFile from '~/data/generated/datasets.json';
 import type { Locale } from '~/i18n/routes';
 
-export type Plugin = (typeof pluginsFile.plugins)[number];
 export type Dataset = (typeof datasetsFile.datasets)[number];
 
-export const plugins: Plugin[] = pluginsFile.plugins;
 export const datasets: Dataset[] = datasetsFile.datasets;
 
 export const stats = {
   core: statsFile.core,
-  stablePlugins: statsFile.stablePlugins,
   lexicon: {
     datasets: datasetsFile.datasets.length,
     totalRows: datasetsFile.totalRows,

@@ -20,6 +20,13 @@ export function connectorErrors(connectors, zones) {
     if (!STATUSES.has(c.status)) errors.push(`${id} : état inconnu « ${c.status} »`);
     if (c.status === 'stable' && !c.source) errors.push(`${id} : stable sans source (code publié)`);
     if (c.status !== 'stable' && c.source) errors.push(`${id} : source indiquée pour un connecteur en cours`);
+    // Une virgule non protégée dans un dictionnaire YAML en ligne crée des clés parasites.
+    for (const field of ['title', 'summary']) {
+      const v = c[field] ?? {};
+      const keys = Object.keys(v).sort().join(',');
+      if (keys !== 'en,fr' || typeof v.fr !== 'string' || typeof v.en !== 'string')
+        errors.push(`${id} : ${field} doit avoir exactement fr et en (virgule à mettre entre guillemets ?)`);
+    }
     if (c.product === 'fourmy') {
       if (!c.zone) errors.push(`${id} : zone obligatoire pour Fourmy`);
       else if (!zones.has(c.zone)) errors.push(`${id} : zone inconnue « ${c.zone} »`);

@@ -9,6 +9,7 @@ import Icon from '~/components/Icon.astro';
 import illusMetiers from '~/assets/illustrations/moisson.webp';
 import { routePath, type Locale } from '~/i18n/routes';
 import { stats, formatCompact, formatInt } from '~/lib/data';
+import { getProducts } from '~/lib/products';
 import { LINKS } from '~/lib/links';
 import type { IconName } from '~/lib/icon-names';
 
@@ -74,7 +75,7 @@ const numbers = [
     label: fr ? 'commits dans le dépôt principal' : 'commits in the main repository',
   },
   { value: formatInt(stats.core.contributors, lang), label: fr ? 'contributeurs au code' : 'code contributors' },
-  { value: formatInt(stats.stablePlugins, lang), label: fr ? 'connecteurs stables' : 'stable connectors' },
+  { value: formatInt(getProducts(lang).length, lang), label: fr ? 'logiciels libres, un seul système' : 'free software projects, one system' },
   {
     value: formatCompact(stats.lexicon.totalRows, lang),
     label: fr ? 'données reliées dans le Lexicon' : 'records linked in Lexicon',
@@ -115,8 +116,8 @@ const numbers = [
       </h1>
       <p class="mt-5 max-w-3xl text-lead text-straw-50/85">
         {fr
-          ? 'Ekylibre SAS développe et fait vivre Ekylibre, Lexicon, Aiffel et Lyvre, quatre logiciels libres ; le Lexicon est un commun de l’association OSFarm. Nous vivons des services qui les font fonctionner chez nos clients.'
-          : 'Ekylibre SAS develops and runs Ekylibre, Lexicon, Aiffel and Lyvre, four free software projects; Lexicon is a commons of the OSFarm association. We make our living from the services that put them to work for our clients.'}
+          ? 'Ekylibre SAS développe et fait vivre Fourmy, Lexicon, Aiffel et Lyvre, quatre logiciels libres ; le Lexicon est un commun de l’association OSFarm. Nous vivons des services qui les font fonctionner chez nos clients.'
+          : 'Ekylibre SAS develops and runs Fourmy, Lexicon, Aiffel and Lyvre, four free software projects; Lexicon is a commons of the OSFarm association. We make our living from the services that put them to work for our clients.'}
       </p>
     </div>
   </section>
