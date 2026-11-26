@@ -3,7 +3,7 @@
   "frame": "local : Lambert 93 - (406300, 6532400), altitude NGF - 20 m ; glTF Y en haut (x, z, -y)",
   "unit": "m",
   "provenance": {
-    "source": "Maquette SCI Les Chênes Verts / FarmLab La Vauzelle (FreeCAD → Blender → glTF)",
+    "source": "Maquette SCI Les Chênes Verts / FarmLab La Vauzelle (FreeCAD → Blender → glTF) ; REBUS et bâtiments voisins d'après la maquette BIMx V2 de l'architecte (ESQ01b)",
     "layers": [
       "terrain",
       "contexte",
@@ -15,23 +15,23 @@
       "reseaux",
       "mobilier",
       "rebus_EDL",
-      "REBUS : cloisons et sols intérieurs"
+      "REBUS : cloisons, sols et sanitaires intérieurs"
     ],
-    "preparedAt": "2026-11-03T11:25:28.389Z",
+    "preparedAt": "2026-11-26T22:46:53.799Z",
     "script": "scripts/prepare-3d.mjs"
   },
   "assets": {
     "hero": {
       "file": "hero.glb",
-      "bytes": 2111792,
+      "bytes": 2520656,
       "trees": 1200,
-      "sha256": "3bf2a90fd3f2"
+      "sha256": "b145e44dce8a"
     },
     "full": {
       "file": "farm-full.glb",
-      "bytes": 2922472,
+      "bytes": 4146636,
       "trees": 2622,
-      "sha256": "e9d8ff29b0ea"
+      "sha256": "87b4619bbc01"
     }
   },
   "views": {
@@ -233,13 +233,19 @@
       "label": "Maison — siège Ekylibre"
     },
     "bureau": {
-      "node": "SITE_batiment_bat3_0_toit",
-      "lift": 6,
+      "xz": [
+        17.5,
+        -46.2
+      ],
+      "lift": 10.6,
       "label": "Annexe — bureau"
     },
     "hangars": {
-      "node": "SITE_batiment_bat4_hangar_0_toit",
-      "lift": 6,
+      "xz": [
+        9.3,
+        9.0
+      ],
+      "lift": 13.0,
       "label": "Hangar à matériel"
     },
     "elevage": {

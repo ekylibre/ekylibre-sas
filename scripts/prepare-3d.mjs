@@ -21,6 +21,7 @@ import {
   unpartition,
   dedup,
   instance,
+  join as joinPrimitives,
   prune,
   weld,
   simplify,
@@ -40,7 +41,10 @@ const MB = 1024 * 1024;
 // (sans intérêt pour le message et sans raison d'être publics).
 const LAYERS = ['terrain', 'contexte', 'paysage', 'rebus_ESQ', 'arbres'];
 // Éléments intérieurs de REBUS retirés (seule l'enveloppe est visible depuis le ciel).
-const REBUS_INTERIOR = new Set(['cloison', 'sol']);
+const REBUS_INTERIOR = new Set(['cloison', 'sol', 'sanitaire']);
+// Maillages détaillés issus de la maquette BIMx de l'architecte (V2) : bâtiments voisins (SITE_batiment_v2_*)
+// et bâtiment REBUS (ESQ_V2_*), simplifiés selon la variante (vus de loin, leur détail coûte cher).
+const BIMX_PREFIXES = ['SITE_batiment_v2_', 'ESQ_V2_'];
 
 const VARIANTS = {
   hero: {
@@ -49,6 +53,7 @@ const VARIANTS = {
     maxTrees: 1200,
     terrainRatio: 0.5, // part des triangles conservés sur le terrain proche
     farTerrainRatio: 0.35,
+    bimxRatio: 0.12, // part des triangles conservés sur les maillages BIMx de l'architecte
     textureSize: { ortho_web: 2048, ortho_lointain_web: 1024 },
   },
   full: {
@@ -57,6 +62,7 @@ const VARIANTS = {
     maxTrees: Infinity,
     terrainRatio: 0.8,
     farTerrainRatio: 0.6,
+    bimxRatio: 0.5,
     textureSize: { ortho_web: 2048, ortho_lointain_web: 2048 },
   },
 };
@@ -112,12 +118,22 @@ async function build(name, v) {
   const dropped = trees.slice(Number.isFinite(v.maxTrees) ? v.maxTrees : trees.length);
   for (const t of dropped) t.node.dispose();
 
-  // Simplification du terrain (les maillages « drape_* » sont fins et restent intacts).
+  // Simplification du terrain (les maillages « drape_* » sont fins et restent intacts) et des maillages BIMx.
   await doc.transform(weld());
+  const bimxMeshes = new Set(
+    root
+      .listNodes()
+      .filter((n) => n.getMesh() && BIMX_PREFIXES.some((p) => n.getName().startsWith(p)))
+      .map((n) => n.getMesh()),
+  );
+  let bimxBefore = 0;
+  let bimxAfter = 0;
   for (const mesh of root.listMeshes()) {
     const name = mesh.getName();
-    const ratio =
-      name === 'SITE_terrain_terrain'
+    const isBimx = bimxMeshes.has(mesh);
+    const ratio = isBimx
+      ? v.bimxRatio
+      : name === 'SITE_terrain_terrain'
         ? v.terrainRatio
         : name === 'SITE_terrain_terrain_lointain'
           ? v.farTerrainRatio
@@ -125,11 +141,30 @@ async function build(name, v) {
     if (ratio >= 1) continue;
     for (const prim of mesh.listPrimitives()) {
       const before = prim.getIndices()?.getCount() ?? 0;
-      await simplifyPrimitive(prim, ratio);
+      // BIMx : pièces nombreuses, petites et à facettes (sommets dédoublés par normale) : coutures franchissables,
+      // petites pièces supprimées, bords libres ; sinon presque rien ne se simplifie
+      await simplifyPrimitive(prim, ratio, isBimx ? { error: 0.02, flags: ['Permissive', 'Prune'] } : {});
       const after = prim.getIndices()?.getCount() ?? 0;
-      console.log(`  ${name} : ${before / 3} → ${after / 3} triangles`);
+      if (after === 0) prim.dispose(); // pièce entièrement supprimée par la simplification
+      if (isBimx) {
+        bimxBefore += before / 3;
+        bimxAfter += after / 3;
+      } else console.log(`  ${name} : ${before / 3} → ${after / 3} triangles`);
     }
   }
+  for (const node of root.listNodes()) {
+    if (node.getMesh() && node.getMesh().listPrimitives().length === 0) node.dispose();
+  }
+  // Les éléments BIMx (un nœud par élément et par matériau, plus de 800) sont fusionnés par matériau : le site
+  // n'utilise ni leurs noms ni leurs métadonnées, et chaque nœud coûte en poids et en appels de rendu.
+  for (const node of root.listNodes()) {
+    if (node.getMesh() && BIMX_PREFIXES.some((p) => node.getName().startsWith(p))) {
+      node.setName('').setExtras({});
+      node.getMesh().setName('');
+    }
+  }
+  await doc.transform(joinPrimitives({ keepNamed: true }));
+  console.log(`  maillages BIMx : ${bimxBefore} → ${bimxAfter} triangles`);
 
   // Textures : WebP redimensionné (three.js lit EXT_texture_webp nativement).
   for (const tex of root.listTextures()) {
@@ -168,14 +203,14 @@ async function build(name, v) {
 }
 
 /** Simplifie une primitive avec meshoptimizer en conservant les bords (raccords avec les drapés). */
-async function simplifyPrimitive(prim, ratio) {
+async function simplifyPrimitive(prim, ratio, { error = 0.01, flags = ['LockBorder'] } = {}) {
   const pos = prim.getAttribute('POSITION');
   const idx = prim.getIndices();
   if (!pos || !idx) return;
   const positions = new Float32Array(pos.getArray());
   const indices = new Uint32Array(idx.getArray());
   const target = Math.floor((indices.length * ratio) / 3) * 3;
-  const [out] = MeshoptSimplifier.simplify(indices, positions, 3, target, 0.01, ['LockBorder']);
+  const [out] = MeshoptSimplifier.simplify(indices, positions, 3, target, error, flags);
   idx.setArray(out);
   compactPrimitive(prim);
 }
@@ -197,9 +232,11 @@ const manifest = {
   frame: sourceManifest.repere,
   unit: 'm',
   provenance: {
-    source: 'Maquette SCI Les Chênes Verts / FarmLab La Vauzelle (FreeCAD → Blender → glTF)',
+    source:
+      'Maquette SCI Les Chênes Verts / FarmLab La Vauzelle (FreeCAD → Blender → glTF) ; ' +
+      "REBUS et bâtiments voisins d'après la maquette BIMx V2 de l'architecte (ESQ01b)",
     layers: LAYERS,
-    excluded: ['reseaux', 'mobilier', 'rebus_EDL', 'REBUS : cloisons et sols intérieurs'],
+    excluded: ['reseaux', 'mobilier', 'rebus_EDL', 'REBUS : cloisons, sols et sanitaires intérieurs'],
     preparedAt: new Date().toISOString(),
     script: 'scripts/prepare-3d.mjs',
   },
