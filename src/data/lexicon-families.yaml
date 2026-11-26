@@ -81,6 +81,8 @@
     production_documentations: { fr: Fiches de production, en: Production guides }
     rd_agri: { fr: Recherche et développement agricoles, en: Agricultural R&D }
     agricultural_pictures: { fr: Photothèque agricole, en: Agricultural picture library }
+    bsv: { fr: Bulletins de santé du végétal, en: Plant health bulletins }
+    bsv_archive: { fr: Archives des bulletins de santé du végétal (depuis 1955), en: Plant health bulletin archive (since 1955) }
 
 - id: filiere
   icon: shopping-basket

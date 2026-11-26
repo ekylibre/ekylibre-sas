@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-11-03T11:02:36.975Z",
+  "generatedAt": "2026-11-26T23:20:20.869Z",
   "source": "https://lexicon.osfarm.org/catalog.json",
-  "totalRows": 623191518,
-  "providers": 33,
+  "totalRows": 624335888,
+  "providers": 35,
   "byEkylibre": 16,
   "datasets": [
     {
@@ -65,6 +65,30 @@
       "href": "https://lexicon.osfarm.org/catalog/alim_confiance"
     },
     {
+      "name": "bsv",
+      "provider": "Réseaux régionaux d'épidémiosurveillance (DRAAF, chambres d'agriculture, FREDON)",
+      "licence": "Reproduction autorisée avec mention de la source",
+      "licenceUrl": "https://agriculture.gouv.fr/le-bulletin-de-sante-du-vegetal",
+      "scope": "open",
+      "rows": 312131,
+      "sourceDate": "2026-11-06",
+      "sourceUrl": "https://agriculture.gouv.fr/le-bulletin-de-sante-du-vegetal",
+      "version": "2026.11.10.2",
+      "href": "https://lexicon.osfarm.org/catalog/bsv"
+    },
+    {
+      "name": "bsv_archive",
+      "provider": "Projet PestObserver",
+      "licence": "CC-BY",
+      "licenceUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "scope": "open",
+      "rows": 40828,
+      "sourceDate": "2016-12-01",
+      "sourceUrl": "https://www.data.gouv.fr/fr/datasets/archive-en-agro-ecologie-de-bsv-bulletins-de-sante-du-vegetal/",
+      "version": "2026.11.10.1",
+      "href": "https://lexicon.osfarm.org/catalog/bsv_archive"
+    },
+    {
       "name": "budgets",
       "provider": "Ekylibre SAS",
       "licence": "CC-BY-SA 4.0",
@@ -97,7 +121,7 @@
       "rows": 93629068,
       "sourceDate": "2026-09-30",
       "sourceUrl": "https://cadastre.data.gouv.fr/",
-      "version": "2026.10.09.1",
+      "version": "2026.11.07.1",
       "href": "https://lexicon.osfarm.org/catalog/cadastre"
     },
     {
@@ -106,10 +130,10 @@
       "licence": "Licence Ouverte 2.0",
       "licenceUrl": "https://www.etalab.gouv.fr/wp-content/uploads/2017/04/ETALAB-Licence-Ouverte-v2.0.pdf",
       "scope": "members",
-      "rows": 46582299,
-      "sourceDate": "2025-08-19",
+      "rows": 47303475,
+      "sourceDate": "2026-11-03",
       "sourceUrl": "https://www.data.gouv.fr/fr/datasets/fichiers-des-locaux-et-des-parcelles-des-personnes-morales/",
-      "version": "2026.10.09.1",
+      "version": "2026.11.07.1",
       "href": "https://lexicon.osfarm.org/catalog/cadastre_owners"
     },
     {
@@ -157,7 +181,7 @@
       "rows": 35010,
       "sourceDate": "2026-10-04",
       "sourceUrl": "https://lexicon.osfarm.org",
-      "version": "2026.10.10.1",
+      "version": "2026.11.07.1",
       "href": "https://lexicon.osfarm.org/catalog/commune_links"
     },
     {
@@ -178,10 +202,10 @@
       "licence": "Licence Ouverte 2.0",
       "licenceUrl": "https://www.etalab.gouv.fr/wp-content/uploads/2017/04/ETALAB-Licence-Ouverte-v2.0.pdf",
       "scope": "members",
-      "rows": 1979466,
+      "rows": 2047097,
       "sourceDate": "2026-10-04",
       "sourceUrl": "https://lexicon.osfarm.org",
-      "version": "2026.10.09.1",
+      "version": "2026.11.07.1",
       "href": "https://lexicon.osfarm.org/catalog/enterprise_links"
     },
     {
@@ -213,10 +237,10 @@
       "licence": "Réutilisation avec attribution",
       "licenceUrl": "https://appro-cereapro.com",
       "scope": "members",
-      "rows": 1260,
-      "sourceDate": "2026-10-07",
+      "rows": 2501,
+      "sourceDate": "2026-11-07",
       "sourceUrl": "https://appro-cereapro.com/catalogue",
-      "version": "2026.10.07.2",
+      "version": "2026.11.07.1",
       "href": "https://lexicon.osfarm.org/catalog/fertilizers"
     },
     {
@@ -225,10 +249,10 @@
       "licence": "Licence Ouverte 2.0",
       "licenceUrl": "https://www.etalab.gouv.fr/wp-content/uploads/2017/04/ETALAB-Licence-Ouverte-v2.0.pdf",
       "scope": "open",
-      "rows": 435,
-      "sourceDate": "2026-10-02",
+      "rows": 439,
+      "sourceDate": "2026-10-30",
       "sourceUrl": "https://www.ecologie.gouv.fr/politiques-publiques/prix-produits-petroliers",
-      "version": "2026.10.07.1",
+      "version": "2026.11.07.1",
       "href": "https://lexicon.osfarm.org/catalog/fuel_prices"
     },
     {
@@ -369,10 +393,10 @@
       "licence": "Open Licence",
       "licenceUrl": "https://www.etalab.gouv.fr/wp-content/uploads/2014/05/Licence_Ouverte.pdf",
       "scope": "open",
-      "rows": 123138,
-      "sourceDate": "2026-09-01",
+      "rows": 123484,
+      "sourceDate": "2026-11-10",
       "sourceUrl": "https://www.data.gouv.fr/fr/datasets/donnees-ouvertes-du-catalogue-e-phy-des-produits-phytopharmaceutiques-matieres-fertilisantes-et-supports-de-culture-adjuvants-produits-mixtes-et-melanges/",
-      "version": "2026.10.03.1",
+      "version": "2026.11.21.2",
       "href": "https://lexicon.osfarm.org/catalog/phytosanitary"
     },
     {
@@ -381,10 +405,10 @@
       "licence": "Réutilisation avec attribution",
       "licenceUrl": "https://appro-cereapro.com",
       "scope": "members",
-      "rows": 101,
-      "sourceDate": "2026-10-07",
+      "rows": 211,
+      "sourceDate": "2026-11-07",
       "sourceUrl": "https://appro-cereapro.com/catalogue",
-      "version": "2026.10.07.1",
+      "version": "2026.11.07.1",
       "href": "https://lexicon.osfarm.org/catalog/phytosanitary_prices"
     },
     {
@@ -432,7 +456,7 @@
       "rows": 4999,
       "sourceDate": "2022-02-22",
       "sourceUrl": "https://ekylibre.com",
-      "version": "2026.10.07.1",
+      "version": "2026.11.07.1",
       "href": "https://lexicon.osfarm.org/catalog/prices"
     },
     {
@@ -536,10 +560,10 @@
       "licence": "Réutilisation avec attribution",
       "licenceUrl": "https://www.germineo.com",
       "scope": "members",
-      "rows": 980,
-      "sourceDate": "2026-10-07",
+      "rows": 1883,
+      "sourceDate": "2026-11-07",
       "sourceUrl": "https://www.germineo.com/semences-1",
-      "version": "2026.10.07.6",
+      "version": "2026.11.07.1",
       "href": "https://lexicon.osfarm.org/catalog/seeds"
     },
     {
