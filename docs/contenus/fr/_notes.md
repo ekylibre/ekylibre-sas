@@ -31,7 +31,8 @@ description: "Notes internes de la première passe de rédaction (B10)."
 - Formulation du rôle d’Ekylibre SAS : lexicon.osfarm.org dit « construit et maintenu par l’association OSFarm ». Le brief dit « éditeur, contributeur principal et opérateur ». J’ai écrit « contributeur principal, participe au développement et à l’exploitation, produit 16 jeux ». À valider avec OSFarm.
 
 ### Aiffel
-- Rôle exact d’Ekylibre SAS : aiffel.org ne nomme aucune entité (« Un commun numérique pour l’agriculture »).
+- Rôle d’Ekylibre SAS : réglé en novembre 2026 (édite et opère ; code AGPL).
+- Prix et bouton d’abonnement : à ajouter avec T5 (comparatif des offres, billing.ekylibre.com).
 
 ### Services
 - Formation : certification Qualiopi ? prise en charge VIVEA / OPCO ?

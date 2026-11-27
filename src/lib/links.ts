@@ -11,6 +11,8 @@ export const LINKS = {
   github: 'https://github.com/ekylibre',
   discord: 'https://discord.gg/BSpD6hq7qR',
   aiffel: 'https://aiffel.org/',
+  aiffelCode: 'https://github.com/ekylibre/aiffel',
+  aiffelInstall: 'https://github.com/ekylibre/aiffel/blob/main/docs/ops/install-libre.md',
   lexicon: 'https://lexicon.osfarm.org/',
   lexiconCatalog: 'https://lexicon.osfarm.org/catalog',
   osfarm: 'https://www.osfarm.org/',
