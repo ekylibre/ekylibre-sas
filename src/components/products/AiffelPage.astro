@@ -1,7 +1,8 @@
 ---
-// Page produit Aiffel (D3). Textes : docs/contenus/fr/aiffel.md, recoupés avec aiffel.org
-// (garanties, logiciels branchés, « même cœur open source »). Aiffel est en cours de lancement :
-// aucune offre ni aucun prix ici, renvoi vers aiffel.org. Exemple de conversation fictif, sans produit commercial.
+// Page produit Aiffel (D3, pivot ADR-10 de novembre 2026). Textes : docs/contenus/fr/aiffel.md.
+// Logiciels branchés : Ekylibre (écriture), Lyvre (comptabilité en lecture, exploitant seulement),
+// Lexicon ; Fourmy en cours. Code libre (AGPL) et installation libre sans support (D-REL).
+// Pas encore de prix ici : offres sur aiffel.org. Exemple de conversation fictif, sans produit commercial.
 import Base from '~/layouts/Base.astro';
 import Icon from '~/components/Icon.astro';
 import ProductCta from './ProductCta.astro';
@@ -39,7 +40,7 @@ const steps: Array<{ icon: IconName; title: string; text: string }> = fr
       {
         icon: 'check',
         title: 'Vous validez.',
-        text: 'L’enregistrement est écrit dans Ekylibre. Avant cela, tout se corrige ou s’annule.',
+        text: 'L’enregistrement est écrit dans votre logiciel de gestion. Avant cela, tout se corrige ou s’annule.',
       },
     ]
   : [
@@ -56,7 +57,7 @@ const steps: Array<{ icon: IconName; title: string; text: string }> = fr
       {
         icon: 'check',
         title: 'You approve.',
-        text: 'The record is written to Ekylibre. Until then, everything can be corrected or cancelled.',
+        text: 'The record is written to your farm management software. Until then, everything can be corrected or cancelled.',
       },
     ];
 
@@ -141,7 +142,26 @@ const audiences = fr
       ['Farm software vendors', 'who want their tool to be usable by voice, through an API or an MCP server.'],
     ];
 
-const jsonLd = softwareJsonLd({ name: 'Aiffel', description, url: LINKS.aiffel });
+const connected: Array<{ name: string; route: 'fourmy' | 'lyvre' | 'lexicon'; text: string }> = fr
+  ? [
+      { name: 'Ekylibre', route: 'fourmy', text: 'Aiffel y écrit les interventions, une fois validées.' },
+      { name: 'Lyvre', route: 'lyvre', text: 'Aiffel lit la comptabilité, sans jamais y écrire, et seulement pour l’exploitant.' },
+      { name: 'Lexicon', route: 'lexicon', text: 'Aiffel y vérifie doses, zones non traitées et délais avant récolte.' },
+      { name: 'Fourmy', route: 'fourmy', text: 'en cours de branchement, Aiffel y écrira comme dans Ekylibre.' },
+    ]
+  : [
+      { name: 'Ekylibre', route: 'fourmy', text: 'Aiffel writes the interventions to it, once approved.' },
+      { name: 'Lyvre', route: 'lyvre', text: 'Aiffel reads the accounts, never writes to them, and only for the farm owner.' },
+      { name: 'Lexicon', route: 'lexicon', text: 'Aiffel checks rates, buffer zones and pre-harvest intervals against it.' },
+      { name: 'Fourmy', route: 'fourmy', text: 'being connected, Aiffel will write to it as it does to Ekylibre.' },
+    ];
+
+const jsonLd = softwareJsonLd({
+  name: 'Aiffel',
+  description,
+  url: LINKS.aiffel,
+  license: 'https://www.gnu.org/licenses/agpl-3.0.html',
+});
 ---
 
 <Base lang={lang} routeKey="aiffel" title={title} description={description}>
@@ -165,8 +185,8 @@ const jsonLd = softwareJsonLd({ name: 'Aiffel', description, url: LINKS.aiffel }
       <h2 class="text-h2">{fr ? 'Qui fait quoi' : 'Who does what'}</h2>
       <p class="text-lead text-muted">
         {fr
-          ? 'Aiffel est un commun numérique pour l’agriculture, porté avec l’association OSFarm. Ekylibre SAS l’édite et l’opère. Son cœur est open source.'
-          : 'Aiffel is a digital commons for agriculture, run together with the OSFarm association. Ekylibre SAS publishes and operates it. Its core is open source.'}
+          ? 'Aiffel est un commun numérique pour l’agriculture, porté avec l’association OSFarm. Ekylibre SAS l’édite et l’opère. Son code est libre, sous licence AGPL.'
+          : 'Aiffel is a digital commons for agriculture, run together with the OSFarm association. Ekylibre SAS publishes and operates it. Its code is free software, under the AGPL licence.'}
       </p>
     </div>
   </section>
@@ -218,24 +238,20 @@ const jsonLd = softwareJsonLd({ name: 'Aiffel', description, url: LINKS.aiffel }
     <div class="container-site grid gap-12 lg:grid-cols-2">
       <div>
         <h2 class="text-h2">
-          {fr ? 'Aiffel écrit là où vous travaillez déjà' : 'Aiffel writes where you already work'}
+          {fr ? 'Aiffel se branche là où vous travaillez déjà' : 'Aiffel plugs into the software you already use'}
         </h2>
         <p class="mt-5 text-lead text-muted">
           {fr
-            ? 'Aiffel ne remplace aucun logiciel. Il est aujourd’hui branché sur Ekylibre et sur le Lexicon ; d’autres logiciels du marché sont prévus. Il s’y connecte de préférence par API ou par serveur MCP, sinon par fichiers.'
-            : 'Aiffel replaces no software. Today it is connected to Ekylibre and Lexicon, and other software on the market is planned. It connects through an API or an MCP server where available, otherwise through files.'}
+            ? 'Aiffel ne remplace aucun logiciel. Il se connecte à ceux de la ferme de préférence par API ou par serveur MCP, sinon par fichiers ; d’autres logiciels du marché sont prévus.'
+            : 'Aiffel replaces no software. It connects to the farm’s software through an API or an MCP server where available, otherwise through files; other software on the market is planned.'}
         </p>
-        <ul class="mt-8 flex flex-wrap gap-3">
-          <li>
-            <a href={routePath('fourmy', lang)} class="btn btn-secondary">
-              Ekylibre
-            </a>
-          </li>
-          <li>
-            <a href={routePath('lexicon', lang)} class="btn btn-secondary">
-              Lexicon
-            </a>
-          </li>
+        <ul class="mt-8 space-y-4">
+          {connected.map((c) => (
+            <li class="border-t border-soil-800/10 pt-4">
+              <a href={routePath(c.route, lang)} class="font-display font-semibold">{c.name}</a>
+              <span class="text-muted"> : {c.text}</span>
+            </li>
+          ))}
         </ul>
       </div>
       <div>
@@ -244,6 +260,55 @@ const jsonLd = softwareJsonLd({ name: 'Aiffel', description, url: LINKS.aiffel }
           {audiences.map(([who, why]) => (
             <li class="border-t border-soil-800/10 pt-5">
               <strong class="font-display">{who}</strong> {why}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="installer" class="section-dark py-24">
+    <div class="container-site grid gap-12 lg:grid-cols-2">
+      <div>
+        <h2 class="text-h2">{fr ? 'Installer Aiffel soi-même' : 'Run Aiffel yourself'}</h2>
+        <p class="mt-5 text-lead text-straw-50/75">
+          {fr
+            ? 'Le code d’Aiffel est public. Vous pouvez l’installer sur votre serveur, avec votre bot Telegram et vos propres clés d’IA, puis le brancher sur votre Fourmy et votre Lyvre, libres eux aussi.'
+            : 'Aiffel’s code is public. You can install it on your own server, with your own Telegram bot and AI keys, then connect it to your own Fourmy and Lyvre, which are free software too.'}
+        </p>
+        <p class="mt-6 flex flex-wrap gap-6">
+          <a href={LINKS.aiffelCode} rel="noopener" target="_blank" class="inline-flex items-center gap-2 font-semibold">
+            <Icon name="code-fork" />
+            {fr ? 'Voir le code' : 'View the code'}
+          </a>
+          <a href={LINKS.aiffelInstall} rel="noopener" target="_blank" class="inline-flex items-center gap-2 font-semibold">
+            <Icon name="server" />
+            {fr ? 'Guide d’installation' : 'Installation guide'}
+          </a>
+        </p>
+      </div>
+      <div class="rounded-2xl p-6 ring-1 ring-white/15">
+        <h3 class="font-display text-lg font-semibold">
+          {fr ? 'Sans support' : 'No support'}
+        </h3>
+        <ul class="mt-4 space-y-3 text-straw-50/75">
+          {(fr
+            ? [
+                'Pas de version numérotée : l’installation suit le code en cours de développement.',
+                'Pas de compatibilité garantie d’une mise à jour à l’autre.',
+                'Vous gardez vos données et faites vous-même les sauvegardes.',
+                'Hébergement, sauvegardes et suivi sont compris dans l’abonnement opéré par Ekylibre SAS.',
+              ]
+            : [
+                'No numbered releases: the install follows the code under development.',
+                'No compatibility guaranteed from one update to the next.',
+                'You keep your data and make your own backups.',
+                'Hosting, backups and monitoring come with the subscription run by Ekylibre SAS.',
+              ]
+          ).map((line) => (
+            <li class="flex gap-3">
+              <Icon name="check" class="mt-1.5 text-eky-green-light" />
+              <span>{line}</span>
             </li>
           ))}
         </ul>

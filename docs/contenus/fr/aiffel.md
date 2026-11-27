@@ -16,7 +16,7 @@ description: "Aiffel, l’assistant agricole à la voix ou par écrit : il pré
 ## role — Le rôle d’Ekylibre SAS
 
 - **H2** : Qui fait quoi
-- **Texte** : Aiffel est un commun numérique pour l’agriculture, porté avec l’association OSFarm. Ekylibre SAS en est l’éditeur, le contributeur principal et l’opérateur [À CONFIRMER : rôle exact d’Ekylibre SAS sur Aiffel, le site aiffel.org ne nommant pas d’entité].
+- **Texte** : Aiffel est un commun numérique pour l’agriculture, porté avec l’association OSFarm. Ekylibre SAS l’édite et l’opère. Son code est libre, sous licence AGPL.
 
 ## fonctionnement — Comment ça marche
 
@@ -24,7 +24,7 @@ description: "Aiffel, l’assistant agricole à la voix ou par écrit : il pré
 - **Étapes** :
   1. **Vous parlez.** « Traité le blé de la parcelle du Moulin ce matin. » Aiffel vous répète ce qu’il a compris.
   2. **Aiffel vérifie.** Il complète ce qui manque et contrôle la dose, la zone non traitée et le délai avant récolte dans le Lexicon.
-  3. **Vous validez.** L’enregistrement est écrit dans Ekylibre. Avant cela, vous pouvez corriger ou annuler.
+  3. **Vous validez.** L’enregistrement est écrit dans votre logiciel de gestion. Avant cela, vous pouvez corriger ou annuler.
 
 > L’exemple de phrase est fictif ; garder un exemple sans nom de produit commercial.
 
@@ -40,9 +40,25 @@ description: "Aiffel, l’assistant agricole à la voix ou par écrit : il pré
 
 ## integrations — Branché sur vos logiciels
 
-- **H2** : Aiffel écrit là où vous travaillez déjà
-- **Texte** : Aiffel ne remplace aucun logiciel. Il est aujourd’hui branché sur Ekylibre et sur le Lexicon ; d’autres logiciels du marché sont prévus. Il s’y connecte de préférence par API ou par serveur MCP, sinon par fichiers.
+- **H2** : Aiffel se branche là où vous travaillez déjà
+- **Texte** : Aiffel ne remplace aucun logiciel. Il se connecte à ceux de la ferme de préférence par API ou par serveur MCP, sinon par fichiers ; d’autres logiciels du marché sont prévus.
+- **Logiciels branchés** :
+  - **Ekylibre** : Aiffel y écrit les interventions, une fois validées.
+  - **Lyvre** : Aiffel lit la comptabilité, sans jamais y écrire, et seulement pour l’exploitant.
+  - **Lexicon** : Aiffel y vérifie doses, zones non traitées et délais avant récolte.
+  - **Fourmy** : en cours de branchement, Aiffel y écrira comme dans Ekylibre.
 - **Note** : Aiffel est en cours de lancement. Les offres et l’état d’avancement sont présentés sur aiffel.org.
+
+## installer — Installer Aiffel soi-même (D-REL)
+
+- **H2** : Installer Aiffel soi-même
+- **Texte** : Le code d’Aiffel est public. Vous pouvez l’installer sur votre serveur, avec votre bot Telegram et vos propres clés d’IA, puis le brancher sur votre Fourmy et votre Lyvre, libres eux aussi.
+- **Liens** : Voir le code → https://github.com/ekylibre/aiffel ; Guide d’installation → docs/ops/install-libre.md du dépôt Aiffel
+- **Encadré « Sans support »** :
+  - Pas de version numérotée : l’installation suit le code en cours de développement.
+  - Pas de compatibilité garantie d’une mise à jour à l’autre.
+  - Vous gardez vos données et faites vous-même les sauvegardes.
+  - Hébergement, sauvegardes et suivi sont compris dans l’abonnement opéré par Ekylibre SAS.
 
 ## pour-qui — À qui s’adresse Aiffel
 
@@ -57,7 +73,7 @@ description: "Aiffel, l’assistant agricole à la voix ou par écrit : il pré
 - **H2** : Essayer Aiffel
 - **Points** :
   - Toutes les offres, et l’inscription pour être prévenu du lancement → https://aiffel.org
-  - Le cœur d’Aiffel est open source.
+  - Le code d’Aiffel est libre (AGPL) ; il peut être installé soi-même, sans support.
   - Pour brancher Aiffel sur votre logiciel ou votre réseau d’exploitations : Ekylibre SAS vous accompagne.
 
 ## cta — Appel à l’action
